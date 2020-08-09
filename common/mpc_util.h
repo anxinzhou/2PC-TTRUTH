@@ -150,10 +150,13 @@ namespace MPC {
     ABYParty *init_party(e_role role, const std::string &address, uint16_t port, seclvl seclvl, uint32_t bitlen,
                          uint32_t nthreads, e_mt_gen_alg mt_alg);
 
-    uint64_t compare(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
+    uint64_t share_gt_const(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
+    uint64_t gt(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
     uint64_t eq(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
+    uint64_t share_eq_const(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
     uint64_t argmax(vector<uint64_t>&a, ABYParty *pt, e_role role);
     uint64_t product(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
+    vector<uint64_t> product(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty*pt, e_role role);
     uint64_t inner_product(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty *pt, e_role role);
     vector<uint64_t> argmax_vector(vector<uint64_t>&a, ABYParty *pt, e_role role);
     uint64_t min(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
@@ -163,14 +166,20 @@ namespace MPC {
     uint64_t max2N(uint64_t a, uint64_t &digits, ABYParty *pt, e_role role);
     uint64_t max2N(uint64_t a, ABYParty *pt, e_role role) ;
     uint64_t right_shift(uint64_t a, uint64_t digits, ABYParty *pt, e_role role);
+    uint64_t right_shift_const(uint64_t a, uint64_t digits, ABYParty *pt, e_role role);
+    vector<uint64_t> right_shift_const(vector<uint64_t >&a, uint64_t digits, ABYParty *pt, e_role role);
+    vector<uint64_t> right_shift(vector<uint64_t >&a, uint64_t digits, ABYParty *pt, e_role role);
     uint64_t left_shift(uint64_t a, uint64_t digits, ABYParty *pt, e_role role);
+    uint64_t left_shift_const(uint64_t a, uint64_t digits, ABYParty *pt, e_role role);
+
     uint range_sample(vector<uint64_t>&threshold, vector<uint64_t> &value, uint64_t p, ABYParty *pt, e_role role);
     // generate a 32-bit randomness
     uint random(ABYParty *pt, e_role role);
 
-    share*build_compare_circuit(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
+    share*build_gt_circuit(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
     share*build_eq_circuit(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
     share* build_product_circuit(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
+    share* build_product_circuit(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty*pt, e_role role);
     share* build_inner_product_circuit(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty *pt, e_role role);
     share *build_max_circuit(vector<uint64_t>&a, ABYParty *pt, e_role role);
     share *build_argmax_circuit(vector<uint64_t>&a, ABYParty *pt, e_role role);

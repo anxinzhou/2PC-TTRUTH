@@ -6,10 +6,12 @@
 #define TTRUTH_MPC_TTRUTH_H
 
 #include "common/mpc_util.h"
-extern const uint CLUSTER_NUM = 10;
+extern const uint CLUSTER_NUM;
 
 namespace MPC {
     vector<vector<uint64_t>> latent_truth_discovery(vector<vector<uint64_t>> &obs, uint iter);
+
+    vector<uint64_t> sphere_kmeans(vector<vector<uint64_t>> &point, uint iter, ABYParty *pt, e_role role);
 }
 
 
