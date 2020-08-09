@@ -65,7 +65,7 @@ namespace MPC {
                 uint p_negt = 0;
                 auto tl_eq_1 = eq(tl[k], role == SERVER ? 1 : 0, pt, role);
                 uint64_t tl_eq_0 = role == SERVER ? -tl_eq_1 : -tl_eq_1 + 1;
-                vector<vector<uint64_t>> tmp_prior(user_num,vector<uint64_t>(2,0));
+                vector<vector<uint64_t>> tmp_prior(user_num, vector<uint64_t>(2, 0));
                 for (int j = 0; j < user_num; j++) {
                     // load paramers
                     auto &ob = all_obs[i][j];
@@ -100,68 +100,68 @@ namespace MPC {
                                             product(ob_eq_1, alpha_t_0, pt, role);
                     // update p_t
                     uint tmp1 = n_u_t_o + alpha_t_o;
-                    if(role==SERVER) {
-                        tmp1-=1;
+                    if (role == SERVER) {
+                        tmp1 -= 1;
                     }
                     tmp1 = log(tmp1 << FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
                     uint tmp2 = n_u_t_1 + n_u_t_0 + alpha_t_0 + alpha_t_1;
-                    if(role==SERVER) {
-                        tmp2-=1;
+                    if (role == SERVER) {
+                        tmp2 -= 1;
                     }
-                    tmp2 = log(tmp2<<FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                    tmp2 = log(tmp2 << FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
                     p_t += tmp1 - tmp2;
                     // update p_(1-t)
                     uint tmp3 = n_u_negt_o + alpha_negt_o;
-                    tmp3 = log(tmp3<<FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                    tmp3 = log(tmp3 << FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
                     uint tmp4 = n_u_negt_0 + n_u_negt_1 + alpha_negt_0 + alpha_negt_1;
-                    tmp4 = log(tmp4<<FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                    tmp4 = log(tmp4 << FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
                     p_negt = tmp3 - tmp4;
 
                     tmp_prior[j][0] = n_u_t_o;
                     tmp_prior[j][1] = n_u_negt_o;
                 }
-                uint64_t threshold_p = sigmoid(p_negt-p_t,FLOAT_SCALE_FACTOR,FLOAT_SCALE_FACTOR,pt,role);
+                uint64_t threshold_p = sigmoid(p_negt - p_t, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
                 uint64_t r = random(pt, role);
                 threshold_p *= RAND_MAX;
-                r = r<<FLOAT_SCALE_FACTOR;
+                r = r << FLOAT_SCALE_FACTOR;
                 uint64_t flip = gt(threshold_p, r, pt, role);
                 // update statistics
-                for(int j=0;j<user_num;j++) {
+                for (int j = 0; j < user_num; j++) {
                     auto &ob = all_obs[i][j];
                     auto ob_eq_1 = eq(ob[k], role == SERVER ? 1 : 0, pt, role);
                     uint64_t ob_eq_0 = role == SERVER ? -ob_eq_1 : -ob_eq_1 + 1;
 
                     tmp_prior[j][0] -= flip;
                     tmp_prior[j][1] += flip;
-                    uint64_t  n_u_t_o = tmp_prior[j][0];
-                    uint64_t  n_u_negt_o = tmp_prior[j][1];
+                    uint64_t n_u_t_o = tmp_prior[j][0];
+                    uint64_t n_u_negt_o = tmp_prior[j][1];
                     pos_counts[j][0] = product(ob_eq_0,
                                                product(tl_eq_0, n_u_t_o, pt, role) +
-                                               product(tl_eq_1, n_u_negt_o,pt,role),pt,role);
+                                               product(tl_eq_1, n_u_negt_o, pt, role), pt, role);
 
                     pos_counts[j][1] = product(ob_eq_1,
                                                product(tl_eq_0, n_u_t_o, pt, role) +
-                                               product(tl_eq_1, n_u_negt_o,pt,role),pt,role);
+                                               product(tl_eq_1, n_u_negt_o, pt, role), pt, role);
                     pos_counts[j][2] = product(ob_eq_0,
                                                product(tl_eq_1, n_u_t_o, pt, role) +
-                                               product(tl_eq_0, n_u_negt_o,pt,role),pt,role);
+                                               product(tl_eq_0, n_u_negt_o, pt, role), pt, role);
                     pos_counts[j][0] = product(ob_eq_1,
                                                product(tl_eq_1, n_u_t_o, pt, role) +
-                                               product(tl_eq_0, n_u_negt_o,pt,role),pt,role);
+                                               product(tl_eq_0, n_u_negt_o, pt, role), pt, role);
                 }
                 // update truth label
-                tl[k] = product(flip, role==SERVER? 1-tl[k]:-tl[k], pt, role) +
-                        product(role==SERVER? 1-flip:-flip, tl[k],pt,role);
+                tl[k] = product(flip, role == SERVER ? 1 - tl[k] : -tl[k], pt, role) +
+                        product(role == SERVER ? 1 - flip : -flip, tl[k], pt, role);
             }
             return tls;
         }
     }
 
     // only for float number
-    uint64_t distance(vector<uint64_t>&a, vector<uint64_t>&b, ABYParty *pt, e_role role) {
-        uint64_t gamma = role==SERVER?2:0;
-        uint64_t  tmp = inner_product(a,b,pt,role);
-        tmp = right_shift_const(tmp,FLOAT_SCALE_FACTOR,pt,role);
+    uint64_t distance(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty *pt, e_role role) {
+        uint64_t gamma = role == SERVER ? 2 : 0;
+        uint64_t tmp = inner_product(a, b, pt, role);
+        tmp = right_shift_const(tmp, FLOAT_SCALE_FACTOR, pt, role);
         return gamma - tmp;
     }
 
@@ -169,46 +169,89 @@ namespace MPC {
     // sphere kmeans++ for init
     vector<vector<uint64_t>> cluster_init(vector<vector<uint64_t>> &points, ABYParty *pt, e_role role) {
         vector<vector<uint64_t>> cluster_centers(CLUSTER_NUM);
-        uint k = CLUSTER_NUM;
+        uint cluster_num = CLUSTER_NUM;
         uint dim = points[0].size();
         // pick first cluster
         uint r = random(pt, role);
-        r = right_shift(k*r,UINT_LEN,pt,role);
-        for(int i=0;i<points.size();i++) {
-            uint64_t cmp = share_eq_const(r,i,pt,role);
+        r = right_shift(cluster_num * r, UINT_LEN, pt, role);
+        for (int i = 0; i < points.size(); i++) {
+            uint64_t cmp = share_eq_const(r, i, pt, role);
             vector<uint64_t> tmp(dim, cmp);
-            tmp = product(tmp,points[i],pt,role);
-            for(int j=0; j<dim;j++) {
+            tmp = product(tmp, points[i], pt, role);
+            for (int j = 0; j < dim; j++) {
                 cluster_centers[0][j] += tmp[j];
             }
         }
-        // right shift
-        cluster_centers[0] = right_shift_const(cluster_centers[0],FLOAT_SCALE_FACTOR,pt,role);
 
-        vector<uint64_t> D(points.size(),UINT_MAX);
+        vector<uint64_t> D(points.size(), UINT_MAX);
         //pick other clusters
 
-        for(int i=1;i<k;i++) {
-            for(int j=0;j<points.size();j++) {
+        for (int i = 1; i < cluster_num; i++) {
+            for (int j = 0; j < points.size(); j++) {
                 D[j] = min(D[j],
-                           distance(points[j],cluster_centers[i-1],pt,role),pt,role);
+                           distance(points[j], cluster_centers[i - 1], pt, role), pt, role);
             }
             // pick new cluster
             vector<uint64_t> bar_D(points.size());
-            for(int j=0;j<points.size();j++) {
-                bar_D[j] = j==0? D[0]: bar_D[j-1] + D[j];
+            for (int j = 0; j < points.size(); j++) {
+                bar_D[j] = j == 0 ? D[0] : bar_D[j - 1] + D[j];
             }
-            uint64_t J = bar_D[points.size()-1];
+            uint64_t J = bar_D[points.size() - 1];
 
-            uint r = random(pt, role);
-            uint64_t  p = product(r, J, pt, role);
+            r = random(pt, role);
+            uint64_t p = product(r, J, pt, role);
             p = right_shift_const(p, UINT_LEN, pt, role);
 
+            for (int j = 0; j < points.size(); j++) {
+                if (j == points.size() - 1) {
+                    for (int k = 0; k < dim; k++) {
+                        cluster_centers[i][k] += points[j][k];
+                    }
+                    continue;
+                }
 
+                uint64_t cmp = gt(bar_D[j], p, pt, role);
+                vector<uint64_t> tmp(dim, cmp);
+                auto diff = minus(points[j], points[j + 1]);
+                tmp = product(tmp, diff, pt, role);
+                for (int k = 0; k < dim; k++) {
+                    cluster_centers[i][k] += tmp[k];
+                }
+            }
         }
+        return cluster_centers;
     }
 
-    vector<uint64_t> sphere_kmeans(vector<vector<uint64_t>> &point, uint iter, ABYParty *pt, e_role role) {
+    vector<vector<uint64_t>> sphere_kmeans(vector<vector<uint64_t>> &points, uint iter, ABYParty *pt, e_role role) {
+        int cluster_num = CLUSTER_NUM;
+        int dim = points[0].size();
+        vector<vector<uint64_t>> cluster_index(points.size(), vector<uint64_t>(cluster_num, 0));
+        // initialization
+        auto cluster_centers = cluster_init(points, pt, role);
+        // iteration
+        for (int t = 0; t < iter; t++) {
+            // assign cluster index
+            for (int j = 0; j < points.size(); j++) {
+                vector<uint64_t> dis(cluster_num);
+                for (int i = 0; i < cluster_num; i++) {
+                    dis[i] = distance(points[j], cluster_centers[i], pt, role);
+                }
+                cluster_index[j] = argmin_vector(dis, pt, role);
+            }
 
+            // update new cluster center
+            vector<vector<uint64_t>> new_cluster_centers(cluster_num, vector<uint64_t>(dim, 0));
+            for (int i = 0; i < cluster_num; i++) {
+                for (int j = 0; j < points.size(); j++) {
+                    uint l = cluster_index[j][i];
+                    vector<uint64_t> tmp(dim,l);
+                    tmp = product(tmp,points[j],pt,role);
+                    for(int k=0; k<dim;k++) {
+                        new_cluster_centers[i][k] += tmp[k];
+                    }
+                }
+            }
+        }
+        return cluster_index;
     }
 }

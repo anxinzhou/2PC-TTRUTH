@@ -69,3 +69,94 @@ vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,
     }
     return tls;
 }
+
+double inner_product(vector<double> &a, vector<double> &b) {
+    int dim = a.size();
+    double res = 0;
+    for (int i = 0; i < a.size(); i++) {
+        res += a[i] * b[i];
+    }
+    return res;
+}
+
+double distance(vector<double> &a, vector<double> &b) {
+    return 2 - inner_product(a, b);
+}
+
+vector<vector<double>> cluster_init(vector<vector<double>> &points) {
+    int cluster_num = CLUSTER_NUM;
+    vector<vector<double>> cluster_centers(cluster_num);
+    int dim = points[0].size();
+    // pick first cluster center
+    int r = rand() % cluster_num;
+    cluster_centers[0] = points[r];
+
+    vector<double> D(points.size(), INT_MAX);
+    //pick other clusters
+    for (int i = 1; i < cluster_num; i++) {
+        //update min distance
+        double total_dis = 0;
+        for (int j = 0; j < points.size(); j++) {
+            D[j] = min(D[j], distance(cluster_centers[i - 1], points[j]));
+            total_dis += D[j];
+        }
+
+        // sample next cluster
+        double p = double(rand()) / RAND_MAX;
+        p = p * total_dis;
+
+        vector<double> bar_D(points.size(), INT_MAX);
+        for (int j = 0; j < points.size(); j++) {
+            bar_D[j] = j == 0 ? D[0] : bar_D[j - 1];
+        }
+
+        int cluster_index = 0;
+        for (int j = 0; j < points.size(); j++) {
+            if (p < bar_D[j]) {
+                cluster_index = j;
+                break;
+            }
+        }
+        cluster_centers[i] = points[cluster_index];
+    }
+    return cluster_centers;
+}
+
+vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
+    int cluster_num = CLUSTER_NUM;
+    int dim = points[0].size();
+    vector<vector<int>> cluster_index(points.size(), vector<int>(cluster_num, 0));
+    // initialization
+    auto cluster_centers = cluster_init(points);
+    // iteration
+    for (int t = 0; t < iter; t++) {
+        // assign cluster index
+        for (int j = 0; j < points.size(); j++) {
+            double min_dis = -INT_MAX;
+            int min_index = -1;
+            for (int i = 0; i < cluster_num; i++) {
+                double dis = distance(points[j], cluster_centers[i]);
+                if(dis<min_dis) {
+                    min_dis = dis;
+                    min_index = i;
+                }
+            }
+            cluster_index[j][min_index]=1;
+        }
+
+        // update new cluster center
+        vector<vector<double>> new_cluster_centers(cluster_num, vector<double>(dim, 0));
+        for (int j=0; j<points.size();j++) {
+            int l = -1;
+            for(int i=0; i<cluster_num; i++) {
+                if(cluster_index[j][i]==1) {
+                    l = i;
+                    break;
+                }
+            }
+            for(int k=0;k<dim;k++) {
+                new_cluster_centers[l][k] += points[j][k];
+            }
+        }
+    }
+}

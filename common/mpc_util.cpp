@@ -132,18 +132,57 @@ namespace MPC {
         return sum;
     }
 
-    vector<uint64_t> right_shift_const(vector<uint64_t >&a, uint64_t digits, ABYParty *pt, e_role role) {
+    uint64_t bitwise_shift(uint64_t a, uint64_t digits, ABYParty *pt, e_role role, bool left, bool const_digit) {
+        auto sharings = pt->GetSharings();
+        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
+        share * sdigit;
+        if(const_digit) {
+            sdigit = acirc->PutCONSGate(digits, UINT64_LEN);
+        } else {
+            sdigit = acirc->PutSharedINGate(digits, UINT64_LEN);
+        }
+        auto sa = acirc->PutSharedINGate(a, UINT64_LEN);
+        sdigit = ycirc->PutA2YGate(sdigit);
+        sa = ycirc->PutA2YGate(sa);
+
+        if (left) {
+            sa = ycirc->PutBarrelLeftShifterGate(sa, sdigit);
+        } else {
+            sa = ycirc->PutBarrelRightShifterGate(sa, sdigit);
+        }
+
+        sa = acirc->PutY2AGate(sa, bcirc);
+        sa = acirc->PutSharedOUTGate(sa);
+        pt->ExecCircuit();
+        auto v = sa->get_clear_value<uint64_t>();
+        pt->Reset();
+        return v;
+    }
+
+    vector<uint64_t> bitwise_shift(vector<uint64_t >&a, uint64_t digits, ABYParty *pt, e_role role, bool left, bool const_digit) {
         uint dim = a.size();
         auto sharings = pt->GetSharings();
         auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
         auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
         auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
 
-        auto sdigit = acirc->PutCONSGate(digits, UINT64_LEN);
+        share *sdigit;
+        if(const_digit) {
+            sdigit = acirc->PutCONSGate(digits, UINT64_LEN);
+        } else {
+            sdigit = acirc->PutSharedINGate(digits, UINT64_LEN);
+        }
+
         auto sa = acirc->PutSharedSIMDINGate(dim, a.data(), UINT64_LEN);
         sdigit = ycirc->PutA2YGate(sdigit);
         sa = ycirc->PutA2YGate(sa);
-        sa = ycirc->PutBarrelRightShifterGate(sa, sdigit);
+        if(left) {
+            sa = ycirc->PutBarrelLeftShifterGate(sa, sdigit);
+        } else {
+            sa = ycirc->PutBarrelRightShifterGate(sa, sdigit);
+        }
         sa = acirc->PutY2AGate(sa, bcirc);
         sa = acirc->PutSharedOUTGate(sa);
         pt->ExecCircuit();
@@ -154,106 +193,42 @@ namespace MPC {
         vector<uint64_t>output(v,v+dim);
         delete v;
         return output;
+    }
+
+    vector<uint64_t> right_shift_const(vector<uint64_t >&a, uint64_t digits, ABYParty *pt, e_role role) {
+        bool left = false;
+        bool const_digit = true;
+        return bitwise_shift(a,digits,pt,role,left,const_digit);
     }
 
     vector<uint64_t> right_shift(vector<uint64_t >&a, uint64_t digits, ABYParty *pt, e_role role) {
-        uint dim = a.size();
-        auto sharings = pt->GetSharings();
-        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-
-        auto sdigit = acirc->PutSharedINGate(digits, UINT64_LEN);
-        auto sa = acirc->PutSharedSIMDINGate(dim, a.data(), UINT64_LEN);
-        sdigit = ycirc->PutA2YGate(sdigit);
-        sa = ycirc->PutA2YGate(sa);
-        sa = ycirc->PutBarrelRightShifterGate(sa, sdigit);
-        sa = acirc->PutY2AGate(sa, bcirc);
-        sa = acirc->PutSharedOUTGate(sa);
-        pt->ExecCircuit();
-        uint *v;
-        uint bitlen, nval;
-        sa->get_clear_value_vec(&v,&bitlen,&nval);
-        pt->Reset();
-        vector<uint64_t>output(v,v+dim);
-        delete v;
-        return output;
+        bool left = false;
+        bool const_digit = false;
+        return bitwise_shift(a,digits,pt,role,left,const_digit);
     }
 
     uint64_t right_shift_const(uint64_t a, uint64_t digits, ABYParty *pt, e_role role) {
-        auto sharings = pt->GetSharings();
-        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-
-        auto sdigit = acirc->PutCONSGate(digits, UINT64_LEN);
-        auto sa = acirc->PutSharedINGate(a, UINT64_LEN);
-        sdigit = ycirc->PutA2YGate(sdigit);
-        sa = ycirc->PutA2YGate(sa);
-        sa = ycirc->PutBarrelRightShifterGate(sa, sdigit);
-        sa = acirc->PutY2AGate(sa, bcirc);
-        sa = acirc->PutSharedOUTGate(sa);
-        pt->ExecCircuit();
-        uint64_t v = sa->get_clear_value<uint64_t>();
-        pt->Reset();
-        return v;
+        bool left = false;
+        bool const_digit = true;
+        return bitwise_shift(a, digits, pt, role, left, const_digit);
     }
 
     uint64_t right_shift(uint64_t a, uint64_t digits, ABYParty *pt, e_role role) {
-        auto sharings = pt->GetSharings();
-        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-
-        auto sdigit = acirc->PutSharedINGate(digits, UINT64_LEN);
-        auto sa = acirc->PutSharedINGate(a, UINT64_LEN);
-        sdigit = ycirc->PutA2YGate(sdigit);
-        sa = ycirc->PutA2YGate(sa);
-        sa = ycirc->PutBarrelRightShifterGate(sa, sdigit);
-        sa = acirc->PutY2AGate(sa, bcirc);
-        sa = acirc->PutSharedOUTGate(sa);
-        pt->ExecCircuit();
-        uint64_t v = sa->get_clear_value<uint64_t>();
-        pt->Reset();
-        return v;
+        bool left = false;
+        bool const_digit = false;
+        return bitwise_shift(a, digits, pt, role, left, const_digit);
     }
 
     uint64_t left_shift(uint64_t a, uint64_t digits, ABYParty *pt, e_role role) {
-        auto sharings = pt->GetSharings();
-        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-
-        auto sdigit = acirc->PutSharedINGate(digits, UINT64_LEN);
-        auto sa = acirc->PutSharedINGate(a, UINT64_LEN);
-        sdigit = ycirc->PutA2YGate(sdigit);
-        sa = ycirc->PutA2YGate(sa);
-        sa = ycirc->PutBarrelLeftShifterGate(sa, sdigit);
-        sa = acirc->PutY2AGate(sa, bcirc);
-        sa = acirc->PutSharedOUTGate(sa);
-        pt->ExecCircuit();
-        uint64_t v = sa->get_clear_value<uint64_t>();
-        pt->Reset();
-        return v;
+        bool left = true;
+        bool const_digit = false;
+        return bitwise_shift(a, digits, pt, role, left, const_digit);
     }
 
     uint64_t left_shift_const(uint64_t a, uint64_t digits, ABYParty *pt, e_role role) {
-        auto sharings = pt->GetSharings();
-        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-
-        auto sdigit = acirc->PutCONSGate(digits, UINT64_LEN);
-        auto sa = acirc->PutSharedINGate(a, UINT64_LEN);
-        sdigit = ycirc->PutA2YGate(sdigit);
-        sa = ycirc->PutA2YGate(sa);
-        sa = ycirc->PutBarrelLeftShifterGate(sa, sdigit);
-        sa = acirc->PutY2AGate(sa, bcirc);
-        sa = acirc->PutSharedOUTGate(sa);
-        pt->ExecCircuit();
-        uint64_t v = sa->get_clear_value<uint64_t>();
-        pt->Reset();
-        return v;
+        bool left = true;
+        bool const_digit = true;
+        return bitwise_shift(a, digits, pt, role, left, const_digit);
     }
 
     // the result will scale scale_factor (1<<scale_factor)
@@ -456,7 +431,7 @@ namespace MPC {
         return out;
     }
 
-    vector<uint64_t> argmax_vector(vector<uint64_t>&a, ABYParty *pt, e_role role) {
+    vector<uint64_t> argminmax_vector(vector<uint64_t>&a, ABYParty *pt, e_role role, bool get_max) {
         uint64_t dim = a.size();
         std::vector<Sharing*>& sharings = pt->GetSharings();
 //        ArithmeticCircuit*
@@ -475,7 +450,12 @@ namespace MPC {
             val[i] = boolcirc->PutA2BGate(val[i],yaocirc);
             id[i] = boolcirc->PutA2BGate(id[i],yaocirc);
         }
-        boolcirc->PutMaxIdxGate(val, id, dim, &maxval, &maxindex);
+
+        if(get_max) {
+            boolcirc->PutMaxIdxGate(val, id, dim, &maxval, &maxindex);
+        } else {
+            boolcirc->PutMinIdxGate(val, id, dim, &maxval, &maxindex);
+        }
 
         vector<uint64_t> indexs(dim);
         vector<share*> sindex;
@@ -488,7 +468,7 @@ namespace MPC {
         }
         pt->ExecCircuit();
         for(int i=0;i<dim;i++) {
-            uint64_t index = sindex[i]->get_clear_value<uint64_t>();
+            auto index = sindex[i]->get_clear_value<uint64_t>();
             indexs[i] = index;
             cout<<index<<endl;
         }
@@ -497,6 +477,16 @@ namespace MPC {
         delete val;
         delete id;
         return indexs;
+    }
+
+    vector<uint64_t> argmin_vector(vector<uint64_t>&a, ABYParty *pt, e_role role) {
+        bool get_max = false;
+        return argminmax_vector(a,pt,role,get_max);
+    }
+
+    vector<uint64_t> argmax_vector(vector<uint64_t>&a, ABYParty *pt, e_role role) {
+        bool get_max = true;
+        return argminmax_vector(a,pt,role,get_max);
     }
 
     uint64_t share_gt_const(uint64_t a, uint64_t b, ABYParty *pt, e_role role) {
@@ -555,6 +545,16 @@ namespace MPC {
         pt->ExecCircuit();
         auto output = s_out->get_clear_value<uint64_t>();
         pt->Reset();
+        return output;
+    }
+
+    vector<uint64_t> minus(vector<uint64_t> &a, vector<uint64_t> &b) {
+        assert(a.size()==b.size());
+        uint dim = a.size();
+        vector<uint64_t>output(dim);
+        for(int i=0;i<dim;i++) {
+            output[i] = a[i]-b[i];
+        }
         return output;
     }
 
@@ -799,11 +799,6 @@ namespace MPC {
         delete u;
         delete v;
         return s_va;
-    }
-
-    share* build_logarithm_circuit(vector<uint64_t>&a, ABYParty *party) {
-        share *s_a_vec;
-        return s_a_vec;
     }
 
     share *build_argmax_circuit(vector<uint64_t>&a, ABYParty *pt, e_role role) {

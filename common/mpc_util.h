@@ -154,15 +154,21 @@ namespace MPC {
     uint64_t gt(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
     uint64_t eq(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
     uint64_t share_eq_const(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
+
+    vector<uint64_t> argmax_vector(vector<uint64_t>&a, ABYParty *pt, e_role role);
+    vector<uint64_t> argmin_vector(vector<uint64_t>&a, ABYParty *pt, e_role role);
+    uint64_t min(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
     uint64_t argmax(vector<uint64_t>&a, ABYParty *pt, e_role role);
+
     uint64_t product(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
     vector<uint64_t> product(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty*pt, e_role role);
     uint64_t inner_product(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty *pt, e_role role);
-    vector<uint64_t> argmax_vector(vector<uint64_t>&a, ABYParty *pt, e_role role);
-    uint64_t min(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
+    vector<uint64_t> minus(vector<uint64_t> &a, vector<uint64_t> &b);
+
     uint64_t rep_square_root(uint64_t a, uint64_t scale_factor,uint64_t already_scaled_factor, ABYParty *pt, e_role role);
     uint64_t log(uint64_t a, uint64_t scale_factor, uint64_t already_scaled_factor,ABYParty *pt,e_role role);
     uint64_t sigmoid(uint64_t a, uint64_t scale_factor,uint64_t already_scaled_factor,ABYParty *pt, e_role role);
+
     uint64_t max2N(uint64_t a, uint64_t &digits, ABYParty *pt, e_role role);
     uint64_t max2N(uint64_t a, ABYParty *pt, e_role role) ;
     uint64_t right_shift(uint64_t a, uint64_t digits, ABYParty *pt, e_role role);
@@ -185,7 +191,6 @@ namespace MPC {
     share *build_argmax_circuit(vector<uint64_t>&a, ABYParty *pt, e_role role);
     share *build_argmax_circuit2(vector<uint64_t>&a, ABYParty *pt, e_role role);
     share *build_argmax_vector_circuit(vector<uint64_t>&a, ABYParty *pt, e_role role);
-    share *build_logarithm_circuit(vector<int> &a, ABYParty *party);
     share* build_max2N_circuit(uint64_t a, share ** digits, ABYParty *pt, e_role role);
 }
 
