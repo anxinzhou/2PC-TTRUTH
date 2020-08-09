@@ -338,7 +338,7 @@ void test_rep_square_root(ABYParty *pt, e_role role) {
     clock_t start, end;
     start = clock();
     for(int i=0; i<1;i++) {
-        uint64_t a = (129)<<20;
+        uint64_t a = (0)<<20;
         srand(2);
         uint64_t x = rand();
         a = role==SERVER? a-x:x;
@@ -397,10 +397,11 @@ int main(int argc, char** argv) {
 //    test_inner_product(pt, role);
 //    test_right_shift(pt, role);
 //test_log(pt,role);
-//test_rep_square_root(pt,role);
+test_rep_square_root(pt,role);
 //test_eq(pt,role);
 //    test_right_shift2(pt,role);
-test_sigmoid(pt,role);
+//test_sigmoid(pt,role);
+
     delete pt;
     return 0;
 }

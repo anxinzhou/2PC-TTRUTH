@@ -160,6 +160,7 @@ namespace MPC {
     vector<uint64_t> argmin_vector(vector<uint64_t>&a, ABYParty *pt, e_role role);
     uint64_t min(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
     uint64_t argmax(vector<uint64_t>&a, ABYParty *pt, e_role role);
+    uint64_t argmax_test(vector<uint64_t>&a, ABYParty *pt, e_role role);
 
     uint64_t product(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
     vector<uint64_t> product(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty*pt, e_role role);

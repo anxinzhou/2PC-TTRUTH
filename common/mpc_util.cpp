@@ -431,6 +431,38 @@ namespace MPC {
         return out;
     }
 
+    uint64_t argmax_test(vector<uint64_t>&a, ABYParty *pt, e_role role) {
+        uint64_t dim = a.size();
+        std::vector<Sharing*>& sharings = pt->GetSharings();
+//        ArithmeticCircuit*
+        auto boolcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
+        auto arithcirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+        auto yaocirc = (ArithmeticCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+        share ** val, ** id, *maxval, *maxindex;
+        val = (share **)malloc(sizeof(share *)*dim);
+        id = (share **)malloc(sizeof(share *)*dim);
+        for(uint64_t i=0; i<a.size(); i++) {
+            val[i] = arithcirc->PutSharedINGate(a[i],UINT64_LEN);
+            id[i] = arithcirc->PutCONSGate(i, UINT64_LEN);
+        }
+
+        for(uint64_t i=0; i<a.size(); i++) {
+            val[i] = boolcirc->PutA2BGate(val[i],yaocirc);
+            id[i] = boolcirc->PutA2BGate(id[i],yaocirc);
+        }
+
+        boolcirc->PutMaxIdxGate(val, id, dim, &maxval, &maxindex);
+        maxindex = arithcirc->PutB2AGate(maxindex);
+        maxindex = arithcirc->PutOUTGate(maxindex,ALL);
+        pt->ExecCircuit();
+        auto index = maxindex->get_clear_value<uint64_t>();
+        pt->Reset();
+
+        delete val;
+        delete id;
+        return index;
+    }
+
     vector<uint64_t> argminmax_vector(vector<uint64_t>&a, ABYParty *pt, e_role role, bool get_max) {
         uint64_t dim = a.size();
         std::vector<Sharing*>& sharings = pt->GetSharings();

@@ -4,12 +4,13 @@
 
 #include "mpc_ttruth.h"
 
-const uint ALPHA[4] = {90, 10, 50, 50};
-const uint CLUSTER_NUM = 10;
-const uint SKM_ITER = 10;
-const uint LTM_ITER = 10;
-
 namespace MPC {
+    const uint ALPHA[4] = {90, 10, 50, 50};
+    const uint CLUSTER_NUM = 10;
+    const uint SKM_ITER = 10;
+    const uint LTM_ITER = 10;
+    const uint ANSWER_LEN = 128;
+
     vector<vector<uint64_t>>
     latent_truth_discovery(vector<vector<vector<uint64_t>>> &all_obs, uint iter,
                            ABYParty *pt, e_role role) {
@@ -255,20 +256,31 @@ namespace MPC {
                     }
                 }
             }
+            //normalize cluster center
+            for(int i=0; i<cluster_num; i++) {
+                uint64_t val = inner_product(cluster_centers[i], cluster_centers[i], pt, role);
+
+                val = rep_square_root(val, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                vector<uint64_t> tmp(dim, val);
+                cluster_centers[i] = product(tmp, cluster_centers[i],pt, role);
+                cluster_centers[i] = right_shift_const(cluster_centers[i],FLOAT_SCALE_FACTOR,pt,role);
+            }
         }
         return cluster_index;
     }
 
-    vector<uint64_t> ttruth(vector<vector<vector<uint64_t>>> all_kvec, ABYParty *pt, e_role role) {
+    vector<uint64_t> ttruth(vector<vector<vector<uint64_t>>> &all_kvec, vector<vector<vector<uint64_t>>> &answers,ABYParty *pt, e_role role) {
         uint question_num = all_kvec.size();
         uint user_num = all_kvec[0].size();
         uint cluster_number = CLUSTER_NUM;
         vector<vector<vector<uint64_t>>> all_obs(question_num,vector<vector<uint64_t>>(user_num,
                 vector<uint64_t>(cluster_number,0)));
         // clustering keywords
+        vector<vector<vector<vector<uint64_t>>>> all_cls(question_num, vector<vector<vector<uint64_t>>>(user_num));
         for(int i=0; i< question_num; i++) {
             auto &obs = all_obs[i];
             auto &kvec = all_kvec[i];
+            auto &cls = all_cls[i];
             vector<uint> key_num(user_num);
             vector<vector<uint64_t>> points;
             for(int j=0;j<user_num;j++) {
@@ -287,6 +299,7 @@ namespace MPC {
                 for(int k=0;k<cluster_number;k++) {
                     obs[u][k] += cluster_index[j][k];
                 }
+                cls[u].push_back(std::move(cluster_index[j]));
             }
 
             // normalize observation
@@ -303,5 +316,39 @@ namespace MPC {
         // latent truth discovery
         auto tls = latent_truth_discovery(all_obs, LTM_ITER, pt, role);
 
+        // calculate score of each user for each question
+        vector<vector<uint64_t>> score(question_num, vector<uint64_t>(user_num,0));
+        for(int i=0; i<question_num; i++) {
+            auto &cls = all_cls[i];
+            auto &tl = tls[i];
+            auto &ans = answers[i];
+            for(int j=0;j<user_num;j++) {
+                auto &cl = cls[j];
+                uint64_t s = 0;
+                for(int k=0; k<cl.size(); k++) {
+                    s += inner_product(tl,cl[k],pt,role);
+                }
+                score[i][j] = s;
+            }
+            // answer selection
+            auto best_user = argmax_vector(score[i],pt,role);
+            vector<uint64_t> as(ANSWER_LEN, 0);
+            for(int j=0; j<user_num;j++) {
+                vector<uint64_t>tmp(user_num,best_user[0]);
+                tmp = product(ans[j],tmp,pt,role);
+                for(int k=0;k<as.size();k++) {
+                    as[k] += tmp[k];
+                }
+            }
+        }
+
+        // for test only
+        vector<uint64_t> best_index(question_num);
+        for(int i=0; i<question_num; i++) {
+            auto &ss = score[i];
+            uint64_t index =  argmax_test(ss,pt,role);
+            best_index[i] = index;
+        }
+        return best_index;
     }
 }

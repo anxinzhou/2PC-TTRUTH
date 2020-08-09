@@ -158,5 +158,14 @@ vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
                 new_cluster_centers[l][k] += points[j][k];
             }
         }
+
+        for(int i=0;i<cluster_num;i++) {
+            double val = inner_product(cluster_centers[i], cluster_centers[i]);
+            if(val==0) val = INT_MAX;
+            val = 1/(sqrt(val));
+            for(int j=0;j<dim;j++) {
+                cluster_centers[i][j] *= val;
+            }
+        }
     }
 }
