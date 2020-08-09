@@ -9,9 +9,11 @@
 extern const uint CLUSTER_NUM;
 
 namespace MPC {
-    vector<vector<uint64_t>> latent_truth_discovery(vector<vector<uint64_t>> &obs, uint iter);
+    vector<vector<uint64_t>> latent_truth_discovery(vector<vector<uint64_t>> &obs, uint iter,ABYParty *pt, e_role role);
 
     vector<vector<uint64_t>> sphere_kmeans(vector<vector<uint64_t>> &points, uint iter, ABYParty *pt, e_role role);
+
+    vector<uint64_t> ttruth(vector<vector<vector<uint64_t>>> all_kvec, ABYParty *pt, e_role role);
 }
 
 

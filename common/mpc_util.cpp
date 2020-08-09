@@ -186,7 +186,7 @@ namespace MPC {
         sa = acirc->PutY2AGate(sa, bcirc);
         sa = acirc->PutSharedOUTGate(sa);
         pt->ExecCircuit();
-        uint *v;
+        uint64_t *v;
         uint bitlen, nval;
         sa->get_clear_value_vec(&v,&bitlen,&nval);
         pt->Reset();
@@ -489,6 +489,31 @@ namespace MPC {
         return argminmax_vector(a,pt,role,get_max);
     }
 
+    vector<uint64_t> eq(vector<uint64_t>&a, vector<uint64_t>&b, ABYParty *pt, e_role role) {
+        uint dim = a.size();
+        auto sharings = pt->GetSharings();
+        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
+
+        auto sa = acirc->PutSharedSIMDINGate(dim, a.data(), UINT64_LEN);
+        auto sb = acirc->PutSharedSIMDINGate(dim, b.data(), UINT64_LEN);
+        auto ba = ycirc->PutA2YGate(sa);
+        auto bb = ycirc->PutA2YGate(sb);
+        auto cmp = ycirc->PutEQGate(ba,bb);
+        auto cmp_result = acirc->PutY2AGate(cmp, bcirc);
+        cmp_result = acirc->PutSharedOUTGate(cmp_result);
+        pt->ExecCircuit();
+
+        uint64_t *v;
+        uint bitlen, nval;
+        cmp_result->get_clear_value_vec(&v, &bitlen, &nval);
+        vector<uint64_t> output(v,v+dim);
+        pt->Reset();
+        delete v;
+        return output;
+    }
+
     uint64_t share_gt_const(uint64_t a, uint64_t b, ABYParty *pt, e_role role) {
         auto sharings = pt->GetSharings();
         auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
@@ -564,7 +589,7 @@ namespace MPC {
         auto s_out = build_product_circuit(a, b, pt, role);
         s_out = circ->PutSharedOUTGate(s_out);
         pt->ExecCircuit();
-        uint *v;
+        uint64_t *v;
         uint bitlen, nval;
         s_out->get_clear_value_vec(&v, &bitlen, &nval);
         vector<uint64_t> output (v,v+a.size());

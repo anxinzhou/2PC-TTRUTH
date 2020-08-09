@@ -153,6 +153,7 @@ namespace MPC {
     uint64_t share_gt_const(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
     uint64_t gt(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
     uint64_t eq(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
+    vector<uint64_t> eq(vector<uint64_t>&a, vector<uint64_t>&b, ABYParty *pt, e_role role);
     uint64_t share_eq_const(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
 
     vector<uint64_t> argmax_vector(vector<uint64_t>&a, ABYParty *pt, e_role role);
