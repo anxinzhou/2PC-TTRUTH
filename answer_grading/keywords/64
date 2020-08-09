@@ -1,0 +1,24 @@
+tree data structure node value total order defined values left subtree contains values less parent node vice versa right subtree
+binary search tree binary tree value node n greater value every node n left subtree less every node n right subtree
+binary tree value node n greater value every node n left subtree less value every node n right subtree
+binary tree search key node n greater search key node n left subtree less search key node n right subtree
+tree split based values makes easy search one compare desired value root root greater search left side tree less search right side thing recursively
+tree node two nodes node left less root node right greater root
+special binary tree rule all subtrees right smaller node value all subtrees left larger node value
+binary search trees similar binary trees implemented organize data specific way later searching
+binary tree node value total order defined values left subtree node contains values less node value right subtree node contains values greater equal node value
+binary tree data organized specific arangment
+binary search tree tree also condition node may maximum 2 children input data compared data tree starting root value smaller root traverses left larger traverses right becomes leaf
+binary tree data order left right
+tree set easily searched numbers based location compared previous nodes
+binary tree children ordered right side greater current node left less equal current node
+binary tree value node n greater value every node n left subtree less every value n right subtree
+binary search tree finite set nodes either empty consits root two disjoint binary trees call left right subtrees
+similar binary tree keys nonempty left subtree right subtree smaller larger key root subtree values all nodes left subtree node less node value values all nodes right subtree node greater node values
+set numbers arranged links node contain two pointers elements node left parent smaller node right larger recursive implementation implies traversed order output would sorted
+binary search tree special binary tree arranged every left child node contains value less parent every right child node contains value greater parent
+binary tree special organization data left child element less right child larger
+tree smaller values located left parent node larger values located right parent node
+binary search tree special tree node two children labeled left child right child
+binary tree node unique key left child node values less node right child node higher values node
+binary search trees fundamental data structure used construct abstract data structures sets multisets associative arrays

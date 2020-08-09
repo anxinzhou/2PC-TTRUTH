@@ -1,0 +1,24 @@
+reference
+reference pointer element array
+arrays passed functions reference
+arrays passed reference individual array elements passed value functions take arrays arguments function prototypes may include parameter names const array parameters
+arrays passed reference
+must pass array size function ex function array size
+usually way pass anything else specify length char array pass function sending name array example char str 20 ispalindrome str sends char array function ispalindrome otherwise would need send length array well
+pass pointer first item also pass size
+reference
+two parts array size function passed avoid bounds errors
+specify array name without brackets array size normally passed another argument function process specific number elements array arrays passed reference individual array elements passed value functions take arrays arguments
+arrays passed reference
+way declaration actual function
+specify array name without brackets
+reference
+pass name array function int bin 10 pass array like jingle bin jingle must declared correctly order receive array either prototype void jingle int definition initialization void jingle int array also worth noting arrays passed function reference copy large arrays burn memory gives function complete control array however
+called function function must loop array get set characters
+reference default unless specify const later make array unmodifiable
+function recieves both array array size parameters function arrayname arraysize
+specifying array name passing reference argument function
+1st must specify array name without brackets array name size passed two arguments function call
+arrays passed reference passing starting address array programmer specifies array name without brackets passes array size another argument function process specific number elements array
+reference
+reference

@@ -1,0 +1,24 @@
+traverse tree size visit node three times order 3n n running time
+euler tour traversal tree begins root visits node tree left bottom right sides
+visit order according data value
+tree shows functions contains parents children siblings ancestors descendents use tree type algorithm also alternative sorting algorithm
+start root circle around _whole_ tree naming node see
+visit parent vistit children
+start root traveling left visiting ever child along way till return root right
+traversing tree terminal child all siblings traverses terminal child parent all siblings repeating first step siblings children root node visited
+euler tour traversal tree function iteratively keeps track pointer node
+travel outside edge tree clockwise naming node
+children root
+go bottom left sub tree visit parent children
+euler tour traverses tree rubber band style shape
+euler tour traversal tree specific way navigating tree involves following tree starting top moving along left side tree first cupping visit parents children nodes allows node visited left right bottom euler tour first progresses left child one progresses parent next child parent parent
+runs parents children order
+starts node left root proceeds visits node left right order visits root proceeds repeat previous step right side tree
+travel root farthest left child backup travel leftmost children right side repeat reaching rightmost child
+preorder order postorder tree preorder puts parent node front child node order puts parent node left child right child node postorder puts parent node child node
+euler traveral go tree looking nodes put order left root right like inorder traversal
+euler traversal traversal begins root travels around outside tree element tree visited 3 times left bottom right
+euler tour traversal tree traverses branch straight one leaf starts root repeats all elements traversed
+euler tour visits every node tree starting root working around tree counterclockwise order post order pre order traversals seen variations euler tour traversal
+answered
+traverse going left go right last children back top kind like going around tree

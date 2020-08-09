@@ -1,0 +1,24 @@
+push pop
+pop removes head least recently inserted node stack push inserts new node head stack
+push pop
+push function pop function
+push pop
+push puts element stack pop takes element stack
+push pop
+push pop
+push pop
+push pop push adds element stack pop removes top element stack
+pop push
+push pop search isempty
+push pop
+push pop isempty isfull maybe list show all elements operation count many elements stack
+pop push
+isempty push pop along usually
+push pop
+push pop push puts objects stack pop takes following first last rule
+main operations stack push pop push adds item top stack pop removes top item stack
+push pop
+push adds item top stack pop takes first item top stack
+main functions defined stack push puts element top stack pop removes item top
+push pop full isempty
+pop push remove element insert element

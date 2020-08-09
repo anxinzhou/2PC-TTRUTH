@@ -270,7 +270,7 @@ namespace MPC {
     }
 
     vector<vector<int>>
-    ttruth(vector<vector<vector<uint64_t>>> &all_kvec, vector<vector<vector<uint64_t>>> &answers, uint topK, ABYParty *pt,
+    ttruth(vector<vector<vector<vector<uint64_t>>>> &all_kvec, vector<vector<vector<uint64_t>>> &answers, uint topK, ABYParty *pt,
            e_role role) {
         uint question_num = all_kvec.size();
         uint user_num = all_kvec[0].size();

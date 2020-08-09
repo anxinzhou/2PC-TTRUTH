@@ -1,0 +1,24 @@
+every node binary tree first visit left sub tree visit parent node right sub tree
+inorder traversal binary tree visits node binary tree order according data values
+traverses binary tree inorder lets visit nodes order according data values
+used visit nodes binary search tree search key order
+left side tree root right side tree
+printing tree order least greatest done going far left tree possible printing parent right tree move tree
+order go left root right
+inorder traversal binary tree retrieve start furthest left hand leaf checks itã â â parent itã â â right side sibling goes level repeats gets root
+traverse left subtree visit root traverse right subtree
+postorder
+order starts root right child left child recursively
+left child gt parent gt right child
+goes lowest highest inside tree
+starting displaying node furthest right node node right recursive order
+travels left right
+void inorder ptnode ptr ptr inorder ptr gt left cout lt lt ptr gt data inorder ptr gt right
+root middle left subtree traversed first root finally right subtree
+traversal visits left branch first parent node right branch recursively
+inorder traversal visits left branch node all way deepest left leaf visiting node visiting entire left branch node visits node right branch following pattern left child node right child
+left middle right
+traverse all nodes left visit root traverse all nodes right
+would go furthest left node root right left right exist would return one node previous reached root go furthest left node right side root continue process
+means traverse one subtree node look node traversing subtree node
+level order traversal traversal method levels visited successively starting level 0 root node nodes visited left right level push pop methods

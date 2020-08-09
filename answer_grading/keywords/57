@@ -1,0 +1,24 @@
+list based run time order n also limited size like array
+linked list based store items linearly memory instead individual blocks
+list based preferred size restrictions
+list based implementation would preferred array slightly complicated would need keep track both front rear
+list based array based queues way complicate things extent
+list based less code size limitation declaration means also efficient versatile
+list based prefered set size insertion deletion done quickly keep pointers first element last
+list based preferred space issues array based due rightward drift fix rightward drift requires constant shifting queue data
+similar stacks linked lists preferable queues size adjusted
+array based preferred all keep track array count
+list size defined
+list based enqueue dequeue depending upon implementation would need shift all elements another space array causing horrid time complexity large data sets modify pointers list constant time complexity
+queue best lists especially tail kept track list dynamically grown without losing track head tail
+list based much simpler run time better
+list based lessened memory usage initially increased limits large que become
+list based fixed size
+list dynamic size needs declared
+list bases implementatoin best use pointers keep track front back pointers easier maintain uses memory
+list based dynamically grow fewer restrictions
+list based preferred memory allocation issue
+list based solutions preferred allow queues size
+think array based batter fixed size list base flaxible worry size
+list based dont need shift elements like array based queues
+list based memory constricted

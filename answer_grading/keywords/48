@@ -1,0 +1,24 @@
+array fixed size add delete elements end array use pointer keep track last element added time add delete element update pointer check equal max size array
+implementing array pre defined size bottom stack element stored element 0 last element stored array top increment top element pushed decrement item popped
+use dynamically allocated array must provide destructor copy constructor
+create int value stores head stack increment top one element pushed decrement popped
+use pointer always points end array list push pop modifications
+used array implement stack add element add end array remove items end array also
+predetermine size stack would array type grow
+declare variable points last item array increases items pushed onto stack decreases item popped top
+allocate array size bottom stack element stored element last index array top increment top one element pushed decrement pop
+allocate pre defined array bottom element stored element 0 last index head
+make array make bottom spot 0 make last spot array top increment top ad
+treat beginning array beginning stack
+use index value called top keep track last element array
+create array implement pointers point next list item stack
+efficiency easiest implement left right method right item one retrieved pop performed push places object furthest element
+create array based pre defined size n elements n bottom stack element stored element 0 last index array top increment top one element pushed decrement pop
+element added array last element added end element popped takes last element array
+allocate array pre defined size bottom stack element stored element 0 last index array top increment top one element pushed
+create array size n n one element pushed n one element popped
+define array keep track pointer last element items added
+allocating array predetermined size integer track top element stack bottom member stack go element 0 array element pushed top tracking integer incremented
+allocate array size bottom stack element stored element 0
+store stack array keep mind first element
+keep track last item entered array allow user access parts array

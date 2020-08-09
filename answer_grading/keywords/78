@@ -1,0 +1,24 @@
+log n n number nodes
+log n steps
+number levels height tree
+height tree
+given n elements would take n 2 steps find search criteria
+log n
+depends location node looking root one step else smaller current node go left larger current node go right
+2 n n levels binary tree
+number steps search node function n 1
+would take n 2 elements given n
+log n
+log n
+log n
+binary search tree constructed efficiently best case scenario log n time n number items tree binary search tree constructed poorly instance root tree 1 progressing downwards right children last one way linear linked list worse case scenario would full traversal n time n number items tree
+n n number nodes
+depending way tree ordered could anywhere log n n steps
+log n
+worst case scenario number levels tree ie node farthest position root node best case 1 step root node
+3 steps 3 cases
+log n n equals total number nodes tree
+number steps number levels generations tree
+find node binary search tree takes number steps levels tree
+three steps visit root node go right subtree visiting right subtree visit left subtree
+log n

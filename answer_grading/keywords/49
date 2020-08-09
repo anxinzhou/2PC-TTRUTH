@@ -1,0 +1,24 @@
+add element end linked list update pointer called top time modify list
+implement list head pointer points element recently pushed onto list pop function changes head pointer point next last element list removes element head pointer previously pointed
+implementation stack using single linked list operations performed stack 1 push function insertion pushing element stack similar insertion element end single linked list see function insert_end program operations single linked list 2 pop function deletion popping element stack similar deletion element end single linked list see function delete_end program operations single linked list 3 stack_display function displaying elements stack
+using nodes keep track head stack using push pop create stack needed
+use head top stack modify head push pop push would add new item head pop would remove item head
+implement stack list changing pointer first element list new item move pointer top stack next item removing item
+dynamicly create space stack grows stack long need
+declare pointer points head linked list add remove nodes beginning list
+creating linked list add element top stack pushing deleting element popping
+singly linked list already lot like stack depends way address moving head
+make list make bottom head add end make end top
+use add function list beginning stack remove pop
+use head top push pop nodes head
+create node based list points next list item
+head list last item added push adds new head
+create new list pop elements stack needed push stack remove items unless stack empty top item head list last item end
+adding element end list links element popping element takes last element list sets previous one end list
+implement stack using arrays linked list use pointers point element node next element stack use pointers stack becomes linked list
+elements inserted removed head list header node current pointer
+use linked list keep track pointer points first item
+singly linked list already easily used lifo data storage members stack simply pushed popped list first item last
+using pointer
+top first pointer
+keep pointer pointing last element entered front array move pointer back delete element

@@ -1,0 +1,24 @@
+role header file list all functions class hiding inner workings functions
+main role header file used share information among various files
+header files separate files classes defined allow compiler recognize classes used elsewhere
+reduces
+header file consists reusable source code class file convention h filename extension differs cpp files contain source code
+provide information contents library includes definition classes declarations functions data types constants
+header file shows user types go come function allow user manipulate actual code function
+header files declares class member functions
+header file allows separation declaration implementation separate files
+header file access c standard library makes certain classes like class string work
+ã â å instructã â â compiler interface library user written components
+create comon area contain reusable functions
+declare functions used classes
+include hat h allows use hat container called act pulling names hat header file hat includes functions storage retrieval contents mainly put peek pull
+hold reusable content modules separate actual source code file easily referenced employed different programs
+header file file used store list prototye functions data members
+header file cross communication method source files help limit size individual program without header files program 1 large lump code thus fairly hard debug traverse
+contains reusable source code use classes
+separate source code main function allows methods classes included program without direct coding allows usability
+header files reusable source code file programer use
+hide definition details class also help readability main c file
+allow compiler recognize classes used elsewhere
+header file declares class data functions available class
+header files contain code used multiple files

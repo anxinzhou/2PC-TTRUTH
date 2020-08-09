@@ -1,0 +1,24 @@
+array retrieve memory place list link list traverse individual node
+arrays require less memory linked lists allow direct access specified item also insertion deletion arrays require list traversal
+access particular element fast location memory determined mathematically accessed directly
+arrays good random access good sequential access both constant time linked lists linear random access arrays faster case
+array capable accessing part array based index link list must traversed beginning end data accessed adjacent previous next nodes
+hand arrays allow random access linked lists allow sequential access elements singly linked lists fact traversed one direction
+keep head list
+arrays easier implement require less memory
+linked list increase complexity implementation linked list array keeps growing leads increase memory
+iterate entire list access elements
+go forwards backwards point piece data given time linked lists point next piece data
+take less memory contiguously stored
+arrays fixed less error prone
+arrays set list values meaning pick spot array 7 picks 8th spot array linked lists keep track pointers want take specific nodes otherwise must traverse entire list
+direct access elements speed linked lists increased search times access elements even list sorted like getting last element without pointer directly end list
+array items accessed directly equal access time
+array bases implementations require less memory pointer bases one
+access specific elements quickly array linked list must traverse list get access element
+link lists allow sequential access arrays allow random access
+entitiy array may accessed immediately whereas linked list must traversed one item time object points adjacent objects
+array based implementation requires less memory lined lists based implementation
+array based implementations require less memory pointer based ones
+go array go one direction traversing linked list
+arrays allow random access item cotained time linked lists must gone toget desired item

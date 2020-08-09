@@ -30,6 +30,7 @@
 
 #include <algorithm>
 #include <random>
+#include <filesystem>
 
 int32_t read_test_options(int32_t* argcp, char*** argvp, e_role* role,
                           uint32_t* bitlen, uint32_t* numbers, uint32_t* secparam, std::string* address,
@@ -65,316 +66,153 @@ int32_t read_test_options(int32_t* argcp, char*** argvp, e_role* role,
     return 1;
 }
 
-void test_inner_product(ABYParty *pt, e_role role) {
-    int len = 100;
-    srand(1);
-    vector<uint64_t> a(len);
-    vector<uint64_t> b(len);
-    uint64_t v_sum = 0;
-    for(int i=0;i<len;i++) {
-        a[i] = rand()%100;
-        b[i] = rand()%100;
-        v_sum += a[i] * b[i];
-    }
-
-    MPC::VecShare a_share (a,role);
-    MPC::VecShare b_share (b,role);
-
-    std::vector<Sharing*>& sharings = pt->GetSharings();
-    ArithmeticCircuit* circ = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
 
 
-    auto s_out = MPC::build_inner_product_circuit(a_share.val(),b_share.val(),pt, role);
-    s_out = circ->PutOUTGate(s_out, ALL);
-
-    pt->ExecCircuit();
-
-    auto output = s_out->get_clear_value<uint64_t>();
-    pt->Reset();
-//    assert(output == v_sum);
-//
-    std::cout << "\nCircuit Result: " << output;
-    std::cout << "\nVerification Result: " << v_sum << std::endl;
+vector<vector<vector<string>>> load_keyword() {
+    const string kv_bath_dir = "../answer_grading/keywords";
+    const vector<string> qdir{"q1","q2","q3","q4","q5","q6","q7","q8","q9","q10","q11","q12"};
 }
 
-void test_argmax(ABYParty *pt, e_role role) {
-    int len = 20;
-    srand(1);
-    vector<uint64_t> a(len);
 
-    for(int i=0;i<len;i++) {
-        a[i] = i+1;
+
+vector<vector<double>> load_score() {
+    const string score_bath_dir = "../answer_grading/scores";
+    const vector<string> qdir{"q1","q2","q3","q4","q5","q6","q7","q8","q9","q10","q11","q12"};
+    vector<vector<double>> score;
+    for(int i=0; i<qdir.size(); i++) {
+        string dirpath = score_bath_dir + "/" + qdir[i];
+        filesystem::directory_iterator end_itr;
+        for(filesystem::directory_iterator itr(dirpath);itr!=end_itr;++itr) {
+            if(filesystem::is_regular_file(itr->path())) {
+                auto current_file = itr->path();
+                int question_id = atof(current_file.filename().c_str());
+                ifstream score_file(current_file.string());
+                vector<double> sub_scores;
+                if (!score_file.is_open()) {
+                    cout<< "can not open score file"<<endl;
+                    cout << strerror(errno) << endl;
+                    exit(0);
+                }
+                float score;
+                while (score_file >> score) {
+                    sub_scores.push_back(score);
+                }
+                scores[question_id] = sub_scores;
+            }
+        }
     }
-    shuffle(a.begin(), a.end(),std::default_random_engine(1));
-    int v_max = 0;
-    int v_index = 0;
-    for(int i=0;i<len;i++) {
-        if(v_max<a[i]) {
-            v_max = a[i];
-            v_index = i;
+
+    int question_num = questions.size();
+    scores = vector<vector<float>> (question_num,vector<float>());
+    boost::filesystem::directory_iterator end_itr;
+    for (boost::filesystem::directory_iterator itr(score_file_path); itr != end_itr; ++itr) {
+// If it's not a directory, list it. If you want to list directories too, just remove this check.
+        if (boost::filesystem::is_regular_file(itr->path())) {
+// assign current file name to current_file and echo it out to the console.
+            auto current_file = itr->path();
+            int question_id = atof(current_file.filename().c_str());
+            ifstream score_file(current_file.string());
+            vector<float> sub_scores;
+            if (!score_file.is_open()) {
+                cout<< "can not open score file"<<endl;
+                cout << strerror(errno) << endl;
+                exit(0);
+            }
+            float score;
+            while (score_file >> score) {
+                sub_scores.push_back(score);
+            }
+            scores[question_id] = sub_scores;
         }
     }
 
 
-    MPC::VecShare a_share (a,role);
-    std::vector<Sharing*>& sharings = pt->GetSharings();
-    BooleanCircuit* circ = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-//    ArithmeticCircuit *arc = (ArithmeticCircuit *) sharings[S_ARITH]->GetCircuitBuildRoutine();
-//
-//    len = 50;
-//    vector<uint64_t> t1(len);
-//    vector<uint64_t> t2(len);
-//
-//    auto x = circ->PutSIMDINGate(len,t1.data(),UINT64_LEN, SERVER);
-//    auto y =  circ->PutSIMDINGate(len,t2.data(),UINT64_LEN,CLIENT);
-//    auto output = circ->PutGTGate(x,y);
-//    output = circ->PutOUTGate(output, ALL);
-
-//    pt->ExecCircuit();
-
-    auto s_out = MPC::build_argmax_circuit(a_share.val(), pt, role);
-    auto s_out2 = MPC::build_argmax_circuit(a_share.val(), pt, role);
-
-    s_out = circ->PutOUTGate(s_out, ALL);
-    s_out2 = circ->PutOUTGate(s_out2, ALL);
-
-    pt->ExecCircuit();
-
-    auto output = s_out->get_clear_value<uint64_t>();
-
-    pt->Reset();
-
-    std::cout << "\nCircuit Result: " << output;
-    std::cout << "\nVerification Result: " << v_index << std::endl;
-    cout<<a[v_index]<<endl;
 }
 
-void test_argmax2(ABYParty *pt, e_role role) {
-    int len = 10;
-    srand(1);
-    vector<uint64_t> a(len);
+unordered_map<string,vector<double>> load_pretrained_vec() {
+    const string model_path = "../answer_grading/pretrained_vec";
 
-    for(int i=0;i<len;i++) {
-        a[i] = i+1;
+}
+
+
+void AnswerGradingData::load_dataset(const string &dir_path) {
+    const string question_file_path = (boost::filesystem::path(dir_path) / "questions/questions").string();
+    const string answers_file_path = (boost::filesystem::path(dir_path) / "answers").string();
+    const string score_file_path = (boost::filesystem::path(dir_path) / "scores").string();
+    load_question(question_file_path);
+    load_answers(answers_file_path);
+    load_scores(score_file_path);
+}
+
+void AnswerGradingData::load_question(const string &question_file_path) {
+    ifstream question_file(question_file_path);
+    if (!question_file.is_open()) {
+        cout<<"can not open question file"<<endl;
+        cout << strerror(errno) << endl;
+        exit(0);
     }
-    shuffle(a.begin(), a.end(),std::default_random_engine(1));
-    int v_max = 0;
-    int v_index = 0;
-    for(int i=0;i<len;i++) {
-        if(v_max<a[i]) {
-            v_max = a[i];
-            v_index = i;
+
+    string line;
+    while (getline(question_file, line)) {
+        questions.emplace_back(std::move(line),key_factor_number);
+    }
+    question_file.close();
+}
+
+void AnswerGradingData::load_answers(const string &answer_file_path) {
+    // read answer
+    int question_num = questions.size();
+    answers = vector<vector<Answer>> (question_num,vector<Answer>());
+    boost::filesystem::directory_iterator end_itr;
+    for (boost::filesystem::directory_iterator itr(answer_file_path); itr != end_itr; ++itr) {
+        // If it's not a directory, list it. If you want to list directories too, just remove this check.
+        if (boost::filesystem::is_regular_file(itr->path())) {
+            // assign current file name to current_file and echo it out to the console.
+            auto current_file = itr->path();
+            int question_id = atof(current_file.filename().c_str());
+            ifstream answers_file(current_file.string());
+            vector<Answer> sub_answers;
+            if (!answers_file.is_open()) {
+                cout<< "can not open answer file"<<endl;
+                cout << strerror(errno) << endl;
+                exit(0);
+            }
+            string answer;
+            int count = 0;
+            while (getline(answers_file, answer)) {
+                sub_answers.emplace_back(count, question_id, std::move(answer));
+                count+=1;
+            }
+
+            answers[question_id] = sub_answers;
         }
     }
-
-
-    MPC::VecShare a_share (a,role);
-    std::vector<Sharing*>& sharings = pt->GetSharings();
-    BooleanCircuit* circ = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-
-    auto s_out = MPC::build_argmax_circuit2(a_share.val(), pt, role);
-
-    s_out = circ->PutOUTGate(s_out, ALL);
-
-    pt->ExecCircuit();
-
-    auto output = s_out->get_clear_value<uint64_t>();
-
-    pt->Reset();
-
-    std::cout << "\nCircuit Result: " << output;
-    std::cout << "\nVerification Result: " << v_index << std::endl;
-    cout<<a[v_index]<<endl;
 }
 
-void test_argmax3(ABYParty *pt, e_role role) {
-    int len = 10;
-    srand(1);
-    vector<uint64_t> a(len);
-
-    for(int i=0;i<len;i++) {
-        a[i] = i+1;
-    }
-    shuffle(a.begin(), a.end(),std::default_random_engine(1));
-    int v_max = 0;
-    int v_index = 0;
-    for(int i=0;i<len;i++) {
-        if(v_max<a[i]) {
-            v_max = a[i];
-            v_index = i;
+void AnswerGradingData::load_scores(const string &score_file_path) {
+    int question_num = questions.size();
+    scores = vector<vector<float>> (question_num,vector<float>());
+    boost::filesystem::directory_iterator end_itr;
+    for (boost::filesystem::directory_iterator itr(score_file_path); itr != end_itr; ++itr) {
+        // If it's not a directory, list it. If you want to list directories too, just remove this check.
+        if (boost::filesystem::is_regular_file(itr->path())) {
+            // assign current file name to current_file and echo it out to the console.
+            auto current_file = itr->path();
+            int question_id = atof(current_file.filename().c_str());
+            ifstream score_file(current_file.string());
+            vector<float> sub_scores;
+            if (!score_file.is_open()) {
+                cout<< "can not open score file"<<endl;
+                cout << strerror(errno) << endl;
+                exit(0);
+            }
+            float score;
+            while (score_file >> score) {
+                sub_scores.push_back(score);
+            }
+            scores[question_id] = sub_scores;
         }
     }
-
-
-    MPC::VecShare a_share (a,role);
-    std::vector<Sharing*>& sharings = pt->GetSharings();
-    auto circ = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-
-    auto s_out = MPC::argmax(a_share.val(), pt, role);
-
-
-    std::cout << "\nCircuit Result: " << s_out;
-    std::cout << "\nVerification Result: " << v_index << std::endl;
-    cout<<a[v_index]<<endl;
-}
-
-void test_argmax4(ABYParty *pt, e_role role) {
-    int len = 10;
-    srand(1);
-    vector<uint64_t> a(len);
-
-    for(int i=0;i<len;i++) {
-        a[i] = i+1;
-    }
-    shuffle(a.begin(), a.end(),std::default_random_engine(1));
-    int v_max = 0;
-    int v_index = 0;
-    for(int i=0;i<len;i++) {
-        if(v_max<a[i]) {
-            v_max = a[i];
-            v_index = i;
-        }
-    }
-
-
-    MPC::VecShare a_share (a,role);
-    std::vector<Sharing*>& sharings = pt->GetSharings();
-    auto circ = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-
-    auto s_out = MPC::argmax_vector(a_share.val(), pt, role);
-
-    for(uint i=0;i<len;i++) {
-        if(s_out[i] == 1) {
-            std::cout << "\nCircuit Result: " << i<<endl;
-
-        }
-    }
-    std::cout << "\nVerification Result: " << v_index << std::endl;
-    cout<<a[v_index]<<endl;
-}
-
-void test_max(ABYParty *pt, e_role role) {
-    int len = 2;
-    srand(1);
-    vector<uint64_t> a(len);
-
-    for(int i=0;i<len;i++) {
-        a[i] = i+1;
-    }
-    shuffle(a.begin(), a.end(),std::default_random_engine(1));
-    int v_max = 0;
-    int v_index = 0;
-    for(int i=0;i<len;i++) {
-        if(v_max<a[i]) {
-            v_max = a[i];
-            v_index = i;
-        }
-    }
-
-
-    MPC::VecShare a_share (a,role);
-    std::vector<Sharing*>& sharings = pt->GetSharings();
-    BooleanCircuit* circ = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-
-    auto s_out = MPC::build_max_circuit(a_share.val(), pt, role);
-
-    s_out = circ->PutOUTGate(s_out, ALL);
-
-    pt->ExecCircuit();
-
-    auto output = s_out->get_clear_value<uint64_t>();
-
-    pt->Reset();
-
-    std::cout << "\nCircuit Result: " << output;
-    std::cout << "\nVerification Result: " << v_max << std::endl;
-    cout<<a[v_index]<<endl;
-}
-
-void test_min(ABYParty *pt, e_role role) {
-    uint64_t a =5;
-    uint64_t b= 10;
-    auto output = MPC::min(a,b,pt,role);
-    cout<<output<<endl;
-}
-
-void test_max2N(ABYParty *pt, e_role role) {
-    uint64_t a=1024;
-    cout<< MPC::max2N(a,pt,role) <<endl;
-}
-
-void test_right_shift(ABYParty *pt, e_role role) {
-    srand(1);
-    uint64_t a = 2048;
-    uint64_t tmp = rand();
-    if (role == SERVER) {
-        a = tmp;
-    } else {
-        a = a-tmp;
-    }
-    auto res = MPC::right_shift(a,3,pt,role);
-//    cout<<a<<endl;
-    cout<<res<<endl;
-}
-
-void test_log(ABYParty *pt, e_role role) {
-    clock_t start, end;
-    start = clock();
-    for(int i=0; i<1;i++) {
-        uint64_t a = 21<<FLOAT_SCALE_FACTOR;
-        srand(2);
-        uint64_t x = rand();
-        a = role==SERVER? a-x:x;
-
-        uint64_t res = MPC::log(a,FLOAT_SCALE_FACTOR,FLOAT_SCALE_FACTOR,pt,role);
-            cout<<res<<endl;
-    }
-    end = clock();
-    cout<<"Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
-//    cout<<res<<endl;
-}
-
-void test_rep_square_root(ABYParty *pt, e_role role) {
-    clock_t start, end;
-    start = clock();
-    for(int i=0; i<1;i++) {
-        uint64_t a = (0)<<20;
-        srand(2);
-        uint64_t x = rand();
-        a = role==SERVER? a-x:x;
-        auto res = MPC::rep_square_root(a, 20,20, pt, role);
-        cout<<res<<endl;
-    }
-    end = clock();
-    cout<<"Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
-//    cout<<res<<endl;
-}
-
-void test_sigmoid(ABYParty *pt, e_role role) {
-    clock_t start, end;
-    start = clock();
-    for(int i=0; i<1;i++) {
-        uint64_t a = (3)<<16;
-        srand(2);
-        uint64_t x = rand();
-        a = role==SERVER? a-x:x;
-        auto res = MPC::sigmoid(a, 16,16, pt, role);
-        cout<<res<<endl;
-    }
-    end = clock();
-    cout<<"Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
-//    cout<<res<<endl;
-}
-
-void test_eq(ABYParty *pt, e_role role) {
-    auto res = MPC::eq(3,2,pt,role);
-    cout<<res<<endl;
-}
-
-void test_right_shift2(ABYParty *pt, e_role role) {
-    uint64_t a = role==SERVER? 4:5;
-    auto res = MPC::right_shift(a,1,pt,role);
-    cout<<res<<endl;
 }
 
 int main(int argc, char** argv) {

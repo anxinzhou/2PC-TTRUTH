@@ -1,0 +1,24 @@
+list unlimited elements push node onto end list pop one front
+theoretically could two ways one uses processing power memory larger queue ever full uses almost infinite memory practical method would two place items array remove item position one array shift array add another element required option use infinite memory used long term queues job scheduling goes nonstop extended periods implement array add items read item one raise counter value two ecetera continue adding elements array downside method use element one still memory im crazy knows
+implementing list tail pointer points item recently inserted onto back list head pointer points item least recently inserted onto list also items removed front list added back list
+use list represent items queue
+pointer last element list use enqueue insert items link first last elements together dequeue list
+enqueue end linked list dequeue items beginning head list
+use first element list remove point queue insert items end list
+utilizing front pointer back pointer front poiner back pointer points first item queue add items front remains back poiner next points new item new item assigned become new back pointer
+implement linked list allows nodes added tail retrieved head
+check list empty add elements list
+make linked list add front delete back keep track both
+making head list beginning queue last listed item insertion point queue
+throw data head take tail
+create list nodes head top pointer functions basically substituting pop push enqueue dequeue
+fairly easy singly linked list pointer head tail hte list deque first item que create temp pointer next element delete head make head temporary pointer enque new item use pointer end list add new item next item tail make tail next item current tail
+use linked list 2 pointers one front one back long back front queue empty
+create node input data continue add list dequeueing get first elements data set next element list new first element
+linked list stack principles queue top element element always removed first must use nodes contain element pointer top element also could called head pointer
+linked list checking front rear keep enqueueing elements front equal rear 1
+queue implemented list keeping track two pointers head tail
+element queue allocated nodes linked list new elements added head list dequeued element coming tail
+implement operation dequeue list operation remove 1 operation getfront queuefront list operation retrieve 1 queuefront
+remove first element reference second element new head list
+creating adding nodes end list removing nodes beginning list

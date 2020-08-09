@@ -1,0 +1,24 @@
+static array store new values assigned elements meaning call function twice use last values returned first time declare static new values stored reset original value
+static array referenced accessed also static arrays used without creating object
+array declared static created initialized time function also destroyed function terminates
+program intializes static local arrays declarations first encountered static array initialized explicityly programmer earch element array intialized zero compiler array created non static array members cannot initialized all c
+arrays static remain size throughout program execution
+static array initilized non static array initilized program reaches initilization line
+array declared static available beginning program end one w static declaration disappears accessed within right scope
+static array pre runtime size size cannot changed dynamic array gets size runtime
+array declared static created time array called
+array declared static initialize every time function declaring called static array initialize declaration store values elements throughout duration program even function called multiple times static array initialize
+all elements initialized zero explicitly initialized happen automatic local arrays
+all elements initialized zero explicitly initialized static array non static array initialized zero
+static cannot changed
+static array set size cannot change data may need all space assigned could go beyond size
+static member prevents naming conflicts put global namespace allowing information hiding private public
+static local array exists duration program elements initialized 0 explicitly initialized static local array elements still called later unless specifically initialized something else happen automatic arrays
+static arrays declared size known program whereas non static arrays leave size undeclared open assigned later usually used input purposes
+static arrays keep values end function non static reinitialize every time
+static arrays created initialized values destroyed function terminates program automatic arrays reset everytime function called
+created initialized time program calls function destroyed every time function ends program
+declare static array destroyed function array declared static array created initialized every time function calls
+static array exists duration program
+array declared static declared
+static array exists memory program terminates whereas automatic normal array removed function created terminates

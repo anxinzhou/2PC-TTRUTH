@@ -1,0 +1,24 @@
+isemptry determines stack full pop remove top element looking search compare element stack data looking
+would keep using peek gettop see top element popping top element peek gettop provides element looking
+push adds given node top stack leaving previous nodes pop removes returns current top node stack
+using linked lists stacks would need temp stack retain values would use pop function pop element compare element looking push temp stack repeat element found find pop temp stack back onto regular stack complete stack
+pop item top find looking stack ends empty never found item exist stack may also necessary save popped values case want recreate stack
+stack implemented using array could simply search array item stack implemented using linked list would pop values stack either value found stack empty would items put back list
+need pop item stack compare item item found items need removed
+pop element one stack check see desired element push onto another stack finished pop items second stack push back onto first stack ensure order elements maintained
+basically pop stack find given element
+iterate stack checking number current element
+pop push
+pop all elements stack find element push popped elements back stack
+keep popping nodes storing alternate stack given element found pop given element push previously popped nodes back onto stack
+either traverse entire list pop given part create pointer system automatically points
+depends type stack true stack haft pop all elements stack find element want need push all elements removed back stack order removed java style stack peek function return element wanted instead requiring perform all excessive actions required true stack
+top item given element pop stack repeat item found stack empty
+could traverse list array find element
+need pop opertation go throught stack find element
+createstack push isempty pop boolean return value
+would traverse stack popping element search
+pop element stack another stack storage desired element found
+pop operation
+pop elements push back
+function keep track elements popped function put popped elements backinto function

@@ -1,0 +1,24 @@
+searches array largest smallest element moved front array search next largest smallest element move front
+selection sort searches whole array largest item puts end array searches second largest item puts second last spot
+finds minimum value swap value first position
+finds minimum element array swaps first element repeats step swapping minimum element nth positions array
+find lowest value place front find next lowest place front last value etc
+cycle unsorted list place minimum next slot sorted list repeat
+find minimum value list swap first element list find second largest swap second element array continue like array sorted
+find smallest put current position till get end
+find lowest unsorted value array place current position starting first element array advance current position one
+sort elements comparing two elements swapping smaller one sort elements array
+selection sort finds minimum value list swaps first value list repeats throughout list
+select minimum number array put current position move
+find lowest value place front list swap value continue moving right
+main idea behind selection sort take least variable right put directly left
+find smallest value list make first element find smallest value leftover list make first element leftover list continue list sorted
+runs finds lowest highest value puts desired position
+places smallest item list position 1 proceeds value last position ray reached
+search largest item array swap last unsorted item
+finds smallest element places 1st position process repeated rest array
+selection sort algorithm selects larges item array puts place select next largest array sorted
+select smallest number list move front list advance next number
+selection sort chooses largest smallest value unsorted list creates new list using selection depending sorted
+selection sort finds smallest number left unsorted array puts end sorted
+selects minimum remaining elements array palces miminum current position moves next position

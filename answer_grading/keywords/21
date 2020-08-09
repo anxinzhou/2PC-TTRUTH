@@ -1,0 +1,24 @@
+int n 10 array 10 integers int n arraysize arraysize positive integer defined user
+either inputing different elements array coding giving array specifacations size array also possible giving specifacations tell array grow needed
+initialize array using initializer list declaration initializing size constant variable
+pass length along array use vector
+one way declare size array using variable equal integer way size omitted declaration compiler determines size array based size initializer list
+declaration int array x initilizer int array 0 1 2 etc
+1 declare length array int array 10 2 initialize array int array 0 1 2 3 compiler assume size 4
+statically dynamically
+explicitly int array 10 variable const int size 10 int array size
+array lengths explicitly specified inputing number elements brackets declaration implicitly including initializer list without specifying number compiler automatically declare array proper number elements needed list
+specify arrayã â â size constant variable setting array elements calculations
+statically using dynamically using
+define array 5 array 1 2 3 4 5
+static dynamic
+manually inside brackets automatically via initializer list
+use initializer list simply tell compiler many elements want array initializer list int 10 2 3 4 5 elemental declaration int b 5 both arrays 5 elements array already initialized
+string specify strlen arrayname command gets length string another way integers initiate size start ex array 40 specifying possible length 40 passed object actual ammout array another way declare initializing program
+implicit namely give values like 1 2 3 4 5 6 7 8 9 compiler automatically give size static declaration
+supply integer inside brackets compiler counts number elements initializer list int n 5 int n 1 2 3 4 5
+either initializing array specific length initializing array declaring contents
+within brackets using initializer list
+specify number elements array declaration constant using constant variable future scalability
+number variable
+explicitly declaring brackets e int array 50 implicitly initializing several values e int array 1 2 3

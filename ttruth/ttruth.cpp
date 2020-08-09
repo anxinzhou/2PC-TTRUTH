@@ -173,7 +173,7 @@ vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
     }
 }
 
-vector<vector<int>> ttruth(vector<vector<vector<double>>> &all_kvec, int topK) {
+vector<vector<int>> ttruth(vector<vector<vector<vector<double>>>> &all_kvec, int topK) {
     int question_num = all_kvec.size();
     int user_num = all_kvec[0].size();
     int cluster_number = CLUSTER_NUM;
