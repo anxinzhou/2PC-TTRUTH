@@ -61,7 +61,7 @@ namespace MPC {
         }
 
         // iteratively update truth label and prior count
-        for(int t=0; t<iter; t++) {
+        for (int t = 0; t < iter; t++) {
             for (int i = 0; i < question_num; i++) {
                 auto &tl = tls[i];
                 for (int k = 0; k < tl.size(); k++) {
@@ -249,66 +249,71 @@ namespace MPC {
             for (int i = 0; i < cluster_num; i++) {
                 for (int j = 0; j < points.size(); j++) {
                     uint l = cluster_index[j][i];
-                    vector<uint64_t> tmp(dim,l);
-                    tmp = product(tmp,points[j],pt,role);
-                    for(int k=0; k<dim;k++) {
+                    vector<uint64_t> tmp(dim, l);
+                    tmp = product(tmp, points[j], pt, role);
+                    for (int k = 0; k < dim; k++) {
                         new_cluster_centers[i][k] += tmp[k];
                     }
                 }
             }
             //normalize cluster center
-            for(int i=0; i<cluster_num; i++) {
+            for (int i = 0; i < cluster_num; i++) {
                 uint64_t val = inner_product(cluster_centers[i], cluster_centers[i], pt, role);
 
                 val = rep_square_root(val, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
                 vector<uint64_t> tmp(dim, val);
-                cluster_centers[i] = product(tmp, cluster_centers[i],pt, role);
-                cluster_centers[i] = right_shift_const(cluster_centers[i],FLOAT_SCALE_FACTOR,pt,role);
+                cluster_centers[i] = product(tmp, cluster_centers[i], pt, role);
+                cluster_centers[i] = right_shift_const(cluster_centers[i], FLOAT_SCALE_FACTOR, pt, role);
             }
         }
         return cluster_index;
     }
 
-    vector<uint64_t> ttruth(vector<vector<vector<uint64_t>>> &all_kvec, vector<vector<vector<uint64_t>>> &answers,ABYParty *pt, e_role role) {
+    vector<vector<int>>
+    ttruth(vector<vector<vector<uint64_t>>> &all_kvec, vector<vector<vector<uint64_t>>> &answers, uint topK, ABYParty *pt,
+           e_role role) {
         uint question_num = all_kvec.size();
         uint user_num = all_kvec[0].size();
         uint cluster_number = CLUSTER_NUM;
-        vector<vector<vector<uint64_t>>> all_obs(question_num,vector<vector<uint64_t>>(user_num,
-                vector<uint64_t>(cluster_number,0)));
+        vector<vector<vector<uint64_t>>> all_obs(question_num,
+                                                 vector<vector<uint64_t>>(user_num,
+                                                                          vector<uint64_t>(cluster_number,
+                                                                                           0)));
         // clustering keywords
-        vector<vector<vector<vector<uint64_t>>>> all_cls(question_num, vector<vector<vector<uint64_t>>>(user_num));
-        for(int i=0; i< question_num; i++) {
+        vector<vector<vector<vector<uint64_t>>>> all_cls(question_num,
+                                                         vector<vector<vector<uint64_t>>>(user_num));
+        for (int i = 0; i < question_num; i++) {
             auto &obs = all_obs[i];
             auto &kvec = all_kvec[i];
             auto &cls = all_cls[i];
             vector<uint> key_num(user_num);
             vector<vector<uint64_t>> points;
-            for(int j=0;j<user_num;j++) {
-                key_num[j] =  kvec[j].size();
-                points.insert(points.end(),kvec[j].begin(),kvec[j].end());
+            for (int j = 0; j < user_num; j++) {
+                key_num[j] = kvec[j].size();
+                points.insert(points.end(), kvec[j].begin(), kvec[j].end());
             }
-            auto cluster_index = sphere_kmeans(points,SKM_ITER,pt, role);
+            auto cluster_index = sphere_kmeans(points, SKM_ITER, pt, role);
 
-            int c = 0;
-            int u = 0;
-            for(int j=0; j< cluster_index.size(); j++) {
-                while(c + key_num[u] < j+1) {
+            uint c = 0;
+            uint u = 0;
+            for (int j = 0; j < cluster_index.size(); j++) {
+                while (c + key_num[u] < j + 1) {
                     c += key_num[u];
                     u = u + 1;
                 }
-                for(int k=0;k<cluster_number;k++) {
+                for (int k = 0; k < cluster_number; k++) {
                     obs[u][k] += cluster_index[j][k];
                 }
                 cls[u].push_back(std::move(cluster_index[j]));
             }
 
             // normalize observation
-            for(int j=0;j<user_num;j++) {
+            for (int j = 0; j < user_num; j++) {
                 auto &ob = obs[j];
-                vector<uint64_t>tmp(cluster_number,0);
-                tmp = eq(ob,tmp,pt,role);
-                for(int k=0;k<cluster_number;k++) {
-                    ob[k] = role == SERVER? 1-tmp[k]:-tmp[k];
+                vector<uint64_t> tmp(cluster_number, 0);
+                tmp = eq(ob, tmp, pt, role);
+                for (int k = 0; k < cluster_number; k++) {
+                    ob[k] = role == SERVER ? 1 - tmp[k] : -tmp[k];
                 }
             }
         }
@@ -317,38 +322,47 @@ namespace MPC {
         auto tls = latent_truth_discovery(all_obs, LTM_ITER, pt, role);
 
         // calculate score of each user for each question
-        vector<vector<uint64_t>> score(question_num, vector<uint64_t>(user_num,0));
-        for(int i=0; i<question_num; i++) {
+        vector<vector<uint64_t>> score(question_num, vector<uint64_t>(user_num, 0));
+        for (int i = 0; i < question_num; i++) {
             auto &cls = all_cls[i];
             auto &tl = tls[i];
             auto &ans = answers[i];
-            for(int j=0;j<user_num;j++) {
+            for (int j = 0; j < user_num; j++) {
                 auto &cl = cls[j];
                 uint64_t s = 0;
-                for(int k=0; k<cl.size(); k++) {
-                    s += inner_product(tl,cl[k],pt,role);
+                for (int k = 0; k < cl.size(); k++) {
+                    s += inner_product(tl, cl[k], pt, role);
                 }
                 score[i][j] = s;
             }
             // answer selection
-            auto best_user = argmax_vector(score[i],pt,role);
+            auto best_user = argmax_vector(score[i], pt, role);
             vector<uint64_t> as(ANSWER_LEN, 0);
-            for(int j=0; j<user_num;j++) {
-                vector<uint64_t>tmp(user_num,best_user[0]);
-                tmp = product(ans[j],tmp,pt,role);
-                for(int k=0;k<as.size();k++) {
+            for (int j = 0; j < user_num; j++) {
+                vector<uint64_t> tmp(user_num, best_user[0]);
+                tmp = product(ans[j], tmp, pt, role);
+                for (int k = 0; k < as.size(); k++) {
                     as[k] += tmp[k];
                 }
             }
         }
 
-        // for test only
-        vector<uint64_t> best_index(question_num);
-        for(int i=0; i<question_num; i++) {
+        // for test only return topk index for benchmark
+        vector<vector<int>>topk_index(question_num,vector<int>(topK,0));
+        vector<int> best_index(question_num);
+        for (int i = 0; i < question_num; i++) {
             auto &ss = score[i];
-            uint64_t index =  argmax_test(ss,pt,role);
-            best_index[i] = index;
+            ss = open_share(ss,pt,role);
+            vector<pair<int,int>>score_and_index(user_num);
+            for(int j=0;j<user_num;j++) {
+                score_and_index.emplace_back(ss[j],j);
+            }
+
+            sort(score_and_index.begin(), score_and_index.end(),greater<pair<int,int>>());
+            for(int j=0; j<topK; j++) {
+                topk_index[i][j] = score_and_index[j].second;
+            }
         }
-        return best_index;
+        return topk_index;
     }
 }

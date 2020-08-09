@@ -30,6 +30,33 @@ namespace MPC {
                             mt_alg);
     }
 
+    vector<uint64_t> open_share(vector<uint64_t> &a, ABYParty *pt, e_role role) {
+        uint dim = a.size();
+        auto sharings = pt->GetSharings();
+        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+        auto sa = acirc->PutSharedSIMDINGate(dim, a.data(), UINT64_LEN);
+        sa = acirc->PutOUTGate(sa,ALL);
+        pt->ExecCircuit();
+        uint64_t *v;
+        uint bitlen, nval;
+        sa->get_clear_value_vec(&v,&bitlen,&nval);
+        vector<uint64_t>res(v,v+dim);
+        pt->Reset();
+        delete v;
+        return res;
+    }
+
+    uint64_t open_share(uint64_t a, ABYParty *pt, e_role role) {
+        auto sharings = pt->GetSharings();
+        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+        auto sa = acirc->PutSharedINGate(a, UINT64_LEN);
+        sa = acirc->PutOUTGate(sa,ALL);
+        pt->ExecCircuit();
+        auto res = sa->get_clear_value<uint64_t>();
+        pt->Reset();
+        return res;
+    }
+
     uint random(ABYParty *pt, e_role role) {
 //        uint seed = role==SERVER? 2:3;
         srand(time(NULL));

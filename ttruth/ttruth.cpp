@@ -7,6 +7,8 @@
 const uint ALPHA[4] = {90, 10, 50, 50};
 
 const int CLUSTER_NUM = 10;
+const uint SKM_ITER = 10;
+const uint LTM_ITER = 10;
 
 vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs, int iter) {
     uint question_num = all_obs.size();
@@ -70,7 +72,8 @@ vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,
     return tls;
 }
 
-double inner_product(vector<double> &a, vector<double> &b) {
+template <class T>
+T inner_product(vector<T> &a, vector<T> &b) {
     int dim = a.size();
     double res = 0;
     for (int i = 0; i < a.size(); i++) {
@@ -136,36 +139,114 @@ vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
             int min_index = -1;
             for (int i = 0; i < cluster_num; i++) {
                 double dis = distance(points[j], cluster_centers[i]);
-                if(dis<min_dis) {
+                if (dis < min_dis) {
                     min_dis = dis;
                     min_index = i;
                 }
             }
-            cluster_index[j][min_index]=1;
+            cluster_index[j][min_index] = 1;
         }
 
         // update new cluster center
         vector<vector<double>> new_cluster_centers(cluster_num, vector<double>(dim, 0));
-        for (int j=0; j<points.size();j++) {
+        for (int j = 0; j < points.size(); j++) {
             int l = -1;
-            for(int i=0; i<cluster_num; i++) {
-                if(cluster_index[j][i]==1) {
+            for (int i = 0; i < cluster_num; i++) {
+                if (cluster_index[j][i] == 1) {
                     l = i;
                     break;
                 }
             }
-            for(int k=0;k<dim;k++) {
+            for (int k = 0; k < dim; k++) {
                 new_cluster_centers[l][k] += points[j][k];
             }
         }
 
-        for(int i=0;i<cluster_num;i++) {
+        for (int i = 0; i < cluster_num; i++) {
             double val = inner_product(cluster_centers[i], cluster_centers[i]);
-            if(val==0) val = INT_MAX;
-            val = 1/(sqrt(val));
-            for(int j=0;j<dim;j++) {
+            if (val == 0) val = INT_MAX;
+            val = 1 / (sqrt(val));
+            for (int j = 0; j < dim; j++) {
                 cluster_centers[i][j] *= val;
             }
         }
     }
+}
+
+vector<vector<int>> ttruth(vector<vector<vector<double>>> &all_kvec, int topK) {
+    int question_num = all_kvec.size();
+    int user_num = all_kvec[0].size();
+    int cluster_number = CLUSTER_NUM;
+
+    vector<vector<vector<int>>> all_obs(question_num,
+                                        vector<vector<int>>(user_num,
+                                                            vector<int>(cluster_number, 0)));
+
+    //cluster keywords
+    vector<vector<vector<vector<int>>>> all_cls(question_num,
+                                                vector<vector<vector<int>>>(user_num));
+
+
+    for (int i = 0; i < question_num; i++) {
+        auto &obs = all_obs[i];
+        auto &kvec = all_kvec[i];
+        auto &cls = all_cls[i];
+        vector<uint> key_num(user_num);
+        vector<vector<double>> points;
+        for (int j = 0; j < user_num; j++) {
+            key_num[j] = kvec[j].size();
+            points.insert(points.end(), kvec[j].begin(), kvec[j].end());
+        }
+        auto cluster_index = sphere_kmeans(points, SKM_ITER);
+
+        int c = 0;
+        int u = 0;
+        for (int j = 0; j < cluster_index.size(); j++) {
+            while (c + key_num[u] < j + 1) {
+                c += key_num[u];
+                u = u + 1;
+            }
+            for (int k = 0; k < cluster_number; k++) {
+                obs[u][k] += cluster_index[j][k];
+            }
+            cls[u].push_back(std::move(cluster_index[j]));
+        }
+
+        // normalize observation
+        for (int j = 0; j < user_num; j++) {
+            auto &ob = obs[j];
+            for (int k = 0; k < cluster_number; k++) {
+                ob[k] = ob[k]>0? 1:0;
+            }
+        }
+    }
+
+    //latent truth discovery
+    auto tls = latent_truth_discovery(all_obs, LTM_ITER);
+
+    // calculate score of each user for each question
+    vector<vector<int>>topk_index(question_num,vector<int>(topK,0));
+    vector<vector<int>> score(question_num, vector<int>(user_num, 0));
+    for (int i = 0; i < question_num; i++) {
+        vector<pair<int,int>>score_and_index(user_num);
+        auto &cls = all_cls[i];
+        auto &tl = tls[i];
+
+        for (int j = 0; j < user_num; j++) {
+            auto &cl = cls[j];
+            uint64_t s = 0;
+            for (int k = 0; k < cl.size(); k++) {
+                s += inner_product(tl, cl[k]);
+            }
+            score[i][j] = s;
+            score_and_index.emplace_back(s,j);
+        }
+
+        sort(score_and_index.begin(), score_and_index.end(),greater<pair<int,int>>());
+        for(int j=0; j<topK; j++) {
+            topk_index[i][j] = score_and_index[j].second;
+        }
+    }
+
+    return topk_index;
 }

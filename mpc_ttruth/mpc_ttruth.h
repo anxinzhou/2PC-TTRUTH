@@ -15,8 +15,9 @@ namespace MPC {
 
     vector<vector<uint64_t>> sphere_kmeans(vector<vector<uint64_t>> &points, uint iter, ABYParty *pt, e_role role);
 
-    vector<uint64_t>
-    ttruth(vector<vector<vector<uint64_t>>> &all_kvec, vector<vector<vector<uint64_t>>> &answers, ABYParty *pt, e_role role);
+    vector<vector<int>>
+    ttruth(vector<vector<vector<uint64_t>>> &all_kvec, vector<vector<vector<uint64_t>>> &answers, uint topK, ABYParty *pt,
+           e_role role);
 
 }
 
