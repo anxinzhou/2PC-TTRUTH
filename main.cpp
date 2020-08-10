@@ -264,7 +264,12 @@ void testMPCTextTruth(ABYParty *pt, e_role role) {
                 vector<double>tmp(pretrained_vec.at(w));
                 vector<uint64_t>vec(tmp.size(),0);
                 for(int k=0; k<tmp.size(); k++) {
-                    vec[k] = tmp[k] * FLOAT_SCALE_FACTOR;
+                    double t = tmp[k] * FLOAT_SCALE_FACTOR;
+                    if (t<0) {
+                        vec[k] = uint64_t(-t);
+                    } else {
+                        vec[k] = t;
+                    }
                     auto s = MPC::Share(vec[k], role);
                     vec[k] = s.val();
                 }
@@ -340,10 +345,9 @@ int main(int argc, char **argv) {
     // call inner product routine. set size with cmd-parameter -n <size>
     ABYParty *pt = MPC::init_party(role, address, port, seclvl, UINT64_LEN, nthreads, mt_alg);
 
-    delete pt;
-
 //    test_ttruth();
 testMPCTextTruth(pt,role);
+    delete pt;
     return 0;
 }
 

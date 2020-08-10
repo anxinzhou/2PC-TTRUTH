@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 project(ttruth)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_BUILD_TYPE DEBUG)
+set(CMAKE_BUILD_TYPE RELEASE)
 add_subdirectory(ABY)
 include_directories("./")
 

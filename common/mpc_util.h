@@ -31,6 +31,7 @@
 extern const uint UINT64_LEN;
 extern const uint UINT_LEN;
 extern const uint FLOAT_SCALE_FACTOR;
+extern const uint RANDOMNESS_BIT;
 
 using namespace std;
 
@@ -157,6 +158,7 @@ namespace MPC {
     uint64_t share_gt_const(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
 
     uint64_t gt(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
+    vector<uint64_t> gt(vector<uint64_t>& a, vector<uint64_t>& b, ABYParty *pt, e_role role);
 
     uint64_t eq(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
 
@@ -169,6 +171,7 @@ namespace MPC {
     vector<uint64_t> argmin_vector(vector<uint64_t> &a, ABYParty *pt, e_role role);
 
     uint64_t min(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
+    vector<uint64_t> min(vector<uint64_t> &a, vector<uint64_t>&b,ABYParty *pt, e_role role);
 
     uint64_t argmax(vector<uint64_t> &a, ABYParty *pt, e_role role);
 
@@ -208,7 +211,7 @@ namespace MPC {
     uint range_sample(vector<uint64_t> &threshold, vector<uint64_t> &value, uint64_t p, ABYParty *pt, e_role role);
 
     // generate a 32-bit randomness
-    uint random(ABYParty *pt, e_role role);
+    uint64_t random(ABYParty *pt, e_role role);
 
     share *build_gt_circuit(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
 
