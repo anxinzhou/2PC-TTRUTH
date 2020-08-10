@@ -7,9 +7,57 @@
 namespace MPC {
     const uint ALPHA[4] = {80, 20, 40, 60};
     const uint CLUSTER_NUM = 10;
-    const uint SKM_ITER = 10;
-    const uint LTM_ITER = 10;
+    const uint SKM_ITER = 1;
+    const uint LTM_ITER = 1;
     const uint ANSWER_LEN = 128;
+
+    void print_share(vector<uint64_t>&a, ABYParty *pt, e_role role) {
+        auto tmp = open_share(a,pt,role);
+        for(int i=0; i<a.size();i++) {
+            cout<<tmp[i]<<" ";
+        }
+        cout<<endl;
+    }
+
+    void print_share(uint64_t a, ABYParty *pt, e_role role) {
+        auto tmp = open_share(a,pt,role);
+        cout<<tmp<<endl;
+    }
+
+    void print_scaled_share(uint64_t a, ABYParty *pt, e_role role) {
+        auto tmp = open_share(a,pt,role);
+        double val;
+        if(tmp>INT_MAX) val = 0-double(-tmp);
+        else val = tmp;
+        cout<<val/(1<<FLOAT_SCALE_FACTOR)<<endl;
+    }
+
+    void print_scaled_share(vector<uint64_t>&a, ABYParty *pt, e_role role) {
+        auto tmp = open_share(a,pt,role);
+        for(int i=0; i<a.size();i++) {
+            double val;
+            if(tmp[i]>INT_MAX) val = 0-double(-tmp[i]);
+            else val = tmp[i];
+            cout<<val/(1<<FLOAT_SCALE_FACTOR)<<" ";
+        }
+        cout<<endl;
+    }
+
+    void print_distance(vector<uint64_t>&a, ABYParty *pt, e_role role) {
+        auto tmp = open_share(a,pt,role);
+        for(int i=0; i<a.size();i++) {
+            double val = tmp[i]>>FLOAT_SCALE_FACTOR;
+            cout<<val/(1<<FLOAT_SCALE_FACTOR)<<" ";
+        }
+        cout<<endl;
+    }
+
+    void print_distance(uint64_t a, ABYParty *pt, e_role role) {
+        auto tmp = open_share(a,pt,role);
+
+        double val = tmp>>FLOAT_SCALE_FACTOR;
+        cout<<val/(1<<FLOAT_SCALE_FACTOR)<<endl;
+    }
 
     vector<vector<uint64_t>>
     latent_truth_discovery(vector<vector<vector<uint64_t>>> &all_obs, uint iter,
@@ -22,10 +70,15 @@ namespace MPC {
         // random initialization truth label
         for (int i = 0; i < question_num; i++) {
             for (int j = 0; j < cluster_num; j++) {
-                uint r = random(pt, role);
-                uint t = share_gt_const(r, (1<<RANDOMNESS_BIT) / 2, pt, role);
+                uint64_t r = random(pt, role);
+//                cout<<"------------------------"<<endl;
+//                print_share(r,pt,role);
+//                cout<< (1<<RANDOMNESS_BIT) / 2 <<endl;
+                uint64_t t = share_gt_const(r, (1<<RANDOMNESS_BIT) / 2, pt, role);
                 tls[i][j] = t;
             }
+            print_share(tls[i],pt,role);
+            exit(-1);
         }
 
         // initialize posterior counts
@@ -179,9 +232,14 @@ namespace MPC {
 
     // only for float number
     uint64_t non_right_shift_distance(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty *pt, e_role role) {
-        uint64_t gamma = role == SERVER ? 2<<FLOAT_SCALE_FACTOR<<FLOAT_SCALE_FACTOR : 0;
+        uint64_t gamma = role == SERVER ? uint64_t (2)<<(FLOAT_SCALE_FACTOR+FLOAT_SCALE_FACTOR) : 0;
 //        auto start = clock();
+
         uint64_t tmp = inner_product(a, b, pt, role);
+
+//        print_scaled_share(a,pt,role);
+//        cout<<"-----------------------------------"<<endl;
+
 //        auto end = clock();
 //        cout<<"Inner product Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
         return gamma - tmp;
@@ -196,13 +254,15 @@ namespace MPC {
         // pick first cluster
         cout<<"number of point "<<points.size()<<endl;
         uint64_t r = random(pt, role);
-        r = right_shift_const(r*cluster_num, RANDOMNESS_BIT, pt, role);
-
-        auto start = clock();
-        vector<uint64_t> vec_r(dim, r);
-        vector<uint64_t> index(dim);
-        for (int i = 0; i < dim; i++) index[i] = role == SERVER ? i : 0;
+        r = right_shift_const(r*points.size(), RANDOMNESS_BIT, pt, role);
+//        print_share(r,pt,role);
+//        auto start = clock();
+        vector<uint64_t> vec_r(points.size(), r);
+        vector<uint64_t> index(points.size());
+        for (int i = 0; i < points.size(); i++) index[i] = role == SERVER ? i : 0;
         vector<uint64_t> cmp_vec = eq(vec_r, index, pt, role);
+
+//        print_share(cmp_vec,pt,role);
 
         for (int i = 0; i < points.size(); i++) {
             uint64_t cmp = cmp_vec[i];
@@ -215,30 +275,33 @@ namespace MPC {
                 cluster_centers[0][j] += tmp[j];
             }
         }
+//        print_scaled_share(cluster_centers[0],pt,role);
 
-        auto end = clock();
-        cout<<"Pick first cluster Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//        auto end = clock();
+//        cout<<"Pick first cluster Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
-        vector<uint64_t> D(points.size(), uint64_t(INT_MAX)<<FLOAT_SCALE_FACTOR<<FLOAT_SCALE_FACTOR);
+        vector<uint64_t> D(points.size(), uint64_t(10)<<FLOAT_SCALE_FACTOR<<FLOAT_SCALE_FACTOR);
         //pick other clusters
         for (int i = 1; i < cluster_num; i++) {
-            start = clock();
+//            start = clock();
             // calculate new min distance
             vector<uint64_t> new_dis(points.size());
             for(int j=0; j<points.size(); j++) {
-                new_dis[i] = non_right_shift_distance(points[j], cluster_centers[i - 1], pt, role);
+                new_dis[j] = non_right_shift_distance(points[j], cluster_centers[i - 1], pt, role);
             }
-            D = min(D,new_dis,pt,role);
-//            end = clock();
-//            cout<<"Batch Min Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//            print_distance(new_dis,pt,role);
+//            cout<<"-------------------"<<endl;
+//            exit(-1);
 
-//            for (int j = 0; j < points.size(); j++) {
-//                start = clock();
-//                D[j] = min(D[j],
-//                           non_right_shift_distance(points[j], cluster_centers[i - 1], pt, role), pt, role);
-//                end = clock();
+            for (int j = 0; j < points.size(); j++) {
+//                auto start = clock();
+                D[j] = min(D[j],
+                           non_right_shift_distance(points[j], cluster_centers[i - 1], pt, role), pt, role);
+//                auto end = clock();
 //                cout<<"Min Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
-//            }
+            }
+//            print_distance(D,pt,role);
+//            exit(-1);
             // pick new cluster
             vector<uint64_t> bar_D(points.size());
             for (int j = 0; j < points.size(); j++) {
@@ -247,7 +310,7 @@ namespace MPC {
             uint64_t J = bar_D[points.size() - 1];
 
             r = random(pt, role);
-//            uint64_t p = product(r, J, pt, role);
+//            print_share(r,pt,role);
             uint64_t p = J;
             p = right_shift_const(p, RANDOMNESS_BIT, pt, role);
             p = product(r, p, pt, role);
@@ -255,7 +318,10 @@ namespace MPC {
             // batch comparision
             vector<uint64_t>p_vec(points.size(),p);
             cmp_vec = gt(bar_D, p_vec, pt,role);
-
+//            print_distance(p_vec,pt,role);
+//            print_distance(bar_D,pt,role);
+//            print_share(cmp_vec,pt,role);
+//            cout<<"-------------------------------------"<<endl;
             for (int j = 0; j < points.size(); j++) {
                 if (j == points.size() - 1) {
                     for (int k = 0; k < dim; k++) {
@@ -273,13 +339,26 @@ namespace MPC {
                     cluster_centers[i][k] += tmp[k];
                 }
             }
-            end = clock();
-            cout<<"Select a new cluster Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//            end = clock();
+//            cout<<"Select a new cluster Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+        }
+        //test
+        for(int i=0; i<cluster_num; i++) {
+            print_scaled_share(cluster_centers[i],pt,role);
+            cout<<"------------------"<<endl;
+//            exit(-1);
         }
         return cluster_centers;
     }
 
     vector<vector<uint64_t>> sphere_kmeans(vector<vector<uint64_t>> &points, uint iter, ABYParty *pt, e_role role) {
+        cout<<"points "<<points.size()<<endl;
+        cout<<"-----------------------------"<<endl;
+//        for(int i=0; i<points.size();i++) {
+//            print_scaled_share(points[i],pt,role);
+//        }
+//        exit(-1);
+        cout<<"-----------------------------"<<endl;
         int cluster_num = CLUSTER_NUM;
         int dim = points[0].size();
         vector<vector<uint64_t>> cluster_index(points.size(), vector<uint64_t>(cluster_num, 0));
@@ -295,7 +374,7 @@ namespace MPC {
         cout<<"start clustering"<<endl;
         for (int t = 0; t < iter; t++) {
             // assign cluster index
-            auto start = clock();
+//            auto start = clock();
 
             for (int j = 0; j < points.size(); j++) {
                 vector<uint64_t> dis(cluster_num);
@@ -303,17 +382,23 @@ namespace MPC {
                     dis[i] = non_right_shift_distance(points[j], cluster_centers[i], pt, role);
                 }
                 cluster_index[j] = argmin_vector(dis, pt, role);
+//                print_scaled_share(points[j],pt,role);
+//                cout<<"--------------------------------"<<endl;
+//                print_distance(dis,pt,role);
+//                cout<<"--------------------------------"<<endl;
+//                print_share(cluster_index[j],pt,role);
+//                exit(-1);
             }
-            auto end = clock();
-            cout<<"assign cluster index Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//            auto end = clock();
+//            cout<<"assign cluster index Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
 
             // update new cluster center
-            start = clock();
+//            start = clock();
             vector<vector<uint64_t>> new_cluster_centers(cluster_num, vector<uint64_t>(dim, 0));
             for (int i = 0; i < cluster_num; i++) {
                 for (int j = 0; j < points.size(); j++) {
-                    uint l = cluster_index[j][i];
+                    auto l = cluster_index[j][i];
                     vector<uint64_t> tmp(dim, l);
 //                    auto start = clock();
                     tmp = product(tmp, points[j], pt, role);
@@ -324,14 +409,21 @@ namespace MPC {
                     }
                 }
             }
-            end = clock();
-            cout<<"update cluster center time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+
+            cluster_centers = std::move(new_cluster_centers);
+//            end = clock();
+//            cout<<"update cluster center time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
             //normalize cluster center
-            start = clock();
+//            start = clock();
             for (int i = 0; i < cluster_num; i++) {
+//                print_scaled_share(cluster_centers[i],pt,role);
                 uint64_t val = inner_product(cluster_centers[i], cluster_centers[i], pt, role);
+//                print_distance(val,pt,role);
+
 //                auto start = clock();
+                val = right_shift_const(val, FLOAT_SCALE_FACTOR, pt, role);
                 val = rep_square_root(val, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+//                print_scaled_share(val,pt,role);
 //                auto end = clock();
 //                cout<<"req square root Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
                 vector<uint64_t> tmp(dim, val);
@@ -341,11 +433,28 @@ namespace MPC {
 //                end = clock();
 //                cout<<"batch right shift time "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
             }
-            cout<<"one iteration finish"<<endl;
+//            cout<<"one iteration finish"<<endl;
 
-            end = clock();
-            cout<<"Normalize time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//            end = clock();
+//            cout<<"Normalize time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
         }
+
+//        for(int i=0; i<cluster_num;i++) {
+//            print_scaled_share(cluster_centers[i],pt,role);
+//            cout<<"---------------------"<<endl;
+//        }
+
+        vector<uint64_t>statistics(cluster_num,0);
+        for(int i=0;i<points.size();i++) {
+            for(int j=0;j<cluster_num;j++) {
+                statistics[j]+=cluster_index[i][j];
+            }
+        }
+        statistics = open_share(statistics,pt,role);
+        for(int j=0;j<cluster_num;j++) {
+            cout<<statistics[j]<<" ";
+        }
+        cout<<endl;
         return cluster_index;
     }
 
@@ -372,11 +481,15 @@ namespace MPC {
                 key_num[j] = kvec[j].size();
                 points.insert(points.end(), kvec[j].begin(), kvec[j].end());
             }
+
+            auto start = clock();
             auto cluster_index = sphere_kmeans(points, SKM_ITER, pt, role);
+            auto end = clock();
+            cout<<"Cluster time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
             uint c = 0;
             uint u = 0;
-            for (int j = 0; j < cluster_index.size(); j++) {
+            for (int j = 0; j < points.size(); j++) {
                 while (c + key_num[u] < j + 1) {
                     c += key_num[u];
                     u = u + 1;
@@ -391,17 +504,22 @@ namespace MPC {
             for (int j = 0; j < user_num; j++) {
                 auto &ob = obs[j];
                 vector<uint64_t> tmp(cluster_number, 0);
-                tmp = eq(ob, tmp, pt, role);
-                for (int k = 0; k < cluster_number; k++) {
-                    ob[k] = role == SERVER ? 1 - tmp[k] : -tmp[k];
-                }
+                ob = gt(ob, tmp, pt, role);
+//                cout<<"observation"<<endl;
+//                print_share(ob,pt,role);
+//                cout<<"----------------------------"<<endl;
             }
         }
-        cout<<"all clustering finish"<<endl;
         // latent truth discovery
+
+        auto start = clock();
+        cout<<"start latent truth"<<endl;
         auto tls = latent_truth_discovery(all_obs, LTM_ITER, pt, role);
-        cout<<"latent truth discovery finsih"<<endl;
+        auto end = clock();
+        cout<<"Latent truth time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+
         // calculate score of each user for each question
+        start = clock();
         vector<vector<uint64_t>> score(question_num, vector<uint64_t>(user_num, 0));
         for (int i = 0; i < question_num; i++) {
             auto &cls = all_cls[i];
@@ -426,6 +544,9 @@ namespace MPC {
                 }
             }
         }
+
+        end = clock();
+        cout<<"Answer selection time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
         // for test only return topk index for benchmark
         vector<vector<int>>topk_index(question_num,vector<int>(topK,0));

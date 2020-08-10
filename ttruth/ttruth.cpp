@@ -190,6 +190,8 @@ vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
             }
         }
 
+        cluster_centers = std::move(new_cluster_centers);
+
         for (int i = 0; i < cluster_num; i++) {
             double val = inner_product(cluster_centers[i], cluster_centers[i]);
             if (val == 0) val = INT_MAX;
@@ -236,6 +238,7 @@ vector<vector<int>> ttruth(vector<vector<vector<vector<double>>>> &all_kvec, int
             key_num[j] = kvec[j].size();
             points.insert(points.end(), kvec[j].begin(), kvec[j].end());
         }
+
         auto cluster_index = sphere_kmeans(points, SKM_ITER);
 
         int c = 0;
@@ -261,7 +264,10 @@ vector<vector<int>> ttruth(vector<vector<vector<vector<double>>>> &all_kvec, int
     }
 
     //latent truth discovery
+    auto start = clock();
     auto tls = latent_truth_discovery(all_obs, LTM_ITER);
+    auto end = clock();
+    cout<<"Latent truth time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
     // calculate score of each user for each question
     vector<vector<int>> score(question_num, vector<int>(user_num, 0));

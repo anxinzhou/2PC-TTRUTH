@@ -36,7 +36,8 @@
 #include "ttruth/ttruth.h"
 #include "mpc_ttruth/mpc_ttruth.h"
 
-const int QUESTION_NUM = 87;
+const int QUESTION_NUM = 1;
+const int USER_NUM = 1;
 
 int32_t read_test_options(int32_t *argcp, char ***argvp, e_role *role,
                           uint32_t *bitlen, uint32_t *numbers, uint32_t *secparam, std::string *address,
@@ -91,6 +92,7 @@ vector<vector<vector<string>>> load_keyword() {
             // assign current file name to current_file and echo it out to the console.
             auto current_file = itr->path();
             int question_id = atof(current_file.filename().c_str());
+            if(question_id >= QUESTION_NUM) continue;
             ifstream keywords_file(current_file.string());
             vector<vector<string>> user_keywords;
             if (!keywords_file.is_open()) {
@@ -99,9 +101,12 @@ vector<vector<vector<string>>> load_keyword() {
                 exit(0);
             }
             string raw_keywords;
+            int count = 0;
             while (getline(keywords_file, raw_keywords)) {
                 auto keywords = string_split(raw_keywords);
                 user_keywords.push_back(std::move(keywords));
+                count+=1;
+                if(count>=USER_NUM) break;
             }
             all_keywords[question_id] = (std::move(user_keywords));
         }
@@ -120,6 +125,7 @@ vector<vector<double>> load_score() {
         if (filesystem::is_regular_file(itr->path())) {
             auto current_file = itr->path();
             int question_id = atof(current_file.filename().c_str());
+            if(question_id >= QUESTION_NUM) continue;
             ifstream score_file(current_file.string());
             vector<double> sub_scores;
             if (!score_file.is_open()) {
@@ -128,8 +134,11 @@ vector<vector<double>> load_score() {
                 exit(0);
             }
             double s;
+            int count = 0;
             while (score_file >> s) {
                 sub_scores.push_back(s);
+                count+=1;
+                if(count>=USER_NUM) break;
             }
             score[question_id] = std::move(sub_scores);
         }
@@ -192,7 +201,7 @@ void test_ttruth() {
         }
     }
 
-    int topK=24;
+    int topK= USER_NUM;
     auto topk_index = ttruth(all_kvec, topK);
     vector<double>total_avg(topK,0);
     double all_socre = 0;
@@ -264,9 +273,9 @@ void testMPCTextTruth(ABYParty *pt, e_role role) {
                 vector<double>tmp(pretrained_vec.at(w));
                 vector<uint64_t>vec(tmp.size(),0);
                 for(int k=0; k<tmp.size(); k++) {
-                    double t = tmp[k] * FLOAT_SCALE_FACTOR;
+                    double t = tmp[k] * (1<<FLOAT_SCALE_FACTOR);
                     if (t<0) {
-                        vec[k] = uint64_t(-t);
+                        vec[k] = -uint64_t(-t);
                     } else {
                         vec[k] = t;
                     }
@@ -283,7 +292,7 @@ void testMPCTextTruth(ABYParty *pt, e_role role) {
                                              vector<vector<uint64_t>>(user_num,
                                                      vector<uint64_t>(150,0)));
 
-    int topK=24;
+    int topK=USER_NUM;
     auto topk_index = MPC::ttruth(all_kvec, answers, topK, pt, role);
     vector<double>total_avg(topK,0);
     double all_socre = 0;

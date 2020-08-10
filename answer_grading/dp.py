@@ -71,24 +71,23 @@ keywords_dir_path =  keywords_path
 model_path = "word2vec_model"
 if not os.path.exists(model_path):
 	corpus = []
-	for d in answer_dir_path:
-		files = os.listdir(d)
-		for fname in files:
-			fpath = os.path.join(d,fname)
-			with open(fpath,'rb') as f:
-				lines = f.readlines()
-				lines = lines[:max_user]
-				for line in lines:
-					line = line.decode('latin-1')
-					line = line.strip()
-					keywords = tokenizer(line)
-					keywords = [w.lower() for w in keywords]
-					# keywords = [lemmatizer(w) for w in keywords]
-					keywords = [w for w in keywords if w not in STOP_WORDS]
-					if len(keywords)!=0:
-						corpus.append(keywords)
+	files = os.listdir(answer_dir_path)
+	for fname in files:
+		fpath = os.path.join(answer_dir_path,fname)
+		with open(fpath,'rb') as f:
+			lines = f.readlines()
+			lines = lines[:max_user]
+			for line in lines:
+				line = line.decode('latin-1')
+				line = line.strip()
+				keywords = tokenizer(line)
+				keywords = [w.lower() for w in keywords]
+				# keywords = [lemmatizer(w) for w in keywords]
+				keywords = [w for w in keywords if w not in STOP_WORDS]
+				if len(keywords)!=0:
+					corpus.append(keywords)
 				
-	model = Word2Vec(corpus, size = 50, window = 5, min_count = 1, workers = 4)
+	model = Word2Vec(corpus, size = 50, window = 2, min_count = 1, workers = 4)
 	model.save(model_path)
 model = Word2Vec.load(model_path)	
 
@@ -107,6 +106,23 @@ for k in allwords:
 
 allwords = [w.lower() for w in allwords]
 
+ans_len = []
+#get maximum length
+files = os.listdir(answer_dir_path)
+for fname in files:
+	fpath = os.path.join(answer_dir_path,fname)
+	with open(fpath,'rb') as f:
+		lines = f.readlines()
+		lines = lines[:max_user]
+		for line in lines:
+			line = line.decode('latin-1')
+			ans_len.append(len(line.split()))
+
+print("maximum answer length", min(ans_len))
+sys.exit(-1)
+
+
+#extract keywords
 files = os.listdir(answer_dir_path)
 for fname in files:
 	fpath = os.path.join(answer_dir_path,fname)
