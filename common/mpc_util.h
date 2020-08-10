@@ -227,7 +227,6 @@ namespace MPC {
 
     share *build_argmax_circuit(vector<uint64_t> &a, ABYParty *pt, e_role role);
 
-    share *build_argmax_circuit2(vector<uint64_t> &a, ABYParty *pt, e_role role);
 
     share *build_argmax_vector_circuit(vector<uint64_t> &a, ABYParty *pt, e_role role);
 

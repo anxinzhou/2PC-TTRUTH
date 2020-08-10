@@ -223,8 +223,6 @@ namespace MPC {
         //pick other clusters
         for (int i = 1; i < cluster_num; i++) {
             start = clock();
-
-            start = clock();
             // calculate new min distance
             vector<uint64_t> new_dis(points.size());
             for(int j=0; j<points.size(); j++) {
@@ -304,45 +302,49 @@ namespace MPC {
                 for (int i = 0; i < cluster_num; i++) {
                     dis[i] = non_right_shift_distance(points[j], cluster_centers[i], pt, role);
                 }
-                auto start = clock();
                 cluster_index[j] = argmin_vector(dis, pt, role);
-                auto end = clock();
-                cout<<"arg min vector Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
             }
+            auto end = clock();
+            cout<<"assign cluster index Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+
 
             // update new cluster center
+            start = clock();
             vector<vector<uint64_t>> new_cluster_centers(cluster_num, vector<uint64_t>(dim, 0));
             for (int i = 0; i < cluster_num; i++) {
                 for (int j = 0; j < points.size(); j++) {
                     uint l = cluster_index[j][i];
                     vector<uint64_t> tmp(dim, l);
-                    auto start = clock();
+//                    auto start = clock();
                     tmp = product(tmp, points[j], pt, role);
-                    auto end = clock();
-                    cout<<"product Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//                    auto end = clock();
+//                    cout<<"product Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
                     for (int k = 0; k < dim; k++) {
                         new_cluster_centers[i][k] += tmp[k];
                     }
                 }
             }
+            end = clock();
+            cout<<"update cluster center time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
             //normalize cluster center
+            start = clock();
             for (int i = 0; i < cluster_num; i++) {
                 uint64_t val = inner_product(cluster_centers[i], cluster_centers[i], pt, role);
-                auto start = clock();
+//                auto start = clock();
                 val = rep_square_root(val, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-                auto end = clock();
-                cout<<"req square root Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//                auto end = clock();
+//                cout<<"req square root Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
                 vector<uint64_t> tmp(dim, val);
                 cluster_centers[i] = product(tmp, cluster_centers[i], pt, role);
-                start = clock();
+//                start = clock();
                 cluster_centers[i] = right_shift_const(cluster_centers[i], FLOAT_SCALE_FACTOR, pt, role);
-                end = clock();
-                cout<<"batch right shift time "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//                end = clock();
+//                cout<<"batch right shift time "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
             }
             cout<<"one iteration finish"<<endl;
 
-            auto end = clock();
-            cout<<"Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+            end = clock();
+            cout<<"Normalize time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
         }
         return cluster_index;
     }

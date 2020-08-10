@@ -75,7 +75,7 @@ namespace MPC {
         auto r2 = acirc->PutB2AGate(r1);
         auto r = acirc->PutSharedOUTGate(r2);
         pt->ExecCircuit();
-        uint64_t res = r->get_clear_value<uint64_t>();
+        auto res = r->get_clear_value<uint64_t>();
         pt->Reset();
 
         delete r;
@@ -87,13 +87,14 @@ namespace MPC {
     uint64_t argmax(vector<uint64_t>&a, ABYParty *pt, e_role role) {
         auto sharings = pt->GetSharings();
         auto circ = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto s_out = build_argmax_circuit2(a,  pt, role);
-        s_out = circ->PutSharedOUTGate(s_out);
+        auto s_out_tmp = build_argmax_circuit(a,  pt, role);
+        auto s_out = circ->PutSharedOUTGate(s_out_tmp);
         pt->ExecCircuit();
         auto output = s_out->get_clear_value<uint64_t>();
         pt->Reset();
 
         delete s_out;
+        delete s_out_tmp;
         return output;
     }
 
@@ -143,18 +144,23 @@ namespace MPC {
         auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
         auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
 
-        auto sa = acirc->PutSharedINGate(a, UINT64_LEN);
-        sa = ycirc->PutA2YGate(sa);
+        auto sa_tmp = acirc->PutSharedINGate(a, UINT64_LEN);
+        auto sa = ycirc->PutA2YGate(sa_tmp);
+        delete sa_tmp;
         uint64_t sum = 0;
         digits = 0;
         vector<share*>inds(UINT64_LEN);
         for(int i=UINT64_LEN-1;i>=0;i--) {
             uint64_t v = uint64_t(1)<<uint64_t(i);
             auto sv = ycirc->PutINGate(v,UINT64_LEN,SERVER);
-            auto cmp_res = ycirc->PutGTGate(sa,sv);
-            cmp_res = acirc->PutY2AGate(cmp_res, bcirc);
-            cmp_res = acirc->PutSharedOUTGate(cmp_res);
+            auto cmp_res_tmp1 = ycirc->PutGTGate(sa,sv);
+            auto cmp_res_tmp2 = acirc->PutY2AGate(cmp_res_tmp1, bcirc);
+            auto cmp_res = acirc->PutSharedOUTGate(cmp_res_tmp2);
             inds[i]= cmp_res;
+
+            delete sv;
+            delete cmp_res_tmp1;
+            delete cmp_res_tmp2;
         }
         pt->ExecCircuit();
         for(int i=UINT64_LEN-1; i>=0; i--) {
@@ -163,10 +169,18 @@ namespace MPC {
             sum+= ind * v;
             digits+=ind;
         }
+
+        delete sa;
+        for(int i=0;i<UINT64_LEN;i++) {
+            delete inds[i];
+        }
+
         pt->Reset();
         if(role == SERVER) {
             sum+=1;
         }
+
+
 
         return sum;
     }
@@ -176,23 +190,26 @@ namespace MPC {
         auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
         auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
         auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-        share * sdigit;
+        share * sdigit_tmp;
         if(const_digit) {
-            sdigit = acirc->PutCONSGate(digits, UINT64_LEN);
+            sdigit_tmp = acirc->PutCONSGate(digits, UINT64_LEN);
         } else {
-            sdigit = acirc->PutSharedINGate(digits, UINT64_LEN);
+            sdigit_tmp = acirc->PutSharedINGate(digits, UINT64_LEN);
         }
-        auto sa = acirc->PutSharedINGate(a, UINT64_LEN);
-        sdigit = ycirc->PutA2YGate(sdigit);
-        auto sa_tmp = ycirc->PutA2YGate(sa);
-        delete sa;
-        sa = sa_tmp;
+        auto sa_tmp = acirc->PutSharedINGate(a, UINT64_LEN);
+        auto sa = ycirc->PutA2YGate(sa_tmp);
+        delete sa_tmp;
+
+        auto sdigit = ycirc->PutA2YGate(sdigit_tmp);
+
 
         if (left) {
             sa_tmp = ycirc->PutBarrelLeftShifterGate(sa, sdigit);
         } else {
             sa_tmp = ycirc->PutBarrelRightShifterGate(sa, sdigit);
         }
+        delete sdigit_tmp;
+        delete sdigit;
         delete sa;
         sa = sa_tmp;
 
@@ -217,23 +234,36 @@ namespace MPC {
         auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
         auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
 
-        share *sdigit;
+        share *sdigit_tmp;
         if(const_digit) {
-            sdigit = acirc->PutCONSGate(digits, UINT64_LEN);
+            sdigit_tmp = acirc->PutCONSGate(digits, UINT64_LEN);
         } else {
-            sdigit = acirc->PutSharedINGate(digits, UINT64_LEN);
+            sdigit_tmp = acirc->PutSharedINGate(digits, UINT64_LEN);
         }
 
+        auto sdigit = ycirc->PutA2YGate(sdigit_tmp);
+
         auto sa = acirc->PutSharedSIMDINGate(dim, a.data(), UINT64_LEN);
-        sdigit = ycirc->PutA2YGate(sdigit);
-        sa = ycirc->PutA2YGate(sa);
+        auto sa_tmp = ycirc->PutA2YGate(sa);
+        delete sa;
+        sa = sa_tmp;
         if(left) {
-            sa = ycirc->PutBarrelLeftShifterGate(sa, sdigit);
+            sa_tmp = ycirc->PutBarrelLeftShifterGate(sa, sdigit);
         } else {
-            sa = ycirc->PutBarrelRightShifterGate(sa, sdigit);
+            sa_tmp = ycirc->PutBarrelRightShifterGate(sa, sdigit);
         }
-        sa = acirc->PutY2AGate(sa, bcirc);
-        sa = acirc->PutSharedOUTGate(sa);
+
+        delete sdigit_tmp;
+        delete sdigit;
+        delete sa;
+        sa = sa_tmp;
+
+        sa_tmp = acirc->PutY2AGate(sa, bcirc);
+        delete sa;
+        sa = sa_tmp;
+        sa_tmp = acirc->PutSharedOUTGate(sa);
+        delete sa;
+        sa = sa_tmp;
         pt->ExecCircuit();
         uint64_t *v;
         uint bitlen, nval;
@@ -241,6 +271,7 @@ namespace MPC {
         pt->Reset();
         vector<uint64_t>output(v,v+dim);
         delete v;
+        delete sa;
         return output;
     }
 
@@ -392,7 +423,7 @@ namespace MPC {
 
     // the result will be scaled scale_factor   * (1<<scale_factor)
     uint64_t rep_square_root(uint64_t a, uint64_t scale_factor,uint64_t already_scaled_factor,ABYParty *pt, e_role role) {
-        auto sharings = pt->GetSharings();
+//        auto sharings = pt->GetSharings();
         uint64_t digits;
         uint64_t m2N = max2N(a, digits,pt, role);
 
@@ -489,6 +520,7 @@ namespace MPC {
         delete soutput1;
         delete soutput2;
         delete out;
+
         return res;
     }
 
@@ -562,8 +594,12 @@ namespace MPC {
         }
 
         for(uint64_t i=0; i<a.size(); i++) {
-            val[i] = boolcirc->PutA2BGate(val[i],yaocirc);
-            id[i] = boolcirc->PutA2BGate(id[i],yaocirc);
+            auto val_tmp = boolcirc->PutA2BGate(val[i],yaocirc);
+            delete val[i];
+            val[i] = val_tmp;
+            auto id_tmp = boolcirc->PutA2BGate(id[i],yaocirc);
+            delete id[i];
+            id[i] = id_tmp;
         }
 
         if(get_max) {
@@ -576,9 +612,14 @@ namespace MPC {
         vector<share*> sindex;
         for(uint64_t i=0;i<dim;i++) {
             auto tmp_index = boolcirc->PutINGate(i,UINT64_LEN,SERVER);
-            auto cmp_res = boolcirc->PutEQGate(maxindex,tmp_index);
-            cmp_res = arithcirc->PutB2AGate(cmp_res);
-            cmp_res = arithcirc->PutOUTGate(cmp_res,ALL);
+            auto cmp_res_tmp1 = boolcirc->PutEQGate(maxindex,tmp_index);
+            auto cmp_res_tmp2 = arithcirc->PutB2AGate(cmp_res_tmp1);
+
+            auto cmp_res = arithcirc->PutOUTGate(cmp_res_tmp2,ALL);
+            delete tmp_index;
+            delete cmp_res_tmp1;
+            delete cmp_res_tmp2;
+
             sindex.push_back(cmp_res);
         }
         pt->ExecCircuit();
@@ -588,10 +629,17 @@ namespace MPC {
         }
         pt->Reset();
 
+        for(uint64_t i=0; i<a.size(); i++) {
+            delete val[i];
+            delete id[i];
+        }
         delete val;
         delete id;
         delete maxval;
         delete maxindex;
+        for(int i=0;i<dim;i++) {
+            delete sindex[i];
+        }
         return indexs;
     }
 
@@ -647,11 +695,20 @@ namespace MPC {
         auto ba = ycirc->PutA2YGate(sa);
         auto bb = ycirc->PutA2YGate(sb);
         auto cmp = ycirc->PutGTGate(ba,bb);
-        auto cmp_result = acirc->PutY2AGate(cmp, bcirc);
-        cmp_result = acirc->PutSharedOUTGate(cmp_result);
+        auto cmp_result_tmp = acirc->PutY2AGate(cmp, bcirc);
+        auto cmp_result = acirc->PutSharedOUTGate(cmp_result_tmp);
         pt->ExecCircuit();
         auto output = cmp_result->get_clear_value<uint64_t>();
         pt->Reset();
+
+        delete sa;
+        delete sb;
+        delete ba;
+        delete bb;
+        delete cmp;
+        delete cmp_result_tmp;
+        delete cmp_result;
+
         return output;
     }
 
@@ -692,11 +749,14 @@ namespace MPC {
     uint64_t gt(uint64_t a, uint64_t b, ABYParty *pt, e_role role) {
         auto sharings = pt->GetSharings();
         auto circ = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto s_out = build_gt_circuit(a, b, pt, role);
-        s_out = circ->PutSharedOUTGate(s_out);
+        auto s_out_tmp = build_gt_circuit(a, b, pt, role);
+        auto s_out = circ->PutSharedOUTGate(s_out_tmp);
         pt->ExecCircuit();
         auto output = s_out->get_clear_value<uint64_t>();
         pt->Reset();
+
+        delete s_out_tmp;
+        delete s_out;
         return output;
     }
 
@@ -710,23 +770,35 @@ namespace MPC {
         auto ba = ycirc->PutA2YGate(sa);
         auto bb = ycirc->PutA2YGate(sb);
         auto cmp = ycirc->PutEQGate(ba,bb);
-        auto cmp_result = acirc->PutY2AGate(cmp, bcirc);
+        auto cmp_result_tmp = acirc->PutY2AGate(cmp, bcirc);
 
-        cmp_result = acirc->PutSharedOUTGate(cmp_result);
+        auto cmp_result = acirc->PutSharedOUTGate(cmp_result_tmp);
         pt->ExecCircuit();
         auto output = cmp_result->get_clear_value<uint64_t>();
         pt->Reset();
+
+        delete sa;
+        delete sb;
+        delete ba;
+        delete bb;
+        delete cmp;
+        delete cmp_result_tmp;
+        delete cmp_result;
+
         return output;
     }
 
     uint64_t eq(uint64_t a, uint64_t b, ABYParty *pt, e_role role) {
         auto sharings = pt->GetSharings();
         auto circ = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto s_out = build_eq_circuit(a, b, pt, role);
-        s_out = circ->PutSharedOUTGate(s_out);
+        auto s_out_tmp = build_eq_circuit(a, b, pt, role);
+        auto s_out = circ->PutSharedOUTGate(s_out_tmp);
         pt->ExecCircuit();
         auto output = s_out->get_clear_value<uint64_t>();
         pt->Reset();
+
+        delete s_out_tmp;
+        delete s_out;
         return output;
     }
 
@@ -743,8 +815,8 @@ namespace MPC {
     vector<uint64_t> product(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty*pt, e_role role) {
         auto sharings = pt->GetSharings();
         auto circ = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto s_out = build_product_circuit(a, b, pt, role);
-        s_out = circ->PutSharedOUTGate(s_out);
+        auto s_out_tmp = build_product_circuit(a, b, pt, role);
+        auto s_out = circ->PutSharedOUTGate(s_out_tmp);
         pt->ExecCircuit();
         uint64_t *v;
         uint bitlen, nval;
@@ -752,6 +824,7 @@ namespace MPC {
         vector<uint64_t> output (v,v+a.size());
         pt->Reset();
         delete v;
+        delete s_out_tmp;
         delete s_out;
         return output;
     }
@@ -783,40 +856,40 @@ namespace MPC {
         return output;
     }
 
-    uint64_t argmax2(vector<uint64_t>&a, ABYParty *pt, e_role role) {
-        uint64_t dim = a.size();
-        std::vector<Sharing*>& sharings = pt->GetSharings();
-
-        uint64_t v_max = a[0];
-        uint64_t v_index = 0;
-
-        for(uint64_t i=1; i<a.size();i++) {
-            uint64_t cmp_result = gt(a[i], v_max, pt, role);
-            uint64_t inv_cmp = -cmp_result;
-            if(role == SERVER) {
-                inv_cmp +=1;
-            }
-
-            v_max = product(cmp_result, a[i], pt, role) +
-                    product(inv_cmp, v_max, pt, role);
-
-            uint64_t index = 0;
-            if(i%2==0) {
-                index = i/2;
-            } else {
-                index = role==SERVER? (i+1)/2:(i-1)/2;
-            }
-            v_index = product(cmp_result, index, pt, role) +
-                      product(inv_cmp, v_index, pt, role);
-        }
-        return v_index;
-    }
+//    uint64_t argmax2(vector<uint64_t>&a, ABYParty *pt, e_role role) {
+//        uint64_t dim = a.size();
+//        std::vector<Sharing*>& sharings = pt->GetSharings();
+//
+//        uint64_t v_max = a[0];
+//        uint64_t v_index = 0;
+//
+//        for(uint64_t i=1; i<a.size();i++) {
+//            uint64_t cmp_result = gt(a[i], v_max, pt, role);
+//            uint64_t inv_cmp = -cmp_result;
+//            if(role == SERVER) {
+//                inv_cmp +=1;
+//            }
+//
+//            v_max = product(cmp_result, a[i], pt, role) +
+//                    product(inv_cmp, v_max, pt, role);
+//
+//            uint64_t index = 0;
+//            if(i%2==0) {
+//                index = i/2;
+//            } else {
+//                index = role==SERVER? (i+1)/2:(i-1)/2;
+//            }
+//            v_index = product(cmp_result, index, pt, role) +
+//                      product(inv_cmp, v_index, pt, role);
+//        }
+//        return v_index;
+//    }
 
     share* build_product_circuit(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty*pt, e_role role){
         assert(a.size() == b.size());
         uint64_t dim = a.size();
         std::vector<Sharing*>& sharings = pt->GetSharings();
-        ArithmeticCircuit* circ = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+        auto circ = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
 
         share * s_a_vec = circ->PutSharedSIMDINGate(dim, a.data(), UINT64_LEN);
         share * s_b_vec = circ->PutSharedSIMDINGate(dim, b.data(), UINT64_LEN);
@@ -845,6 +918,9 @@ namespace MPC {
                 uv_div2[i]/=2;
             }
         }
+
+        delete s_a_vec;
+        delete s_b_vec;
         delete trip_a;
         delete trip_b;
         delete su_tmp;
@@ -860,6 +936,9 @@ namespace MPC {
             ub[i] *= u[i];
         }
 
+        delete u;
+        delete v;
+
         auto s_va = circ->PutSharedSIMDINGate(dim, va, UINT64_LEN);
         auto s_ub = circ->PutSharedSIMDINGate(dim, ub, UINT64_LEN);
         auto s_c = circ->PutSharedSIMDINGate(dim, triplet.getC().data(), UINT64_LEN);
@@ -870,11 +949,11 @@ namespace MPC {
         auto s_va2 = circ->PutADDGate(s_va1, s_c);
         auto s_va3 = circ->PutADDGate(s_va2, c_uv_div2);
 
-        delete u;
-        delete v;
         delete s_va;
         delete s_ub;
         delete s_c;
+        delete c_uv_div2;
+
         delete s_va1;
         delete s_va2;
 
@@ -910,6 +989,8 @@ namespace MPC {
             uv_div2/=2;
         }
 
+        delete sa;
+        delete sb;
         delete trip_a;
         delete trip_b;
         delete su_tmp;
@@ -972,6 +1053,8 @@ namespace MPC {
         su->get_clear_value_vec(&u, &out_bitlen, &out_nvals);
         sv->get_clear_value_vec(&v, &out_bitlen, &out_nvals);
 
+        delete s_a_vec;
+        delete s_b_vec;
         delete trip_a;
         delete trip_b;
         delete su_tmp;
@@ -998,6 +1081,9 @@ namespace MPC {
             ub[i] *= u[i];
         }
 
+        delete u;
+        delete v;
+
 
         auto s_va = circ->PutSharedSIMDINGate(dim, va, UINT64_LEN);
         auto s_ub = circ->PutSharedSIMDINGate(dim, ub, UINT64_LEN);
@@ -1014,8 +1100,6 @@ namespace MPC {
         s_va3->set_bitlength(1);
         auto s_va4 = circ->PutADDGate(s_va, c_uv_div2);
 
-        delete u;
-        delete v;
         delete s_va;
         delete s_ub;
         delete s_c;
@@ -1042,81 +1126,66 @@ namespace MPC {
         }
 
         for(uint64_t i=0; i<a.size(); i++) {
-            val[i] = boolcirc->PutA2YGate(val[i]);
-            id[i] = boolcirc->PutA2YGate(id[i]);
+            auto val_tmp = boolcirc->PutA2YGate(val[i]);
+            delete val[i];
+            val[i] = val_tmp;
+            auto id_tmp = boolcirc->PutA2YGate(id[i]);
+            delete id[i];
+            id[i] = id_tmp;
         }
         boolcirc->PutMaxIdxGate(val, id, dim, &maxval, &maxindex);
 
-        delete val;
-        delete id;
-        return maxindex;
-    }
-
-    share *build_argmax_circuit2(vector<uint64_t>&a, ABYParty *pt, e_role role) {
-        uint64_t dim = a.size();
-        std::vector<Sharing*>& sharings = pt->GetSharings();
-//        ArithmeticCircuit*
-        auto boolcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-        auto arithcirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto yaocirc = (ArithmeticCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-        share ** val, ** id, *maxval, *maxindex;
-        val = (share **)malloc(sizeof(share *)*dim);
-        id = (share **)malloc(sizeof(share *)*dim);
         for(uint64_t i=0; i<a.size(); i++) {
-            val[i] = arithcirc->PutSharedINGate(a[i],UINT64_LEN);
-            id[i] = arithcirc->PutCONSGate(i, UINT64_LEN);
-        }
-
-        for(uint64_t i=0; i<a.size(); i++) {
-            val[i] = boolcirc->PutA2BGate(val[i],yaocirc);
-            id[i] = boolcirc->PutA2BGate(id[i],yaocirc);
+            delete val[i];
+            delete id[i];
         }
 
         delete val;
         delete id;
+        delete maxval;
         return maxindex;
     }
 
-    share *build_argmax_vector_circuit(vector<uint64_t>&a, ABYParty *pt, e_role role) {
-        uint dim = a.size();
-        std::vector<Sharing*>& sharings = pt->GetSharings();
-//        ArithmeticCircuit*
-        auto boolcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-        auto arithcirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto yaocirc = (ArithmeticCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-        share ** val, ** id, *maxval, *maxindex;
-        val = (share **)malloc(sizeof(share *)*dim);
-        id = (share **)malloc(sizeof(share *)*dim);
-        for(uint i=0; i<a.size(); i++) {
-            val[i] = arithcirc->PutSharedINGate(a[i],UINT64_LEN);
-            id[i] = arithcirc->PutCONSGate(i, UINT64_LEN);
-        }
-
-        for(uint i=0; i<a.size(); i++) {
-            val[i] = boolcirc->PutA2BGate(val[i],yaocirc);
-            id[i] = boolcirc->PutA2BGate(id[i],yaocirc);
-        }
-        boolcirc->PutMaxIdxGate(val, id, dim, &maxval, &maxindex);
-        vector<uint> indexs(dim);
-        vector<share*> sindex;
-        for(uint i=0;i<dim;i++) {
-            auto tmp_index = boolcirc->PutCONSGate(i,UINT64_LEN);
-            auto cmp_res = boolcirc->PutEQGate(maxindex,tmp_index);
-            cmp_res = arithcirc->PutB2AGate(cmp_res);
-            cmp_res = arithcirc->PutOUTGate(cmp_res,ALL);
-            sindex.push_back(cmp_res);
-        }
-        pt->ExecCircuit();
-        for(uint i=0;i<dim;i++) {
-            uint index = sindex[i]->get_clear_value<uint>();
-            indexs[i] = index;
-        }
-        pt->Reset();
-
-        delete val;
-        delete id;
-        return maxindex;
-    }
+//    share *build_argmax_vector_circuit(vector<uint64_t>&a, ABYParty *pt, e_role role) {
+//        uint dim = a.size();
+//        std::vector<Sharing*>& sharings = pt->GetSharings();
+////        ArithmeticCircuit*
+//        auto boolcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
+//        auto arithcirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+//        auto yaocirc = (ArithmeticCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+//        share ** val, ** id, *maxval, *maxindex;
+//        val = (share **)malloc(sizeof(share *)*dim);
+//        id = (share **)malloc(sizeof(share *)*dim);
+//        for(uint i=0; i<a.size(); i++) {
+//            val[i] = arithcirc->PutSharedINGate(a[i],UINT64_LEN);
+//            id[i] = arithcirc->PutCONSGate(i, UINT64_LEN);
+//        }
+//
+//        for(uint i=0; i<a.size(); i++) {
+//            val[i] = boolcirc->PutA2BGate(val[i],yaocirc);
+//            id[i] = boolcirc->PutA2BGate(id[i],yaocirc);
+//        }
+//        boolcirc->PutMaxIdxGate(val, id, dim, &maxval, &maxindex);
+//        vector<uint> indexs(dim);
+//        vector<share*> sindex;
+//        for(uint i=0;i<dim;i++) {
+//            auto tmp_index = boolcirc->PutCONSGate(i,UINT64_LEN);
+//            auto cmp_res = boolcirc->PutEQGate(maxindex,tmp_index);
+//            cmp_res = arithcirc->PutB2AGate(cmp_res);
+//            cmp_res = arithcirc->PutOUTGate(cmp_res,ALL);
+//            sindex.push_back(cmp_res);
+//        }
+//        pt->ExecCircuit();
+//        for(uint i=0;i<dim;i++) {
+//            uint index = sindex[i]->get_clear_value<uint>();
+//            indexs[i] = index;
+//        }
+//        pt->Reset();
+//
+//        delete val;
+//        delete id;
+//        return maxindex;
+//    }
 
     share*build_gt_circuit(uint64_t a, uint64_t b, ABYParty *pt, e_role role) {
         std::vector<Sharing*>& sharings = pt->GetSharings();
@@ -1129,6 +1198,12 @@ namespace MPC {
         auto bb = ycirc->PutA2YGate(sb);
         auto cmp = ycirc->PutGTGate(ba,bb);
         auto cmp_result = arithcirc->PutY2AGate(cmp, bcirc);
+
+        delete sa;
+        delete sb;
+        delete ba;
+        delete bb;
+        delete cmp;
         return cmp_result;
     }
 
@@ -1143,6 +1218,13 @@ namespace MPC {
         auto bb = ycirc->PutA2YGate(sb);
         auto cmp = ycirc->PutEQGate(ba,bb);
         auto cmp_result = arithcirc->PutY2AGate(cmp, bcirc);
+
+        delete sa;
+        delete sb;
+        delete ba;
+        delete bb;
+        delete cmp;
+
         return cmp_result;
     }
 
@@ -1159,54 +1241,58 @@ namespace MPC {
         }
 
         for(uint i=0; i<a.size(); i++) {
-            val[i] = boolcirc->PutA2YGate(val[i]);
+            auto tmp = boolcirc->PutA2YGate(val[i]);
+            delete val[i];
+            val[i] = tmp;
         }
         auto out = boolcirc->PutMaxGate(val, dim);
 
-
+        for(uint i=0; i<a.size(); i++) {
+            delete val[i];
+        }
         delete val;
         return out;
     }
 
-    share* build_max2N_circuit(share* sa, share ** digits, ABYParty *pt, e_role role) {
-        auto sharings = pt->GetSharings();
-        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-        sa = ycirc->PutA2YGate(sa);
-        uint sum = 0;
-        digits = 0;
-        vector<share*>inds(UINT64_LEN);
-        for(int i=UINT64_LEN-1;i>=0;i--) {
-            uint v = uint(1)<<uint(i);
-            auto sv = ycirc->PutINGate(v,UINT64_LEN,SERVER);
-            auto cmp_res = ycirc->PutGTGate(sa,sv);
-            cmp_res = acirc->PutY2AGate(cmp_res, bcirc);
-            inds[i]= cmp_res;
-        }
-        vector<share*> svs;
-        for(int i=UINT64_LEN-1; i>=0; i--) {
-            uint v = uint(1)<<uint(i);
-            auto sv = acirc->PutCONSGate(v, UINT64_LEN);
-            sv = acirc->PutMULCONSTGate(sv, inds[i]);
-            svs.push_back(sv);
-        }
+//    share* build_max2N_circuit(share* sa, share ** digits, ABYParty *pt, e_role role) {
+//        auto sharings = pt->GetSharings();
+//        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+//        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+//        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
+//        sa = ycirc->PutA2YGate(sa);
+//        uint sum = 0;
+//        digits = 0;
+//        vector<share*>inds(UINT64_LEN);
+//        for(int i=UINT64_LEN-1;i>=0;i--) {
+//            uint v = uint(1)<<uint(i);
+//            auto sv = ycirc->PutINGate(v,UINT64_LEN,SERVER);
+//            auto cmp_res = ycirc->PutGTGate(sa,sv);
+//            cmp_res = acirc->PutY2AGate(cmp_res, bcirc);
+//            inds[i]= cmp_res;
+//        }
+//        vector<share*> svs;
+//        for(int i=UINT64_LEN-1; i>=0; i--) {
+//            uint v = uint(1)<<uint(i);
+//            auto sv = acirc->PutCONSGate(v, UINT64_LEN);
+//            sv = acirc->PutMULCONSTGate(sv, inds[i]);
+//            svs.push_back(sv);
+//        }
+//
+//        for(int i=1;i<UINT64_LEN;i++) {
+//            svs[0] = acirc->PutADDGate(svs[0],svs[i]);
+//            inds[0] = acirc->PutADDGate(inds[0], inds[1]);
+//        }
+//        *digits = inds[0];
+//        return svs[0];
+//    }
 
-        for(int i=1;i<UINT64_LEN;i++) {
-            svs[0] = acirc->PutADDGate(svs[0],svs[i]);
-            inds[0] = acirc->PutADDGate(inds[0], inds[1]);
-        }
-        *digits = inds[0];
-        return svs[0];
-    }
-
-    share* build_max2N_circuit(uint64_t a, share ** digits, ABYParty *pt, e_role role) {
-        auto sharings = pt->GetSharings();
-        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-
-        auto sa = acirc->PutSharedINGate(a, UINT64_LEN);
-        return build_max2N_circuit(sa, digits, pt, role);
-    }
+//    share* build_max2N_circuit(uint64_t a, share ** digits, ABYParty *pt, e_role role) {
+//        auto sharings = pt->GetSharings();
+//        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+//        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+//        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
+//
+//        auto sa = acirc->PutSharedINGate(a, UINT64_LEN);
+//        return build_max2N_circuit(sa, digits, pt, role);
+//    }
 }
