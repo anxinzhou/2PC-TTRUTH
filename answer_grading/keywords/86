@@ -1,24 +1,24 @@
-root set root null else deleting right leaf set rightptr parent node null else deleting left leaf set leftptr parent node null else deleting left right subtree child node set max leaf child left subtree new child node
-traverse tree find node node children simply delete otherwise set node data equal data one children set pointer child null
-first attaching elements node deleting alternate nodes deleting node delete node
-delete node tree link nodes parents children node
-must delete information node contains free memory garbage collect also delete pointer node parent points node wish delete
-replace node largest element left subtree replace smallest element right subtree
-traverse tree till find node wanting delete node children delete node children delete find left children attach root delete node
-link deleted left child deleted parent left child pointer
-way delete node binary search tree first take root see nodes coming root delete nodes set root null
-remove element tree move next highest element left place
+max left subtree root deleting rightptr leaf leftptr null node right parent new else set child
+delete one pointer otherwise traverse tree child null node simply data find set equal children
+delete nodes deleting first alternate attaching node elements
+delete nodes tree node link children parents
+delete pointer garbage must free collect wish memory contains node also information parent points
+left subtree replace node element smallest right largest
+delete left root attach traverse tree till node wanting find children
+left pointer deleted link parent child
+delete nodes root see first take way tree binary coming null node search set
+move left highest tree element place remove next
 delete node
-deletion node depends upon children avl binary search tree assuming avl tree node deleted children set pointer null left child right child exclusively child replaces deleted node two children left child right sub tree right child left subtree replace
-node leaf set parent pointer null delete single child set parent pointer child delete two children set node one middle children remove child previous position leaf rightmost child left subtree leftmost child right subtree
-binary search tree must first establish proper replacement node delete usually child soon deleted node replacement node found simply reassign node going deleted deleted node usurped remove deleted node memory may used
-all depends node located child deleted node inside tree must replaced another node works place
-node children delete right away otherwise put either furthest right node left side furthest left node right side place perform node guarantee children get handled properly
-create temp node set temp values node head null case head node list set head equal temp delete temp
-searching tree find node replacing link node greatest child node left subtree least child node right subtree
-set nodes null point anything use delete opertator clear space memory
-must first traverse tree find appropriate value must make sure node leaf node delete pointer specific node
-node leaf set parent pointer null node tree must replace node one tree either largest left tree smallest right tree done recursively needed
-node leaf simply deallocated deleted memory parent reference changed null node single child pointer made point child deleting node node two children easiest solution may copy node entire subtree new array tree delete node all descendants add elements taken subtree back main tree
+depends left pointer deletion sub right exclusively search replaces set children replace tree null deleted subtree upon binary avl assuming two node child
+left pointer rightmost right parent set middle one children position null delete subtree single leftmost two previous leaf node child remove
+search found reassign proper tree simply deleted replacement going delete must first memory binary soon used may establish usurped node usually child remove
+all depends located must inside works replaced tree place node deleted another child
+delete left handled away furthest either otherwise side get properly node perform guarantee right put place children
+delete head case temp node null create values set equal list
+left subtree least tree node searching greatest right link replacing find child
+use delete nodes space memory point null clear opertator set anything
+appropriate sure delete pointer must first value specific traverse tree leaf node find make
+left pointer must needed replace tree leaf recursively null node largest smallest right either parent set one done
+pointer taken parent changed solution children made all descendants tree null simply deallocated deleted add elements main entire subtree delete back reference single deleting memory point new may two array easiest leaf node copy child
 answered
-cannot delete node cause node 2 children
+delete cause cannot node 2 children

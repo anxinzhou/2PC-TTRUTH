@@ -1,24 +1,24 @@
-strings used char array much easier manipulate string object character stored separately rather whole
-type string uses less storage change string all array characters make permutations words using characters stored array without needing actually access change variables array characters change accessed
-unlike string declared using type string string declared using array characters programmer must provide null terminating character must ensure array large enough hold string null terminating character
-all strings represented character arrays end null character declare object type string like type example string
-using array characters one store manipulate strings rather type string variable
-type string array chars make array single letter characters array strings actual array words array char arrays
-basically however string ends w null character denoting end string size char array potential size must declared limited
-string class standard library method modify whereas char array able modifie user
-using array characters limited size array characters declaring type end string acknowledged white space
-data class type string designed handle character data many functions built class library deal array characters however subject all rules array real additional functionality another difference string class deals null character implicitly unlike array characters must handle null character explicitly
-string declared used array characters contains character array special string termination character called null character versus type string
-char array reads string individual character string literal array reads entire string
-array characters hold many characters array size strings limited
-stings modified functions string class array characters modified user
-type string array contains additional terminating null character
-array characters null character 0 end array signify array end string
-strings type string strings part array list all one declared array actually array characters able pointed detected
-array characters set length type string virtually unlimited length
-char array individual letters accessed directly array subscript notation string array array subscript return entire string
-array characters need termination character well size specification whether explicit implicit
-using array individual characters accessed manipulated
-strings declared using array characters could result data loss character array initialized large enough
-array passed reference therefore array characters changed memory changed variable
-type string several built functions available using char array individual characters array directly accessible characters string type string
+strings array character whole separately char stored easier rather much object manipulate used string
+all array words actually access variables characters stored storage accessed type using without permutations less change string make uses needing
+array character large must characters terminating enough ensure using type null hold provide declared string unlike programmer
+all end strings character example declare object null type string arrays represented like
+array strings characters rather variable using type store manipulate string one
+arrays array strings words single letter characters char chars type actual string make
+denoting end however character array basically potential must char limited size null w declared string ends
+array able char user class library method whereas modify modifie string standard
+end array limited space characters size using type declaring acknowledged string white
+rules characters class functionality type subject unlike all however deal null string deals character must implicitly real additional another library designed array built functions handle many data explicitly difference
+array character characters called versus special contains termination null type used declared string
+array character entire char reads literal string individual
+array strings limited characters size many hold
+array functions modified characters user class stings string
+array character terminating type contains additional null string
+end array character characters 0 null string signify
+all strings array one part actually detected characters type declared string pointed able list
+array characters type length virtually string set unlimited
+array entire return char accessed letters notation directly string individual subscript
+array character well characters whether size termination specification need explicit implicit
+array characters accessed using manipulated individual
+strings array character initialized characters result enough using data loss could declared large
+array reference characters therefore variable memory passed changed
+array built functions char characters available several type using directly string individual accessible

@@ -1,24 +1,24 @@
-static array store new values assigned elements meaning call function twice use last values returned first time declare static new values stored reset original value
-static array referenced accessed also static arrays used without creating object
-array declared static created initialized time function also destroyed function terminates
-program intializes static local arrays declarations first encountered static array initialized explicityly programmer earch element array intialized zero compiler array created non static array members cannot initialized all c
-arrays static remain size throughout program execution
-static array initilized non static array initilized program reaches initilization line
-array declared static available beginning program end one w static declaration disappears accessed within right scope
-static array pre runtime size size cannot changed dynamic array gets size runtime
-array declared static created time array called
-array declared static initialize every time function declaring called static array initialize declaration store values elements throughout duration program even function called multiple times static array initialize
-all elements initialized zero explicitly initialized happen automatic local arrays
-all elements initialized zero explicitly initialized static array non static array initialized zero
-static cannot changed
-static array set size cannot change data may need all space assigned could go beyond size
-static member prevents naming conflicts put global namespace allowing information hiding private public
-static local array exists duration program elements initialized 0 explicitly initialized static local array elements still called later unless specifically initialized something else happen automatic arrays
-static arrays declared size known program whereas non static arrays leave size undeclared open assigned later usually used input purposes
-static arrays keep values end function non static reinitialize every time
-static arrays created initialized values destroyed function terminates program automatic arrays reset everytime function called
-created initialized time program calls function destroyed every time function ends program
-declare static array destroyed function array declared static array created initialized every time function calls
-static array exists duration program
-array declared static declared
-static array exists memory program terminates whereas automatic normal array removed function created terminates
+value stored assigned declare call static elements original function use returned first reset meaning twice new array last store time values
+array object static referenced accessed also used without creating arrays
+array initialized terminates destroyed static created also time declared function
+intialized members all non intializes static zero program first encountered cannot c explicityly compiler programmer array earch declarations created element local initialized arrays
+program size static throughout execution remain arrays
+program array non initilization static initilized reaches line
+end array program declaration scope available beginning static within accessed w right declared disappears one
+array dynamic size static gets cannot runtime pre changed
+array called static created time declared
+array initialize declaration program times called static every throughout even multiple time declaring store values elements declared function duration
+all automatic happen local zero elements initialized explicitly arrays
+all array non static zero elements initialized explicitly
+cannot changed static
+all array space beyond assigned size static cannot data need could change go set may
+prevents naming conflicts global static allowing member namespace private information put public hiding
+automatic unless array program arrays something happen 0 called else static local elements explicitly later initialized still specifically exists duration
+program purposes open non assigned known size static usually whereas leave input later used declared arrays undeclared
+end reinitialize non keep static every time values arrays function
+automatic program terminates called destroyed static created reset everytime initialized values arrays function
+program destroyed calls every created time initialized function ends
+array initialized destroyed declare calls static every created time declared function
+program array static exists duration
+declared array static
+automatic array program terminates normal memory static whereas created removed function exists

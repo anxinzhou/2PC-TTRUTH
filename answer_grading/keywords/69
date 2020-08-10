@@ -1,24 +1,24 @@
-public private specifiers
+public specifiers private
 public private restricted
-access specifiers public private
-public private protected
+public access specifiers private
+public protected private
 public private
-public function variable used outside class private function variable used class
-public private
-public private protected
-public private
-private public protected
-access specifiers used c class definition private public
-public private
-static long unsigned
-private public protected friend
-c class definition may include access specifiers public private static
-local global local variable function specific
+outside variable class private used public function
 public private
 public protected private
-private public
-public accessed program private accessed class functions outside functions calls
-public private protected
 public private
-public private protected
-functions data members given access specifications public private friend public access given functions members given specific access rights
+public protected private
+specifiers class definition private c used public access
+public private
+long unsigned static
+public protected private friend
+specifiers include class static definition private c public access may
+variable specific global local function
+public private
+public protected private
+public private
+program functions outside calls class accessed private public
+public protected private
+public private
+public protected private
+functions friend given specific rights data private specifications public access members

@@ -1,24 +1,24 @@
-runtime order log n n number nodes binary tree
-binary search tree size n takes log n comparisons find specified element
-n 1 2 algorithm compare find element
+nodes n tree order binary log runtime number
+find specified n tree size binary log element search comparisons takes
+1 compare n algorithm element find 2
 equivalent height tree
 log n
 log n
-depends half tree levels
-log n balanced trees
-n 1
+half depends tree levels
+trees log n balanced
+1 n
 log n
-nlog n
-nlog n
+n nlog
+n nlog
 logn
-minimum log n log 2 maximum n searches n number nodes
+nodes minimum n searches log maximum number 2
 n
-takes 3 comparisons find element binary search tree
-log n n equals number nodes
-takes many comparisons number levels binary search tree compares one number level
-takes one less comparisons tree height big notation takes log n comparisons tree balanced
+comparisons tree binary 3 element search find takes
+nodes n log number equals
+level tree binary many compares number search levels comparisons takes one
+height tree big n log notation less comparisons takes balanced one
 log n
-log n comparisons
-n k 1 k height tree
-takes h comparisons h height tree
-2 way key comparison
+log comparisons n
+height 1 n tree k
+height tree h comparisons takes
+key comparison way 2

@@ -1,24 +1,24 @@
 reference
-reference pointer element array
-arrays passed functions reference
-arrays passed reference individual array elements passed value functions take arrays arguments function prototypes may include parameter names const array parameters
-arrays passed reference
-must pass array size function ex function array size
-usually way pass anything else specify length char array pass function sending name array example char str 20 ispalindrome str sends char array function ispalindrome otherwise would need send length array well
-pass pointer first item also pass size
+array pointer element reference
+passed functions arrays reference
+const array parameter functions names reference value prototypes include arguments parameters elements take passed function individual arrays may
+passed arrays reference
+array pass must size ex function
+example pass sends well otherwise need send specify length else function 20 str char way usually would sending name array ispalindrome anything
+pointer pass item first size also
 reference
-two parts array size function passed avoid bounds errors
-specify array name without brackets array size normally passed another argument function process specific number elements array arrays passed reference individual array elements passed value functions take arrays arguments
-arrays passed reference
-way declaration actual function
-specify array name without brackets
+two parts array errors size avoid bounds passed function
+process value individual specify size elements function reference specific argument another name take arguments array functions brackets normally number without passed arrays
+passed arrays reference
+actual function way declaration
+array brackets specify name without
 reference
-pass name array function int bin 10 pass array like jingle bin jingle must declared correctly order receive array either prototype void jingle int definition initialization void jingle int array also worth noting arrays passed function reference copy large arrays burn memory gives function complete control array however
-called function function must loop array get set characters
-reference default unless specify const later make array unmodifiable
-function recieves both array array size parameters function arrayname arraysize
-specifying array name passing reference argument function
-1st must specify array name without brackets array name size passed two arguments function call
-arrays passed reference passing starting address array programmer specifies array name without brackets passes array size another argument function process specific number elements array
+pass order initialization void control however correctly bin also declared function worth burn must receive reference complete jingle memory name gives large int array noting prototype definition passed copy 10 either arrays like
+array must characters called get loop function set
+unless array unmodifiable reference specify later default make const
+arraysize array size parameters recieves both arrayname function
+array reference passing argument specifying name function
+two array must 1st specify brackets size call name without arguments passed function
+process address starting size passes elements function specifies reference specific argument another name programmer array passing brackets number without passed arrays
 reference
 reference

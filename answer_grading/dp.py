@@ -105,6 +105,8 @@ pretrained_vec = dict()
 for k in allwords:
 	pretrained_vec[k] = model.wv[k]
 
+allwords = [w.lower() for w in allwords]
+
 files = os.listdir(answer_dir_path)
 for fname in files:
 	fpath = os.path.join(answer_dir_path,fname)
@@ -126,6 +128,7 @@ for fname in files:
 				c+=1
 				# keywords = ['None']
 				keywords = random.sample(allwords,1)
+			keywords = list(set(keywords))
 			key_num.append(len(keywords))
 			keyword_content.append(' '.join(keywords) + '\n')
 	kpath = os.path.join(keywords_dir_path, fname)
@@ -143,6 +146,9 @@ word_vec_path = "pretrained_vec"
 lines = []
 with open(word_vec_path,'w') as f:
 	for k,v in pretrained_vec.items():
+		k = k.lower()
+		# if k in STOP_WORDS:
+		# 	continue
 		v = v/np.linalg.norm(v)
 		v = [str(e) for e in v]
 		lines.append(k + ' ' + ' '.join(v) + '\n')

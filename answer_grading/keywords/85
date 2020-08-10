@@ -1,24 +1,24 @@
-traverse tree size visit node three times order 3n n running time
-euler tour traversal tree begins root visits node tree left bottom right sides
-visit order according data value
-tree shows functions contains parents children siblings ancestors descendents use tree type algorithm also alternative sorting algorithm
-start root circle around _whole_ tree naming node see
-visit parent vistit children
-start root traveling left visiting ever child along way till return root right
-traversing tree terminal child all siblings traverses terminal child parent all siblings repeating first step siblings children root node visited
-euler tour traversal tree function iteratively keeps track pointer node
-travel outside edge tree clockwise naming node
-children root
-go bottom left sub tree visit parent children
-euler tour traverses tree rubber band style shape
-euler tour traversal tree specific way navigating tree involves following tree starting top moving along left side tree first cupping visit parents children nodes allows node visited left right bottom euler tour first progresses left child one progresses parent next child parent parent
-runs parents children order
-starts node left root proceeds visits node left right order visits root proceeds repeat previous step right side tree
-travel root farthest left child backup travel leftmost children right side repeat reaching rightmost child
-preorder order postorder tree preorder puts parent node front child node order puts parent node left child right child node postorder puts parent node child node
-euler traveral go tree looking nodes put order left root right like inorder traversal
-euler traversal traversal begins root travels around outside tree element tree visited 3 times left bottom right
-euler tour traversal tree traverses branch straight one leaf starts root repeats all elements traversed
-euler tour visits every node tree starting root working around tree counterclockwise order post order pre order traversals seen variations euler tour traversal
+visit times traverse tree size three order n node time running 3n
+left root begins traversal tour tree visits node sides euler bottom right
+visit according value order data
+shows use functions siblings tree descendents contains type algorithm also alternative sorting ancestors children parents
+start naming around root see tree node circle _whole_
+vistit visit children parent
+start left root traveling way till ever right along visiting return child
+all visited siblings root first step terminal tree node traversing repeating parent child traverses children
+iteratively pointer traversal tour tree node track euler keeps function
+naming outside travel tree edge node clockwise
+root children
+left visit tree sub bottom parent go children
+tour rubber tree shape euler style traverses band
+left side right parent cupping starting children parents one visit nodes involves traversal navigating tree bottom top first specific tour moving way allows along next visited node progresses euler child following
+order runs children parents
+left proceeds root step side starts repeat order previous tree visits node right
+backup left root travel side repeat reaching leftmost right rightmost farthest child children
+left puts preorder tree order front postorder node right parent child
+left nodes root traversal tree order traveral euler right looking put go inorder like
+visited left around root begins traversal outside times tree 3 travels element euler bottom right
+all straight root traversal tour tree starts leaf repeats euler elements traversed branch traverses one
+traversals around variations root traversal tour working tree order every seen visits node pre counterclockwise euler post starting
 answered
-traverse going left go right last children back top kind like going around tree
+left around back last like traverse tree kind right top go going children

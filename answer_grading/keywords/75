@@ -1,24 +1,24 @@
-type char null n element end
-variable char basically non command key keyboard press string collection letters numbers stored together used later comonly strings used words chars used less opperations performed useful way
-programmer must provide null terminating character string characters using type char must also ensure array large enough contain input string characters null terminating character
-string characters followed null statement type string example string
-string contains word char contain phrases string characters
-string variable single entinty letters combined one char letter assigned memory value variable assigned e char 0 char 1
-string contains null character end string makes easily possible get string length char array virtually unlimited length therefore size must declared limited
-array characters stores null character end
-read string characters also read white space read characters declared char read characters white space
-character arrays terminate whitespace including spaces strings terminate encounter new line character
-difference string declared variable type char char included array versus string characters read variable
-array strings reads string literals meaning anything within quotes char array reads string individual character
-character arrays call individual letters string array call words
-character array end line character end
-type char may contain null value last element whereas type string
-variable type string terminating character 0 end
-one type string extra string member 0 end
-string variable size function calls available character array usually static size
-string char adds null value end string
-char array needs end character signature made characters separate string object value user enters
-variable type char character stored different memory address accessed easly string character easy able access character string
-string passed array char individual characters stored manipulated although word stored string variable stored one word individual characters
-string variable change size passed functions value whereas type char cannot change size passed functions reference
-string type string acts single object individual char entities accessible specific string class functions char array less robust allows direct access specific char entities
+end char n type null element
+stored chars letters later keyboard non basically collection variable words string performed command char together way used less comonly press key strings opperations numbers useful
+array character large must characters char terminating enough input null using type also provide contain string ensure programmer
+example characters statement followed null type string
+word char phrases characters contains contain string
+e one single value 1 variable char letter assigned 0 memory letters combined string entinty
+end array character makes limited must char therefore get size easily contains null length possible virtually declared string unlimited
+end array character stores characters null
+space characters char read also declared string white
+strings character including new terminate spaces encounter whitespace arrays line
+array variable char characters included versus type declared string read difference
+array strings quotes character char within reads meaning string individual literals anything
+array character words call letters string individual arrays
+end array character line
+value last char type null element whereas contain string may
+end character variable 0 terminating type string
+end 0 type member extra string one
+array character variable available calls size static usually string function
+end value char null string adds
+end array character signature value char characters user needs object enters separate string made
+character different char variable stored address easly memory accessed type access string able easy
+word array although char characters stored variable manipulated passed string individual one
+functions value reference variable char size cannot whereas type change passed string
+array robust functions single acts char specific object class allows direct type less access string individual accessible entities

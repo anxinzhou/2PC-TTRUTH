@@ -1,24 +1,24 @@
-isemptry determines stack full pop remove top element looking search compare element stack data looking
-would keep using peek gettop see top element popping top element peek gettop provides element looking
-push adds given node top stack leaving previous nodes pop removes returns current top node stack
-using linked lists stacks would need temp stack retain values would use pop function pop element compare element looking push temp stack repeat element found find pop temp stack back onto regular stack complete stack
-pop item top find looking stack ends empty never found item exist stack may also necessary save popped values case want recreate stack
-stack implemented using array could simply search array item stack implemented using linked list would pop values stack either value found stack empty would items put back list
-need pop item stack compare item item found items need removed
-pop element one stack check see desired element push onto another stack finished pop items second stack push back onto first stack ensure order elements maintained
-basically pop stack find given element
-iterate stack checking number current element
+isemptry determines pop compare stack element data full top looking remove search
+peek see popping keep would using element provides gettop looking top
+push nodes given pop returns previous leaving stack node removes top current adds
+onto lists need linked found repeat function use push back regular complete compare stacks would stack looking find pop using temp element values retain
+recreate found item never want pop exist necessary case save stack also values top looking empty find popped may ends
+put array found empty item value linked pop back would items stack using simply implemented could search either values list
+removed item pop compare items stack need found
+onto push back check see desired pop second first maintained finished order items stack another element elements ensure one
+basically given pop stack element find
+iterate checking stack element number current
 pop push
-pop all elements stack find element push popped elements back stack
-keep popping nodes storing alternate stack given element found pop given element push previously popped nodes back onto stack
-either traverse entire list pop given part create pointer system automatically points
-depends type stack true stack haft pop all elements stack find element want need push all elements removed back stack order removed java style stack peek function return element wanted instead requiring perform all excessive actions required true stack
-top item given element pop stack repeat item found stack empty
-could traverse list array find element
-need pop opertation go throught stack find element
-createstack push isempty pop boolean return value
-would traverse stack popping element search
-pop element stack another stack storage desired element found
+all push back pop stack element elements find popped
+onto push nodes back popping given pop keep alternate storing stack element previously found popped
+automatically entire pointer part given pop traverse create either system list points
+depends requiring order type need true all required want perform elements style function haft push back peek stack instead removed find wanted java pop element actions excessive return
+empty item given pop repeat stack element top found
+array traverse element could find list
+find opertation pop throught stack element need go
+createstack push value isempty pop return boolean
+popping traverse would stack element search
+desired pop storage stack another element found
 pop operation
-pop elements push back
-function keep track elements popped function put popped elements backinto function
+pop push back elements
+keep track elements put function popped backinto

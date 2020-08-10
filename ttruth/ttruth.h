@@ -10,7 +10,7 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,  uint iter);
+vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,  int iter);
 vector<vector<int>> sphere_kmeans(vector<vector<double>>points, uint iter);
 // return top-k score
 vector<vector<int>> ttruth(vector<vector<vector<vector<double>>>> &all_kvec, int topK);

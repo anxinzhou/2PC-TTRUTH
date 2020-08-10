@@ -1,24 +1,24 @@
-data structure c collection data kept order first first
-queue list objects particular order read one time starting first followed second
-queue abstract data structure operations performed both ends giving queue first first behavior
-queue stores set elements particular order principle operation fifo first first means first element inserted first one removed
-adt whose first inserted item first item removed uses fifo idea items enter queue back leave front
-last last architecture works way line bank would work person waiting longest gets served first
-queue data structure stores elements first first order
-waiting list items operation fifo first first order
-queue similar array except data accessed sequentially rather random unlike stack queue follows fifo first first
-particular kind collection entities collection kept order principal operations collection addition entities rear terminal position removal entities front terminal position first first fifo method
-like linked list first first
-queue fifo data structure
-queue first first data structure
-like stack uses linked list stack little differently fifo first thing enqueued first thing dequeued
-first first abstract data type used store values
-stores set elements particular order first first principle
-object stores elements order follows first first first element added first one come
-quese list stores set elements particular order stack principle case first first first element inserted first element removed
-finite ordered list zero elements based upon first first
-data structure performs operations order first first fifo
-queue first first data structure first element added also first removed
-queue buffer store element particular order
-stores set elements first element first element removed
-data structure removes nodes head adds nodes tail
+collection structure first kept order data c
+one first second followed order particular read time queue objects starting list
+operations abstract structure first giving behavior both data queue performed ends
+operation removed stores first means principle fifo particular order inserted element elements queue set one
+back item whose first inserted fifo idea items enter leave front adt queue removed uses
+works last waiting person longest first way gets would architecture work bank served line
+stores structure first order data elements queue
+operation first fifo order items waiting list
+array first rather similar fifo accessed stack follows data sequentially queue random unlike except
+operations collection first terminal kept position particular order kind front removal fifo principal rear method addition entities
+linked first list like
+queue data fifo structure
+structure queue data first
+little first thing fifo dequeued stack linked enqueued differently uses list like
+abstract first type data store used values
+stores first principle order particular elements set
+added stores first object order come follows element elements one
+stores first principle case particular order inserted stack element elements quese removed set list
+finite first upon based elements zero ordered list
+operations performs structure first fifo order data
+removed added structure first data element also queue
+particular buffer order element store queue
+first stores element elements removed set
+nodes head tail structure data removes adds

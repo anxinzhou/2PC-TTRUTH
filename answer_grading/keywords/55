@@ -1,24 +1,24 @@
-make use front pointer tail pointer tail pointer reaches end array gets reset front array two pointers equal queue either full one element
-create array max size queue adjust items make follow fifo procedure
-implementing array adding items end array removing items beginning array
-applications fixed sized queue present problem use array represent queue
-keep track front back array increase decrease elements inside array
-declare size array special conditional statements pointers make sure use all array say array 20 elements load 18 dequeue 3 enqueue 4 elements want loop back index 0 continue process saves resources
-could use first element list remove point insert end f would shift elements time remove item unless make array circular
-utilizing indexes front back front 0 add items back index incremented
-declare two variables ã â å frontã â â ã â å rearã â â used denote elements array accessed increment ã â å rearã â â whenever data enqueued end increment ã â å frontã â â whenever data dequeued
-array fixed size queue maximum n elements
-make array size add front delete back keep track two know full add subtract
-using beginning array removal point queue beginning queue ith element end queue
-add data first element last take data first element last
-take array put queue stack traverse list keep track top bottom
-create fixed array size 2 integers point beginning end que special cases know que empty full
-keep track front rear indexes either 1 dequeue items shifting array left 2 use wrapped configuration
-add items fixed size array pull items calling starting index increase starting index calls next index element array
-use array implement queue element item 0 top element array every time element inserted all items array pushed back one space top element always removed first
-fixed size array max n elements need keep track front rear array
-keeping track front item rear item circular array uses modulo function
-using array queue size array allocated limits size queue array based queue class must keep track both front back queue may need wrap around array
-pointer based implementation queue could use linear linked list two external pointers one front one back
-remove element shift elements one space back
-head pointer point first least current data entered tail point current data entered method must created tail pointer leave array
+equal use end pointer array two tail either gets front element full reset queue reaches make one pointers
+max array procedure follow size fifo items create queue make adjust
+end array adding beginning items removing implementing
+use array represent problem applications present fixed queue sized
+increase array back decrease inside keep front track elements
+dequeue load process continue 0 declare say resources 4 index all want size special 18 elements sure use 20 back enqueue loop make array saves conditional 3 statements pointers
+use end unless array circular item first f point would element time make insert could elements remove shift list
+back indexes 0 front items incremented add utilizing index
+two denote array end variables rearã ã declare enqueued dequeued accessed whenever data increment â frontã used elements å
+array n size maximum fixed elements queue
+two array delete back know keep size front add track full subtract make
+end array beginning ith point using element queue removal
+last first add element data take
+array traverse keep stack track bottom queue take put top list
+end array know size beginning point special que create full fixed empty 2 integers cases
+dequeue shifting array left use indexes 1 keep front items configuration wrapped track rear either 2
+increase array pull size calls items calling add element fixed next index starting
+all use array implement space back item removed pushed 0 first inserted every items element time always top queue one
+max array keep n size front track need fixed elements rear
+circular array item modulo front track rear keeping function uses
+array around back must allocated keep size class front wrap using limits track both need queue may based
+use two pointer one back linear linked external front implementation could list queue based pointers
+space back element elements remove shift one
+entered head pointer array tail first must least point method created leave data current

@@ -1,24 +1,24 @@
-add element end linked list update pointer called top time modify list
-implement list head pointer points element recently pushed onto list pop function changes head pointer point next last element list removes element head pointer previously pointed
-implementation stack using single linked list operations performed stack 1 push function insertion pushing element stack similar insertion element end single linked list see function insert_end program operations single linked list 2 pop function deletion popping element stack similar deletion element end single linked list see function delete_end program operations single linked list 3 stack_display function displaying elements stack
-using nodes keep track head stack using push pop create stack needed
-use head top stack modify head push pop push would add new item head pop would remove item head
-implement stack list changing pointer first element list new item move pointer top stack next item removing item
-dynamicly create space stack grows stack long need
-declare pointer points head linked list add remove nodes beginning list
-creating linked list add element top stack pushing deleting element popping
-singly linked list already lot like stack depends way address moving head
-make list make bottom head add end make end top
-use add function list beginning stack remove pop
-use head top push pop nodes head
-create node based list points next list item
-head list last item added push adds new head
-create new list pop elements stack needed push stack remove items unless stack empty top item head list last item end
-adding element end list links element popping element takes last element list sets previous one end list
-implement stack using arrays linked list use pointers point element node next element stack use pointers stack becomes linked list
-elements inserted removed head list header node current pointer
-use linked list keep track pointer points first item
-singly linked list already easily used lifo data storage members stack simply pushed popped list first item last
+end pointer modify update called add element time linked top list
+onto implement head pointer pointed last recently pushed pop point changes element removes previously function points next list
+see deletion linked pushing displaying stack_display end 1 similar elements function performed list operations push program single insertion implementation stack delete_end insert_end popping pop 3 using element 2
+push nodes head needed pop keep using stack track create
+use push head item pop would stack add modify new remove top
+implement move pointer item first changing stack element removing top new next list
+long space stack grows create need dynamicly
+head pointer nodes remove declare beginning add linked points list
+deleting popping stack add element linked creating pushing top list
+already depends head singly moving lot way address stack linked list like
+end head add bottom top make list
+use pop beginning stack add function remove list
+use push head nodes pop top
+item node create based points next list
+push head added item last new adds list
+unless push head end item last needed pop items stack create elements top new empty remove list
+links end adding one sets popping last previous element takes list
+implement use point using stack element node becomes linked next arrays list pointers
+head pointer inserted node elements current removed header list
+use pointer item first keep track linked points list
+already singly first pushed item last storage easily stack lifo data simply used linked popped list members
 using pointer
-top first pointer
-keep pointer pointing last element entered front array move pointer back delete element
+pointer first top
+move entered pointer array back delete last keep pointing front element

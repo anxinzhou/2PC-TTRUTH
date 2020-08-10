@@ -59,7 +59,7 @@ namespace MPC {
 
     uint random(ABYParty *pt, e_role role) {
 //        uint seed = role==SERVER? 2:3;
-        srand(time(NULL));
+        srand(time(nullptr));
         uint l = rand();
         auto sharings = pt->GetSharings();
         auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
@@ -69,6 +69,7 @@ namespace MPC {
         r = acirc->PutSharedOUTGate(r);
         pt->ExecCircuit();
         uint res = r->get_clear_value<uint>();
+        pt->Reset();
         return res;
     }
 

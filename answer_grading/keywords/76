@@ -1,24 +1,24 @@
-example array n elements divide conquer splits array equal halves repeats process element
-divide coquer means dividing problem 2 problems solved merged back together final solution whole problem
-divide conquer paradigm divides problem smaller smaller portions easier solve
-divide elements recur conquer works merge sort quicksort
-divide conquer divide program half multiple times extent program whole easier work groups solve problem
-divide one larger string line values sepereate smallers lines easily manipulate replace order
-split problem smaller manageable parts proceed address smaller problems
-dived conquer breaking large complex program small easy solve components
-dividing larger problem smallest incident problem solving smallest incident
-break large data structures smaller sub units easier manipulate
-divide conquer technique takes sorting algorithm breaks array smaller elements array tackle problem run algorithm
-divide conquer paradigm divides problem two pieces works piece separately allowing faster approach 2 separate smaller problems
-take problem divide smaller problem solve smaller problem divide smaller problem solve thus solving whole problem process
-idea split problem half solve smaller split problems
-divide conquer paradigm splits large problem simpler problems point solves simpler problems merges simple solutions together answer large problem
-divide conquer refers abstraction act separating large complex problems smaller easier problems solved relatively simple algorithm
-takes large problem splits two easier faster solutions makes better readability
-taking larger problem splitting simpler smaller problems
-divides problem singular units works problem piece piece problem solved
-smaller parts easier compare comparing whole divides problem halves easily compare works backwards putting back together give solution
-divide conquer paradigm takes data divides two parts works part indiviually item found
-idea divide conquer take large problem split n smaller problems making program easier read modify
-divide conquer paradigm recursive solution keeps dividing problem halves base case reached
-dividing conquering means breaking problem two smaller problems solving both putting two solutions together
+array example splits process halves conquer n element repeats elements divide equal
+coquer back solved means together problem solution problems final merged divide dividing whole 2
+problem conquer divides easier paradigm divide portions solve smaller
+merge sort works conquer recur elements divide quicksort
+program times conquer easier problem multiple groups half divide whole work solve extent
+one sepereate lines replace order easily larger smallers values divide manipulate string line
+parts problem address manageable proceed problems split smaller
+program components conquer breaking dived solve small complex large easy
+incident solving problem larger smallest dividing
+units easier structures sub data manipulate break large smaller
+array tackle breaks conquer problem technique run sorting algorithm elements divide takes smaller
+two approach works pieces separately faster piece problem conquer divides allowing separate paradigm problems divide 2 smaller
+solving process problem divide take thus whole solve smaller
+problem idea half problems solve split smaller
+answer splits solves together conquer problem simpler point simple paradigm problems solutions divide merges large
+solved refers conquer separating easier simple algorithm problems act divide complex large abstraction relatively smaller
+two splits makes better faster problem easier readability solutions takes large
+splitting problem simpler taking larger problems smaller
+units singular works solved piece problem divides
+backwards parts back works give halves together easier compare divides problem putting easily solution whole comparing smaller
+two parts part works item conquer divides data paradigm divide found indiviually takes
+program modify conquer problem n idea easier read problems making divide take large split smaller
+halves dividing conquer problem case reached paradigm base keeps divide recursive solution
+two solving conquering means together problem breaking putting both problems solutions dividing smaller

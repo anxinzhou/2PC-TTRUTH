@@ -1,24 +1,24 @@
-enqueue adds data queue dequeue deletes data queue
-enqueue inserts specified element head specified queue dequeue removes specified element queue
-two main functions enqueue inserts item back queue dequeue removes item front queue
-two main functions enqueue dequeue
-enqueue dequeue
-enqueue dequeue
-enqueue insert queue dequeue remove element
-remove item added first add items back
-two main functions queue enqueue dequeue
-enqueue dequeue
-enqueue dequeue
-enqueue dequeue
-enqueue dequeue
-enqueue dequeue
-enque data deque
-enqueue dequeue
-enqueue dequeue
-two functions enqueue dequeue
-enqueue dequeue
-enqueue adds item queue dequeue takes first item queue
-enqueue dequeue add remove elements queue
-enqueue dequeue
+dequeue enqueue deletes data queue adds
+dequeue head enqueue specified element removes queue inserts
+dequeue two functions back item enqueue front removes main queue inserts
+dequeue two functions enqueue main
 dequeue enqueue
-enqueue dequeue
+dequeue enqueue
+dequeue enqueue element insert queue remove
+added item first back items add remove
+dequeue two functions enqueue main queue
+dequeue enqueue
+dequeue enqueue
+dequeue enqueue
+dequeue enqueue
+dequeue enqueue
+enque data deque
+dequeue enqueue
+dequeue enqueue
+enqueue two functions dequeue
+dequeue enqueue
+dequeue item first enqueue queue takes adds
+dequeue enqueue add elements queue remove
+dequeue enqueue
+dequeue enqueue
+dequeue enqueue

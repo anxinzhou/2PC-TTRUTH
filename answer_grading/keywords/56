@@ -1,24 +1,24 @@
-list unlimited elements push node onto end list pop one front
-theoretically could two ways one uses processing power memory larger queue ever full uses almost infinite memory practical method would two place items array remove item position one array shift array add another element required option use infinite memory used long term queues job scheduling goes nonstop extended periods implement array add items read item one raise counter value two ecetera continue adding elements array downside method use element one still memory im crazy knows
-implementing list tail pointer points item recently inserted onto back list head pointer points item least recently inserted onto list also items removed front list added back list
-use list represent items queue
-pointer last element list use enqueue insert items link first last elements together dequeue list
-enqueue end linked list dequeue items beginning head list
-use first element list remove point queue insert items end list
-utilizing front pointer back pointer front poiner back pointer points first item queue add items front remains back poiner next points new item new item assigned become new back pointer
-implement linked list allows nodes added tail retrieved head
-check list empty add elements list
-make linked list add front delete back keep track both
-making head list beginning queue last listed item insertion point queue
-throw data head take tail
-create list nodes head top pointer functions basically substituting pop push enqueue dequeue
-fairly easy singly linked list pointer head tail hte list deque first item que create temp pointer next element delete head make head temporary pointer enque new item use pointer end list add new item next item tail make tail next item current tail
-use linked list 2 pointers one front one back long back front queue empty
-create node input data continue add list dequeueing get first elements data set next element list new first element
-linked list stack principles queue top element element always removed first must use nodes contain element pointer top element also could called head pointer
-linked list checking front rear keep enqueueing elements front equal rear 1
-queue implemented list keeping track two pointers head tail
-element queue allocated nodes linked list new elements added head list dequeued element coming tail
-implement operation dequeue list operation remove 1 operation getfront queuefront list operation retrieve 1 queuefront
-remove first element reference second element new head list
-creating adding nodes end list removing nodes beginning list
+onto end push one pop front node elements list unlimited
+power knows continue value im processing items method infinite periods still uses one crazy job scheduling long implement theoretically required nonstop position extended raise larger practical add full elements queue place option counter use item goes memory would downside another ways used two array queues adding could ever element ecetera almost remove shift term read
+onto pointer head back tail item recently least added inserted front items also removed implementing list points
+use represent items queue list
+dequeue use pointer last first enqueue together items element insert link elements list
+dequeue end head enqueue beginning items linked list
+use end first point items element insert queue remove list
+remains pointer back item first assigned poiner front items add become utilizing new queue points next
+implement nodes head added tail retrieved allows linked list
+check add elements empty list
+delete back keep front both add track linked make list
+head item last insertion beginning listed point making queue list
+head tail data take throw
+dequeue push head nodes pointer functions basically pop enqueue create top list substituting
+pointer linked current enque end deque hte add create list use delete fairly singly first item temporary que new make next head tail temp element easy
+use long one back empty front linked queue 2 list pointers
+continue first get input next node data create add elements element new set dequeueing list
+use nodes principles removed must first pointer could called head stack element always also linked queue contain top list
+1 keep enqueueing checking front rear elements linked equal list
+two head tail track implemented keeping queue list pointers
+nodes head added tail allocated dequeued coming element elements linked new queue list
+dequeue implement operation retrieve 1 getfront queuefront remove list
+head reference first second element new remove list
+end nodes adding beginning removing creating list

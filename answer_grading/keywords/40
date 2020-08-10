@@ -1,24 +1,24 @@
-elements inserted link list point need resized unlike array needs
-unlike arrays linked lists insert delete without shifting data change size easily
-array size fixed linked fixed
-insert delete items pointer based linked list without shifting data
-arrays must defined size elements added linked list w defining size
-principal benefit linked list conventional array order linked items may different order data items stored memory disk allowing list items traversed different order linked list self referential datatype contains pointer link another datum type linked lists permit insertion removal nodes point list constant time
-expand need predetermine size
-linked lists able grow shrink size needed
-linked list able grow size needed require shifting items insertions deletions
-linked list fixed size require shifting items insertions deletions
-limit many create array hold given amount information
-linked lists constant time insertion deletion
-linked lists grown dynamically items require shifting greater awesome factor arrays
-linked lists indefinite size added taken away easily little difficulty shifting data
-nearly infinite size limited system memory also ability expand size dynamically
-grow needed arrays fixed size
-fixed size linked list able grow needed time access array bases list takes contant amount time linked base like depends
-linked lists grow shrink need arrays fixed size
-memory allocated fly items
-linked list may increased size needed array size set created
-array fixed size linked list able grow size needed
+array inserted needs point resized need elements link unlike list
+shifting delete unlike lists size easily without data insert linked change arrays
+array size fixed linked
+shifting delete pointer items without data insert linked list based
+defined added must defining size w elements linked arrays list
+pointer different stored order lists items allowing contains type datatype linked nodes referential list permit insertion constant datum memory disk self point another principal traversed benefit may removal array conventional data time link
+expand predetermine need size
+needed size lists shrink linked grow able
+shifting needed size items deletions insertions linked grow require able list
+shifting size items deletions insertions fixed linked require list
+array given information many hold amount create limit
+constant insertion deletion lists time linked
+shifting factor dynamically lists items greater grown linked require arrays awesome
+shifting added away little size lists easily taken data linked difficulty indefinite
+limited dynamically size memory ability infinite also expand system nearly
+needed size fixed grow arrays
+depends array contant needed size amount time takes fixed linked base grow access bases able list like
+size lists shrink need fixed linked grow arrays
+allocated items memory fly
+array linked needed size created increased list set may
+array needed size fixed linked grow able list
 resizeable
-linked lists set size grow shrink needed
-linked lists abe grow needed new size
+needed size lists shrink linked grow set
+needed size lists abe linked new grow

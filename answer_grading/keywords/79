@@ -1,24 +1,24 @@
-try several sets data algorithm includes worst case best case random cases also try run program different computer specs
+best program worst sets different specs case run several algorithm data includes also computer random try cases
 answered
-time complexity using big logarthmic log n linear n exponential n 2 quadratic n k k gt 1 polynomial n n gt 1
-using sort counting principle number operations performed algorithm
-experimental means would actually write prototype algorithm measure time takes run given certain parameters
-measuring relationship running algorithm different input sizes
-oposite theoretical assessment algorithm determine runtime run code first determine runtime recommended limited test include all possibilities data hardware used process data
+logarthmic linear 1 n big exponential using log k time polynomial gt 2 complexity quadratic
+operations sort counting principle using algorithm number performed
+actually measure means prototype given certain would run algorithm parameters write time experimental takes
+different relationship measuring input algorithm sizes running
+all oposite recommended limited possibilities process first determine test include run algorithm assessment runtime data used code theoretical hardware
 answered
-experimental approach measuring running time using big equation tells running time
-create run algorithm multiple times measuring amount time takes average results
-keep value many operations takes add value time function called
-big oh
-running program various input data measuring running time system time
-run program different data sizes like 10 x increase x measure completion speeds program find patterns attempt measure running time important keep software hardware however makes experimental testing inferior theoretical eyes
-run program see many times thing called runtime function based
-number times specific segments get called per unit work
-every call memory add multiply equation type n
-adding time marker algorithm called another time marker immediately change time calculate efficiency speed computers cpu
-big h notation
-experimental approach measures actual running time seconds
-running algorithm specific set data
-experimental terms running time algorithm measured number operations required complete function number usually expressed big notation
-run code n times get average values drop constant lowest number example f x 3n 1 running time bef f x n
-measure actual time program run calculate running time using input operations done
+approach equation measuring big tells using time running experimental
+average times measuring multiple run algorithm amount create time results takes
+operations value called keep many add time function takes
+oh big
+program various measuring input data time running system
+makes measure different x speeds testing important running experimental however patterns increase program attempt eyes keep find theoretical hardware inferior run sizes data time 10 completion software like
+program see times thing called run many runtime function based
+times specific called get segments unit number work per
+equation n call memory every type add multiply
+speed adding calculate efficiency called computers immediately marker algorithm another time cpu change
+h big notation
+approach measures seconds actual time running experimental
+specific algorithm data running set
+operations required complete expressed big algorithm terms time number running measured experimental usually function notation
+average example times constant 1 get n f run 3n lowest number time running code values x bef drop
+operations program calculate measure run input actual using time running done

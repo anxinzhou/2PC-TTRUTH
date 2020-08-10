@@ -1,24 +1,24 @@
 push
-push inserts something top stack
-stack operation corresponding enqueue queues push operation
-push stack operation corresponds enqueue operation queues operations insert new item one end top back respectively adt
-stack operation almost opposite enqueue operation
-push enqueue pop dequeue
+push something stack top inserts
+queues push operation enqueue stack corresponding
+operations queues push corresponds operation end item back respectively enqueue stack adt insert top new one
+operation opposite enqueue stack almost
+pop enqueue push dequeue
 push
-sure question means use stack push operation enqueue operation detect palindromes
-enqueue queue equivalent push dequeue queue equivalent pop
+use sure push operation means enqueue palindromes stack detect question
+dequeue push equivalent enqueue pop queue
 push operation
 push
 push
 push
 push
-would push operation put item end list
+end push operation item would put list
 push
 push
-push method stack operations
+method stack push operations
 push
-enqueue corresponds push dequeue corresponds pop
-push corresponds enqueue both similarly place new elements stack queue
-fifo first first
+dequeue push corresponds enqueue pop
+push corresponds enqueue stack both elements new queue place similarly
+fifo first
 push
 push

@@ -1,24 +1,24 @@
-list based preferred constrained fix size fall takes memory node least two parts item pointer
-list based preferred stack create limited size increase decrease size needed
-array based prevents push operation adding item stack stack size limit size array reached list base much simpler write fixed size
-array based faster easier keep track less complexity code
-list based use fixed size like array would
-usually linked list fixed size know want set max size array better
-list based allows flexablity size stack
-linked lists preferred implementing stacks limited set number elements
-list based implementation preferred since big 1 efficient
-linked list implementation preferred way list moved along without iteration
-list size determined
-linked list takes less memory scalable
-list based list grown dynamically head node easily accessible
-list based nodes easier work traversed easier
-list based lower processing overhead nearly unlimited space due linked list design
-list based grow shrink dynamically unlike fixed size array
-list based arrays become full lists grow shrink needed
-list bases implentation preferred one main reasons list fixed size
-array preferred linked list implementation requires extra space store pointers space allocated dynamically list based takes time
-link list preferred makes pushing elements easier limit memory number elements
-list based implementation much easier implement allows stack scale necessary therefore preferred implementation
-array based implementation requires less memory list based inceasing size resizeable array waste storage time
-array based stack would need pre determine size list increase decrease size however want
-list based implementation preferred list flexible array
+two parts pointer item least constrained fix size memory fall preferred node list takes based
+increase limited decrease needed size stack preferred create list based
+prevents push array operation adding item size reached list much stack simpler base write fixed limit based
+array faster easier keep track complexity less code based
+use array size would fixed list based like
+max array better want know size fixed linked usually set list
+size flexablity allows stack list based
+limited stacks lists preferred set number elements linked implementing
+1 big implementation preferred list since efficient based
+iteration moved way implementation preferred without along linked list
+determined size list
+scalable linked memory less takes list
+head dynamically easily node grown list accessible based
+nodes easier traversed list work based
+space design due nearly processing overhead linked list lower based unlimited
+array dynamically size shrink fixed list grow unlike based
+needed lists shrink full become list grow arrays based
+one size reasons preferred implentation main fixed bases list
+array space allocated dynamically implementation extra preferred store based time linked requires takes list pointers
+makes easier memory preferred number elements link limit pushing list
+implement therefore easier much allows implementation stack preferred scale list necessary based
+array resizeable waste size memory list implementation storage time less requires inceasing based
+increase array however decrease want determine size would stack pre need list based
+array flexible implementation preferred list based

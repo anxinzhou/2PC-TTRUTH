@@ -1,24 +1,24 @@
-expands function definition place functions called use many times need compiler expands function
-compiler inline expands function call function code gets inserted caller code stream conceptually similar happens define macro depending zillion things improve performance optimizer procedurally integrate called code ã â â optimize called code caller
-inline keyword advises compiler copy function code place avoid function calls however compiler typically ignore inline qualifier all smallest functions
-compiler ignore inline qualifier typically all smallest functions
-placing qualifier inline function return type function definition advises compiler generate copy function code place avoid function call
-declare inline function header int main call function anytime main program quickly easily
-expands small function making code longer also makes run faster
-function treated separate unit like functions
-program compiles copy function inplace avoiding function call
-replaces all instances function call inline code resulting longer faster programs
-compiler ignore inline qualifier typically all smallest functions
-ignores inline qualifier typically all smallest functions
-function small enough expand run faster avoid making many calls function
+use functions times called expands many definition need place compiler function
+expands inserted conceptually depending stream optimizer similar call things improve happens function macro define performance integrate optimize zillion procedurally inline code compiler called caller ã gets â
+all however functions qualifier keyword calls place avoid copy ignore smallest inline typically code function compiler advises
+all functions qualifier ignore smallest inline compiler typically
+advises qualifier call place type definition copy avoid generate inline code placing compiler return function
+int program anytime declare call quickly easily inline main function header
+makes faster expands run also longer making small code function
+functions unit separate treated function like
+program compiles avoiding call copy inplace function
+all faster instances call programs resulting longer inline code replaces function
+all functions qualifier ignore smallest inline compiler typically
+all functions qualifier smallest inline ignores typically
+faster enough calls run avoid many making small expand function
 treats function
-inline functions copied place instead referenced
-inline functions compiler creates copy function code place make function call add function call stack
-generates copy function coding eliminates calling function
+functions copied referenced instead inline place
+functions creates call place stack copy add inline code function compiler make
+generates copy calling coding eliminates function
 answered
-generates copy function code inserting program
-tells compiler make copy function code place avoid function call typically ignores except smallest functions
-compiler ignore inline qualifier typically all smallest functions
-multiple copies function code inserted program making bigger
-compiler ignores inline qualifier
-generates copy function needed
+program inserting generates copy code function
+functions call tells place avoid copy smallest ignores typically code function compiler make except
+all functions qualifier ignore smallest inline compiler typically
+program inserted multiple copies making code function bigger
+qualifier compiler inline ignores
+needed generates copy function

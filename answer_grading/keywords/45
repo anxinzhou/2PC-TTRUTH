@@ -1,24 +1,24 @@
-take twice much memory node
-doubly linked list pointers set mechanics inserting deleting difficult also special cases beginning end list complicated
-pointers set mechanics inserting deleting doubly linked list bit involved singly linked list
-insertion deletion doubly linked list involved singly linked list leaving room error complex algorithms
-need memory store previous pointers
-node doubly linked list takes memory node singly linked list
-keep consider predecessor successor connections inserting deleting
-node requires extra node requires memory difficult insert remove individual nodes
-double linked lists require space per node elementary operations expensive
-difficult delete create nodes
-use memory make 2 pointers update 2 pointers time change list
-nodes take memory
-node requires extra pointer space requirements increased insertion deletion node takes longer pointer operations
-little confusing special cases end beginning become difficult
-increased actions add remove elements linked list
-inserting deleting double linked list involved special cases beginning end
-main disadvanate hard remove all items list
-node requires extra pointer taking storage insertions deletions require pointer operations
-doubly linked list twice many pointers element therefore memory used
-process adding removing nodes doubly linked list complex basic linked list
-double linked lists require space per node elementary operation expensive
-1 node requires extra pointer requiring space 2 insertion deletion node takes bit longer pointer operations
-takes twice storage needed
-using pointers enable backward movement takes memory pointers make slightly work add remove node list
+twice much memory node take
+end complicated deleting doubly cases beginning special inserting also difficult linked mechanics set list pointers
+deleting singly involved doubly inserting linked bit mechanics set list pointers
+singly insertion doubly room deletion error leaving algorithms linked complex list involved
+previous memory store need pointers
+singly doubly memory node linked takes list
+successor deleting keep inserting predecessor consider connections
+nodes individual memory node difficult extra requires insert remove
+operations double space elementary lists expensive node linked require per
+delete nodes create difficult
+use update memory time change make 2 list pointers
+take nodes memory
+operations pointer space insertion requirements deletion node longer increased extra requires takes
+end little beginning special become difficult confusing cases
+linked add increased elements actions remove list
+end double deleting beginning special inserting linked cases list involved
+all disadvanate items hard main remove list
+operations pointer storage taking node deletions insertions extra requires require
+therefore doubly memory many element used linked twice list pointers
+nodes adding process linked doubly basic removing complex list
+double space operation elementary lists expensive node linked require per
+operations bit pointer space 1 insertion requiring deletion node longer extra requires takes 2
+twice takes needed storage
+remove slightly backward memory using node make add movement work takes enable list pointers

@@ -4,7 +4,7 @@
 
 #include "ttruth.h"
 
-const uint ALPHA[4] = {90, 10, 50, 50};
+const uint ALPHA[4] = {80, 20, 40, 60};
 
 const int CLUSTER_NUM = 10;
 const uint SKM_ITER = 10;
@@ -13,12 +13,24 @@ const uint LTM_ITER = 10;
 vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs, int iter) {
     uint question_num = all_obs.size();
     uint user_num = all_obs[0].size();
-    vector<vector<int>> tls(question_num, vector<int>(user_num, 0));
+    int cluster_num = CLUSTER_NUM;
+    vector<vector<int>> tls(question_num, vector<int>(cluster_num, 0));
     // random initialization truth label
     for (int i = 0; i < question_num; i++) {
-        for (int j = 0; j < user_num; j++) {
+        for (int j = 0; j < cluster_num; j++) {
             float p = double(rand()) / RAND_MAX;
             tls[i][j] = p > 0.5 ? 1 : 0;
+
+//            int num_user_has_ob = 0;
+//            for (int k= 0; k<user_num; k++) {
+//                auto &ob = all_obs[i][k];
+//                int o = ob[j];
+//                num_user_has_ob += o;
+//            }
+//            if(num_user_has_ob == 0) {
+//                tls[i][j] = 0;
+////                cout<<"test"<<endl;
+//            }
         }
     }
 
@@ -30,7 +42,7 @@ vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,
             auto &tl = tls[i];
             auto &ob = all_obs[i][j];
 
-            for (int k = 0; k < tl.size(); k++) {
+            for (int k = 0; k < cluster_num; k++) {
                 int t = tl[k];
                 int o = ob[k];
                 pos_counts[j][t * 2 + o] += 1;
@@ -39,33 +51,49 @@ vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,
     }
 
     // iteratively update truth label and prior count
-    for (int i = 0; i < question_num; i++) {
-        auto &tl = tls[i];
-        for (int k = 0; k < tl.size(); k++) {
-            double p_t = 0;
-            double p_negt = 0;
-            int t = tl[k];
-            for (int j = 0; j < user_num; j++) {
-                auto &ob = all_obs[i][j];
-                int o = ob[k];
-                p_t += log2(pos_counts[j][t * 2 + o] - 1 + ALPHA[t * 2 + o]);
-                p_t -= log2(pos_counts[j][t * 2] + pos_counts[j][t * 2 + 1] - 1 + ALPHA[t * 2] + ALPHA[t * 2 + 1]);
-                p_negt += log2(pos_counts[j][(1 - t) * 2 + o] + ALPHA[(1 - t) * 2 + o]);
-                p_negt -= log2(pos_counts[j][(1 - t) * 2] + pos_counts[j][(1 - t) * 2 + 1] + ALPHA[(1 - t) * 2]
-                               + ALPHA[(1 - t) * 2 + 1]);
-            }
+    for (int its =0; its<iter;its++) {
+        for (int i = 0; i < question_num; i++) {
+            auto &tl = tls[i];
+            for (int k = 0; k < cluster_num; k++) {
 
-            // update statistics
-            double threshold = 1.0 / (1 + exp(p_t - p_negt));
-            double p = double(rand()) / RAND_MAX;
-            if (p > threshold) {
+//                int num_user_has_ob = 0;
+//                for (int j= 0; j<user_num; j++) {
+//                    auto &ob = all_obs[i][j];
+//                    int o = ob[k];
+//                    num_user_has_ob += o;
+//                }
+//                if(num_user_has_ob == 0) {
+////                    cout<<"tt2"<<endl;
+//                    continue;
+//                }
+
+
+                double p_t = 0;
+                double p_negt = 0;
+                int t = tl[k];
+
                 for (int j = 0; j < user_num; j++) {
                     auto &ob = all_obs[i][j];
                     int o = ob[k];
-                    pos_counts[j][t * 2 + o] -= 1;
-                    pos_counts[j][(1 - t) * 2 + o] += 1;
+                    p_t += log2(pos_counts[j][t * 2 + o] - 1 + ALPHA[t * 2 + o]);
+                    p_t -= log2(pos_counts[j][t * 2] + pos_counts[j][t * 2 + 1] - 1 + ALPHA[t * 2] + ALPHA[t * 2 + 1]);
+                    p_negt += log2(pos_counts[j][(1 - t) * 2 + o] + ALPHA[(1 - t) * 2 + o]);
+                    p_negt -= log2(pos_counts[j][(1 - t) * 2] + pos_counts[j][(1 - t) * 2 + 1] + ALPHA[(1 - t) * 2]
+                                   + ALPHA[(1 - t) * 2 + 1]);
                 }
-                tl[k] = 1 - t;
+
+                // update statistics
+                double threshold = 1.0 / (1 + exp(p_t - p_negt));
+                double p = double(rand()) / RAND_MAX;
+                if (p < threshold) {
+                    for (int j = 0; j < user_num; j++) {
+                        auto &ob = all_obs[i][j];
+                        int o = ob[k];
+                        pos_counts[j][t * 2 + o] -= 1;
+                        pos_counts[j][(1 - t) * 2 + o] += 1;
+                    }
+                    tl[k] = 1 - t;
+                }
             }
         }
     }
@@ -110,7 +138,7 @@ vector<vector<double>> cluster_init(vector<vector<double>> &points) {
 
         vector<double> bar_D(points.size(), INT_MAX);
         for (int j = 0; j < points.size(); j++) {
-            bar_D[j] = j == 0 ? D[0] : bar_D[j - 1];
+            bar_D[j] = j == 0 ? D[0] : bar_D[j - 1]+D[j];
         }
 
         int cluster_index = 0;
@@ -135,7 +163,7 @@ vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
     for (int t = 0; t < iter; t++) {
         // assign cluster index
         for (int j = 0; j < points.size(); j++) {
-            double min_dis = -INT_MAX;
+            double min_dis = INT_MAX;
             int min_index = -1;
             for (int i = 0; i < cluster_num; i++) {
                 double dis = distance(points[j], cluster_centers[i]);
@@ -171,6 +199,17 @@ vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
             }
         }
     }
+    vector<int>statistics(cluster_num,0);
+    for(int i=0;i<points.size();i++) {
+        for(int j=0;j<cluster_num;j++) {
+            statistics[j]+=cluster_index[i][j];
+        }
+    }
+    for(int j=0;j<cluster_num;j++) {
+        cout<<statistics[j]<<" ";
+    }
+    cout<<endl;
+    return cluster_index;
 }
 
 vector<vector<int>> ttruth(vector<vector<vector<vector<double>>>> &all_kvec, int topK) {
@@ -201,7 +240,7 @@ vector<vector<int>> ttruth(vector<vector<vector<vector<double>>>> &all_kvec, int
 
         int c = 0;
         int u = 0;
-        for (int j = 0; j < cluster_index.size(); j++) {
+        for (int j = 0; j < points.size(); j++) {
             while (c + key_num[u] < j + 1) {
                 c += key_num[u];
                 u = u + 1;
@@ -225,8 +264,8 @@ vector<vector<int>> ttruth(vector<vector<vector<vector<double>>>> &all_kvec, int
     auto tls = latent_truth_discovery(all_obs, LTM_ITER);
 
     // calculate score of each user for each question
-    vector<vector<int>>topk_index(question_num,vector<int>(topK,0));
     vector<vector<int>> score(question_num, vector<int>(user_num, 0));
+    vector<vector<int>>topk_index(question_num,vector<int>(topK,0));
     for (int i = 0; i < question_num; i++) {
         vector<pair<int,int>>score_and_index(user_num);
         auto &cls = all_cls[i];
@@ -242,7 +281,7 @@ vector<vector<int>> ttruth(vector<vector<vector<vector<double>>>> &all_kvec, int
             score_and_index.emplace_back(s,j);
         }
 
-        sort(score_and_index.begin(), score_and_index.end(),greater<pair<int,int>>());
+        sort(score_and_index.begin(), score_and_index.end(),greater<>());
         for(int j=0; j<topK; j++) {
             topk_index[i][j] = score_and_index[j].second;
         }

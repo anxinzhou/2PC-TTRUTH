@@ -1,24 +1,24 @@
-traverse both directions
-doubly linked list delete node without traverse list
-doubly linked list allows delete node without traversing list establish trailing pointer
-doubly linked list allows traverse list either direction node points successor well predecessor
-doubly linked lists traverse backwards though still cannot access data point list shorter traverse backwards
-traverse list front back back front
-traverse list reverse
-doubly linked lists traversed both directions
-double linked lists require space per node elementary operations expensive often easier manipulate allow sequential access list both directions
-traverse forwards backwards nodes
-point both forwards backwards
-go backwards linked list access previous data easier without keep track previous item
-doubly linked lists allow backward movement nodes
-double pointers node point forwards backwards making little easer get need
-ability backtrack list
-move forwards backwards double linked list basic moves forwards
-advantage node points bothe predecessor successor special cases insertion deletion
-node points both predecessor successor
-doubly linked list pointers both directions allows access back front well front back
-doubly linked list traversed either direction normal linked list traversed start finish
-double linked list often easier manipulate allow sequential access list both direction
-given node list one navigate easily either direction
-traverse list both forward backwards
-doubly linked list allows back node rather go entire list
+both traverse directions
+delete doubly traverse node without linked list
+trailing delete pointer doubly establish allows node without traversing linked list
+direction successor well doubly traverse allows node predecessor linked either points list
+backwards shorter doubly traverse though lists point cannot data linked access still list
+traverse back list front
+traverse reverse list
+linked doubly lists both traversed directions
+operations double space allow sequential easier elementary lists expensive node both often manipulate linked directions access require per list
+nodes backwards traverse forwards
+backwards both forwards point
+backwards go item easier keep previous data without track linked access list
+nodes allow backward doubly lists movement linked
+backwards easer double little get point node need making forwards pointers
+backtrack list ability
+move backwards double moves basic linked forwards list
+successor insertion deletion special node predecessor cases points bothe advantage
+successor node both predecessor points
+back well doubly allows front both linked access directions list pointers
+start finish direction linked doubly normal traversed either list
+double direction allow sequential easier both often manipulate linked access list
+direction given navigate easily node list either one
+backwards forward traverse both list
+entire back rather doubly allows node linked go list

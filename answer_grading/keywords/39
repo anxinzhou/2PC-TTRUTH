@@ -1,24 +1,24 @@
-consists sequence nodes containing number data fields one two links called pointers point next previous nodes
-linked list list item list points next item list
-linked list chain structs records called nodes ability add delete retrieve items
-list elements nodes linked one another element points next element
-sequence nodes containing data fields specified programmer pointer point next previous nodes
-list nodes node contains data member also pointer next node
-list items linked together item linked successor
-linked list chain nodes store single piece data pointer variables point nodes list
-one fundamental data structures used implement data structures consists sequence nodes containing arbitrary data fields one two references links pointing next previous nodes
-data structure sequence nodes containing arbitrary data fields one two references links pointing next previous nodes
-information memory linked next piece information linked forwards backwards
-linked list data structure necessarily contiguous memory space arrays holds data type points next data item list doubly linked list also previous item
-linked list data structure containing one data elements pointer next node
-series nodes structures value pointer point similar node quite array still carry list values
-data type contains pointer least next element list
-component contains node data item pointer next item list
-linked list chain structs records called nodes node least two members one points next item node list
-array based list uses implicit ordering scheme often using pointers
-series structures containing data items pointer links structure next structure
-linked list collection objects containing least one data member pointer next object list previous object case doubly linked list
-link list data structure built structures pointers forms chain nodes pointers representing links chain holding entire thing together
-list pointers linked 2 every pointer points next pointer next element
-linear collection self referential nodes connected pointers
-items data structure linked using pointers
+links two nodes fields called previous point data number consists sequence next containing one pointers
+item linked points next list
+delete nodes chain retrieve structs records called ability items add linked list
+nodes another element elements linked list points next one
+nodes pointer fields specified previous point data sequence next containing programmer
+nodes pointer contains node data member also next list
+successor item together items linked list
+nodes chain pointer single variables piece point data store linked list
+links implement two nodes fundamental fields arbitrary structures pointing previous data used consists references sequence next containing one
+links two nodes structure arbitrary fields pointing previous data references sequence next containing one
+backwards piece memory linked information forwards next
+space item structure necessarily holds contiguous doubly memory previous type next data also linked points arrays list
+one pointer structure node data elements linked next containing list
+array nodes pointer value quite carry similar structures point node values series still list
+pointer least type contains data element next list
+pointer item component contains node data next list
+two nodes chain one item least structs records called node linked points next list members
+array ordering using based often scheme implicit uses list pointers
+links pointer structure structures items data series next containing
+one pointer collection least doubly object previous case data member linked objects next containing list
+links forms entire built chain nodes structure together representing thing structures holding data link list pointers
+pointer every element linked points next 2 list pointers
+nodes collection linear self connected referential pointers
+structure items using data linked pointers

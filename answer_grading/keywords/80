@@ -1,24 +1,24 @@
-log log n 2 log n n 2 n 3 n
-log log n n 2 n 3 2 log n n
-log logn 2 log n n 2 n 3 n
-log log n 2 log n n 2 n 3 n
-log log n 2 log n n 2 n 3 n
-log log n n 2 n 3 2 log n n
-log logn 2 logn n n 3 n 2
-log log n 2 log n n n 2 n 3
-goes largest smallest n n 3 n 2 2 log n log log n
-log log n 2 log n n 2 n 3 n
-2 log n log log n n n 2 n 3
-log log n n n 2 n 3 n log n
-least greatest log log n 2 log n n 2 n 3 n
-log log n 2 log n n n 2 n 3 n
-2 log n log log n n 2 n 3 n
-lowest longest log log n 2 log n n n 2 n 3
-log log n 2 log n n 2 n 3 n
-log log n 2 log n n 2 n 3 n
-2 log n n 3 n 2 log log n n
-linear logarithmic exponential linear linear
-quickest top slowest bottom log log n n 2 n 3 2 log n n
-longest shortest n 3 n n 2 2 log n log log n
-2 log n n 2 3 log long n n
-lowest highest 1 long long n 2 2 log n 3 n 2 4 n 3 5 n
+3 log n 2
+3 log n 2
+n 3 log logn 2
+3 log n 2
+3 log n 2
+3 log n 2
+n 3 log logn 2
+3 log n 2
+goes n 3 log smallest largest 2
+3 log n 2
+3 log n 2
+3 log n 2
+least n 3 log greatest 2
+3 log n 2
+3 log n 2
+longest n 3 log lowest 2
+3 log n 2
+3 log n 2
+3 log n 2
+exponential linear logarithmic
+n 3 log slowest bottom top quickest 2
+longest n 3 log shortest 2
+long n 3 log 2
+long highest 1 5 n 3 log lowest 4 2

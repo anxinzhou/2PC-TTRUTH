@@ -31,22 +31,28 @@
 #include <algorithm>
 #include <random>
 #include <filesystem>
+#include <iterator>
 
-int32_t read_test_options(int32_t* argcp, char*** argvp, e_role* role,
-                          uint32_t* bitlen, uint32_t* numbers, uint32_t* secparam, std::string* address,
-                          uint16_t* port, int32_t* test_op) {
+#include "ttruth/ttruth.h"
+#include "mpc_ttruth/mpc_ttruth.h"
+
+const int QUESTION_NUM = 87;
+
+int32_t read_test_options(int32_t *argcp, char ***argvp, e_role *role,
+                          uint32_t *bitlen, uint32_t *numbers, uint32_t *secparam, std::string *address,
+                          uint16_t *port, int32_t *test_op) {
 
     uint32_t int_role = 0, int_port = 0;
 
     parsing_ctx options[] =
-            { { (void*) &int_role, T_NUM, "r", "Role: 0/1", true, false },
-              { (void*) numbers, T_NUM, "n",	"Number of elements for inner product, default: 128", false, false },
-              {	(void*) bitlen, T_NUM, "b", "Bit-length, default 16", false, false },
-              { (void*) secparam, T_NUM, "s", "Symmetric Security Bits, default: 128", false, false },
-              {	(void*) address, T_STR, "a", "IP-address, default: localhost", false, false },
-              {	(void*) &int_port, T_NUM, "p", "Port, default: 7766", false, false },
-              { (void*) test_op, T_NUM, "t", "Single test (leave out for all operations), default: off",
-                      false, false } };
+            {{(void *) &int_role, T_NUM, "r", "Role: 0/1",                                          true,  false},
+             {(void *) numbers,   T_NUM, "n", "Number of elements for inner product, default: 128", false, false},
+             {(void *) bitlen,    T_NUM, "b", "Bit-length, default 16",                             false, false},
+             {(void *) secparam,  T_NUM, "s", "Symmetric Security Bits, default: 128",              false, false},
+             {(void *) address,   T_STR, "a", "IP-address, default: localhost",                     false, false},
+             {(void *) &int_port, T_NUM, "p", "Port, default: 7766",                                false, false},
+             {(void *) test_op,   T_NUM, "t", "Single test (leave out for all operations), default: off",
+                                                                                                    false, false}};
 
     if (!parse_options(argcp, argvp, options,
                        sizeof(options) / sizeof(parsing_ctx))) {
@@ -66,156 +72,259 @@ int32_t read_test_options(int32_t* argcp, char*** argvp, e_role* role,
     return 1;
 }
 
-
+vector<string> string_split(const string &s) {
+    vector<string> tokens;
+    istringstream iss(s);
+    copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter(tokens));
+    return tokens;
+}
 
 vector<vector<vector<string>>> load_keyword() {
     const string kv_bath_dir = "../answer_grading/keywords";
-    const vector<string> qdir{"q1","q2","q3","q4","q5","q6","q7","q8","q9","q10","q11","q12"};
-}
-
-
-
-vector<vector<double>> load_score() {
-    const string score_bath_dir = "../answer_grading/scores";
-    const vector<string> qdir{"q1","q2","q3","q4","q5","q6","q7","q8","q9","q10","q11","q12"};
-    vector<vector<double>> score;
-    for(int i=0; i<qdir.size(); i++) {
-        string dirpath = score_bath_dir + "/" + qdir[i];
-        filesystem::directory_iterator end_itr;
-        for(filesystem::directory_iterator itr(dirpath);itr!=end_itr;++itr) {
-            if(filesystem::is_regular_file(itr->path())) {
-                auto current_file = itr->path();
-                int question_id = atof(current_file.filename().c_str());
-                ifstream score_file(current_file.string());
-                vector<double> sub_scores;
-                if (!score_file.is_open()) {
-                    cout<< "can not open score file"<<endl;
-                    cout << strerror(errno) << endl;
-                    exit(0);
-                }
-                float score;
-                while (score_file >> score) {
-                    sub_scores.push_back(score);
-                }
-                scores[question_id] = sub_scores;
-            }
-        }
-    }
-
-    int question_num = questions.size();
-    scores = vector<vector<float>> (question_num,vector<float>());
-    boost::filesystem::directory_iterator end_itr;
-    for (boost::filesystem::directory_iterator itr(score_file_path); itr != end_itr; ++itr) {
-// If it's not a directory, list it. If you want to list directories too, just remove this check.
-        if (boost::filesystem::is_regular_file(itr->path())) {
-// assign current file name to current_file and echo it out to the console.
-            auto current_file = itr->path();
-            int question_id = atof(current_file.filename().c_str());
-            ifstream score_file(current_file.string());
-            vector<float> sub_scores;
-            if (!score_file.is_open()) {
-                cout<< "can not open score file"<<endl;
-                cout << strerror(errno) << endl;
-                exit(0);
-            }
-            float score;
-            while (score_file >> score) {
-                sub_scores.push_back(score);
-            }
-            scores[question_id] = sub_scores;
-        }
-    }
-
-
-}
-
-unordered_map<string,vector<double>> load_pretrained_vec() {
-    const string model_path = "../answer_grading/pretrained_vec";
-
-}
-
-
-void AnswerGradingData::load_dataset(const string &dir_path) {
-    const string question_file_path = (boost::filesystem::path(dir_path) / "questions/questions").string();
-    const string answers_file_path = (boost::filesystem::path(dir_path) / "answers").string();
-    const string score_file_path = (boost::filesystem::path(dir_path) / "scores").string();
-    load_question(question_file_path);
-    load_answers(answers_file_path);
-    load_scores(score_file_path);
-}
-
-void AnswerGradingData::load_question(const string &question_file_path) {
-    ifstream question_file(question_file_path);
-    if (!question_file.is_open()) {
-        cout<<"can not open question file"<<endl;
-        cout << strerror(errno) << endl;
-        exit(0);
-    }
-
-    string line;
-    while (getline(question_file, line)) {
-        questions.emplace_back(std::move(line),key_factor_number);
-    }
-    question_file.close();
-}
-
-void AnswerGradingData::load_answers(const string &answer_file_path) {
+    vector<vector<vector<string>>> all_keywords(QUESTION_NUM);
     // read answer
-    int question_num = questions.size();
-    answers = vector<vector<Answer>> (question_num,vector<Answer>());
-    boost::filesystem::directory_iterator end_itr;
-    for (boost::filesystem::directory_iterator itr(answer_file_path); itr != end_itr; ++itr) {
+    filesystem::directory_iterator end_itr;
+
+    for (filesystem::directory_iterator itr(kv_bath_dir); itr != end_itr; ++itr) {
         // If it's not a directory, list it. If you want to list directories too, just remove this check.
-        if (boost::filesystem::is_regular_file(itr->path())) {
+        if (filesystem::is_regular_file(itr->path())) {
             // assign current file name to current_file and echo it out to the console.
             auto current_file = itr->path();
             int question_id = atof(current_file.filename().c_str());
-            ifstream answers_file(current_file.string());
-            vector<Answer> sub_answers;
-            if (!answers_file.is_open()) {
+            ifstream keywords_file(current_file.string());
+            vector<vector<string>> user_keywords;
+            if (!keywords_file.is_open()) {
                 cout<< "can not open answer file"<<endl;
                 cout << strerror(errno) << endl;
                 exit(0);
             }
-            string answer;
-            int count = 0;
-            while (getline(answers_file, answer)) {
-                sub_answers.emplace_back(count, question_id, std::move(answer));
-                count+=1;
+            string raw_keywords;
+            while (getline(keywords_file, raw_keywords)) {
+                auto keywords = string_split(raw_keywords);
+                user_keywords.push_back(std::move(keywords));
             }
-
-            answers[question_id] = sub_answers;
+            all_keywords[question_id] = (std::move(user_keywords));
         }
     }
+
+    return all_keywords;
 }
 
-void AnswerGradingData::load_scores(const string &score_file_path) {
-    int question_num = questions.size();
-    scores = vector<vector<float>> (question_num,vector<float>());
-    boost::filesystem::directory_iterator end_itr;
-    for (boost::filesystem::directory_iterator itr(score_file_path); itr != end_itr; ++itr) {
-        // If it's not a directory, list it. If you want to list directories too, just remove this check.
-        if (boost::filesystem::is_regular_file(itr->path())) {
-            // assign current file name to current_file and echo it out to the console.
+
+vector<vector<double>> load_score() {
+    const string score_bath_dir = "../answer_grading/scores";
+    vector<vector<double>> score(QUESTION_NUM);
+
+    filesystem::directory_iterator end_itr;
+    for (filesystem::directory_iterator itr(score_bath_dir); itr != end_itr; ++itr) {
+        if (filesystem::is_regular_file(itr->path())) {
             auto current_file = itr->path();
             int question_id = atof(current_file.filename().c_str());
             ifstream score_file(current_file.string());
-            vector<float> sub_scores;
+            vector<double> sub_scores;
             if (!score_file.is_open()) {
-                cout<< "can not open score file"<<endl;
+                cout << "can not open score file" << endl;
                 cout << strerror(errno) << endl;
                 exit(0);
             }
-            float score;
-            while (score_file >> score) {
-                sub_scores.push_back(score);
+            double s;
+            while (score_file >> s) {
+                sub_scores.push_back(s);
             }
-            scores[question_id] = sub_scores;
+            score[question_id] = std::move(sub_scores);
         }
+    }
+    return score;
+}
+
+unordered_map<string, vector<double>> load_pretrained_vec() {
+    const string model_path = "../answer_grading/pretrained_vec";
+    unordered_map<string, vector<double>> pretrained_vec;
+
+    ifstream word_embedding_file(model_path);
+    if (!word_embedding_file.is_open()) {
+        cout << "can not open word embedding file" << endl;
+        cout << strerror(errno) << endl;
+        exit(0);
+    }
+    string line;
+    while (getline(word_embedding_file, line)) {
+        istringstream iss(line);
+        string word;
+        iss >> word;
+        vector<double> vec;
+        double v;
+        while (iss >> v) {
+            vec.push_back(v);
+        }
+        pretrained_vec.emplace(word,vec);
+
+    }
+    word_embedding_file.close();
+//    cout<<pretrained_vec.size()<<endl;
+    return pretrained_vec;
+}
+
+void test_ttruth() {
+    auto pretrained_vec = load_pretrained_vec();
+    auto all_keywords = load_keyword();
+    auto score = load_score();
+
+    if(score.size()!=all_keywords.size()) {
+        cout<<score.size()<<" "<<all_keywords.size()<<endl;
+        cout<<"wrong size at line"<<__LINE__<<" "<<__FILE__<<endl;
+        exit(-1);
+    }
+    int question_num = all_keywords.size();
+    int user_num = all_keywords[0].size();  // max 24
+
+    vector<vector<vector<vector<double>>>> all_kvec(question_num,
+                                                    vector<vector<vector<double>>>(user_num));
+
+    for(int i=0; i<question_num; i++) {
+        for(int j=0; j<user_num; j++) {
+            auto&keywords = all_keywords[i][j];
+            vector<vector<double>> key_vecs;
+            for (auto &w:keywords) {
+                key_vecs.push_back(pretrained_vec.at(w));
+            }
+            all_kvec[i][j] = std::move(key_vecs);
+        }
+    }
+
+    int topK=24;
+    auto topk_index = ttruth(all_kvec, topK);
+    vector<double>total_avg(topK,0);
+    double all_socre = 0;
+    int all_count = question_num * topK;
+    for(int i=0;i<question_num;i++) {
+        vector<double>avg(topK,0);
+        cout<<"question "<<i+1<<" ";
+        for(int j=0;j<topK;j++) {
+            int index = topk_index[i][j];
+            cout<<score[i][index] << " ";
+            avg[j] += score[i][index];
+            if(j!=0) {
+                avg[j] += avg[j-1];
+            }
+            all_socre+=score[i][index];
+        }
+        cout<<endl;
+        for(int j=0;j<topK;j++) {
+            avg[j] /= (j+1);
+            total_avg[j] += avg[j];
+        }
+    }
+    for(int i=0; i<topK;i++) {
+        total_avg[i]/=question_num;
+        cout<< total_avg[i]<<" ";
+    }
+    cout<<endl;
+    cout<<"avg: " << all_socre/all_count;
+    cout<<endl;
+    vector<double>total_avg2(topK,0);
+    for(int i=0;i<question_num;i++) {
+        vector<double>avg(topK,0);
+        for(int j=0;j<topK;j++) {
+            int index = topk_index[i][j];
+//            cout<<score[i][index] << " ";
+            total_avg2[j] += score[i][index];
+        }
+    }
+//    cout<<endl;
+    for(int i=0; i<topK;i++) {
+        total_avg2[i]/=question_num;
+        cout<< total_avg2[i]<<" ";
+    }
+
+}
+
+void testMPCTextTruth(ABYParty *pt, e_role role) {
+    auto pretrained_vec = load_pretrained_vec();
+    auto all_keywords = load_keyword();
+    auto score = load_score();
+
+    if(score.size()!=all_keywords.size()) {
+        cout<<score.size()<<" "<<all_keywords.size()<<endl;
+        cout<<"wrong size at line"<<__LINE__<<" "<<__FILE__<<endl;
+        exit(-1);
+    }
+    int question_num = all_keywords.size();
+    int user_num = all_keywords[0].size();  // max 24
+
+    vector<vector<vector<vector<uint64_t>>>> all_kvec(question_num,
+                                                    vector<vector<vector<uint64_t>>>(user_num));
+
+    // convert keywords vector to sharing vector
+    for(int i=0; i<question_num; i++) {
+        for(int j=0; j<user_num; j++) {
+            auto&keywords = all_keywords[i][j];
+            vector<vector<uint64_t>> key_vecs;
+            for (auto &w:keywords) {
+                vector<double>tmp(pretrained_vec.at(w));
+                vector<uint64_t>vec(tmp.size(),0);
+                for(int k=0; k<tmp.size(); k++) {
+                    vec[k] = tmp[k] * FLOAT_SCALE_FACTOR;
+                    auto s = MPC::Share(vec[k], role);
+                    vec[k] = s.val();
+                }
+                key_vecs.push_back(std::move(vec));
+            }
+            all_kvec[i][j] = std::move(key_vecs);
+        }
+    }
+
+    vector<vector<vector<uint64_t>>> answers(question_num,
+                                             vector<vector<uint64_t>>(user_num,
+                                                     vector<uint64_t>(150,0)));
+
+    int topK=24;
+    auto topk_index = MPC::ttruth(all_kvec, answers, topK, pt, role);
+    vector<double>total_avg(topK,0);
+    double all_socre = 0;
+    int all_count = question_num * topK;
+    for(int i=0;i<question_num;i++) {
+        vector<double>avg(topK,0);
+        cout<<"question "<<i+1<<" ";
+        for(int j=0;j<topK;j++) {
+            int index = topk_index[i][j];
+            cout<<score[i][index] << " ";
+            avg[j] += score[i][index];
+            if(j!=0) {
+                avg[j] += avg[j-1];
+            }
+            all_socre+=score[i][index];
+        }
+        cout<<endl;
+        for(int j=0;j<topK;j++) {
+            avg[j] /= (j+1);
+            total_avg[j] += avg[j];
+        }
+    }
+    for(int i=0; i<topK;i++) {
+        total_avg[i]/=question_num;
+        cout<< total_avg[i]<<" ";
+    }
+    cout<<endl;
+    cout<<"avg: " << all_socre/all_count;
+    cout<<endl;
+    vector<double>total_avg2(topK,0);
+    for(int i=0;i<question_num;i++) {
+        vector<double>avg(topK,0);
+        for(int j=0;j<topK;j++) {
+            int index = topk_index[i][j];
+//            cout<<score[i][index] << " ";
+            total_avg2[j] += score[i][index];
+        }
+    }
+//    cout<<endl;
+    for(int i=0; i<topK;i++) {
+        total_avg2[i]/=question_num;
+        cout<< total_avg2[i]<<" ";
     }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 
     e_role role;
     uint32_t bitlen = UINT64_LEN, numbers = 128, secparam = 128, nthreads = 1;
@@ -231,16 +340,10 @@ int main(int argc, char** argv) {
     // call inner product routine. set size with cmd-parameter -n <size>
     ABYParty *pt = MPC::init_party(role, address, port, seclvl, UINT64_LEN, nthreads, mt_alg);
 
-//    test_argmax4(pt, role);
-//    test_inner_product(pt, role);
-//    test_right_shift(pt, role);
-//test_log(pt,role);
-test_rep_square_root(pt,role);
-//test_eq(pt,role);
-//    test_right_shift2(pt,role);
-//test_sigmoid(pt,role);
-
     delete pt;
+
+//    test_ttruth();
+testMPCTextTruth(pt,role);
     return 0;
 }
 

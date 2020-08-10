@@ -1,24 +1,24 @@
-converted post fix expressions still follow order precedence operators
-first converted postfix expressions evaluated
-computers cannot evaulate infix expressions must first convert infix postfix expression evaluate
-using parentheses order expression
+follow fix precedence order operators still converted post expressions
+first postfix evaluated converted expressions
+expression must first evaulate computers postfix evaluate cannot infix convert expressions
+expression using order parentheses
 postfix notation
-computers usually convert infix expressions post fix expression evaluate using stack
+expression computers fix evaluate using stack infix usually post expressions convert
 converted postfix
-infix expressions interpreted postfix expressions implementing stacks
-first converted equivalent postfix expression read computer
-computer translates infix expression postfix expression solves
-postfix format
-use parenthisis stack determine evaluations need made first
-throwing variables postfix expression operands onto parentheses regulated stack end parentheses enough variables operate encountered
-passed function leading term
-hard time explaining show infix evaluated instead start infix expression like 5 2 5 400 2 3 push items get happens perform operations reach complete 7 5 400 2 3 expression evaluated perform last step 35 400 2 3 stack repeat agian 35 400 5 stack repeat 35 80 stack repeat 115 stack returned
-infix expression converted postfix form
-converting postfix expressions putting operations stack
-computer converts infix expression postfix form evaluates postfix expression
-infix expressions converted postfix expressions evaluated computer operands stay order operators always follow operands
-infix expressions pointers evaluated reference memory location
-computers convert infix expressions postfix form evaluation
-convert infix expressions postfix expression evaluate postfix expression
-operand entered computer pushes onto stack operator entered computer applies top two operands stack pops operands stack pushes result operation onto stack
-computers convert infix expression postfix expression push numbers onto stack pop needed
+postfix stacks interpreted infix implementing expressions
+expression first equivalent postfix computer converted read
+expression solves postfix computer infix translates
+format postfix
+use evaluations first parenthisis determine stack need made
+expression operands onto end parentheses variables enough postfix encountered stack regulated operate throwing
+passed function term leading
+expression reach 5 115 items 400 repeat evaluated perform show hard infix happens agian 7 35 operations push returned complete step get stack instead explaining start last 3 time 80 2 like
+expression postfix form infix converted
+operations postfix putting converting stack expressions
+expression postfix evaluates converts form computer infix
+operands follow postfix order stay evaluated always computer infix operators converted expressions
+reference location memory evaluated infix expressions pointers
+computers postfix evaluation form infix convert expressions
+expression postfix evaluate infix convert expressions
+onto two entered operands operation pushes applies result operand operator stack computer top pops
+expression onto push needed pop computers postfix stack numbers infix convert

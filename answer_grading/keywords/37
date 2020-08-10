@@ -1,24 +1,24 @@
-passed value reference
-nonconstant pointer nonconstant data nonconstant pointer constant data constant pointer nonconstant data constant pointer constant data
-nonconstant pointer nonconstant data nonconstant pointer constant data constant pointer nonconstant data constant pointer constant data
-four different ways nonconstant pointer nonconstant data nonconstant pointer constant data constant pointer nonconstant data constant pointer constant data
-pass value pass reference
-pass pointer pointer pass reference pointer
-address bptr directly bptr
-nonconstant pointer nonconstant data constant pointer nonconstant data nonconstant pointer constant data constant pointer constant data
+passed reference value
+nonconstant pointer constant data
+nonconstant pointer constant data
+pointer different nonconstant constant four ways data
+pass reference value
+pointer pass reference
+directly bptr address
+nonconstant pointer constant data
 argument reference
-nonconstant pointer nonconstant data nonconstant pointer constant data constant pointer nonconstant data constant pointer constant data
-pass value pass reference reference pointer arguments
-pass pointer memory address
-nonconst gt nonconst const gt nonconst nonconst gt const const gt const
-nonconstant pointer nonconstant data constant pointer nonconstant data nonconstant pointer constant data constant point constant data
-non constant pointer non constant data non constant pointer constant data constant pointer constant data constant pointer non constant data
-pass reference reference arguments function int pass reference pointer arguments function int
-pass reference dereference function
-1 nonconstant pointer nonconstant data delcaration include const qualifier 2 nonconstant pointer constant data provides performance pass reference protection pass value 3 constant pointer nonconstant data 4 constant pointer constant date
-constant pointer constant data constant pointer nonconstant data nonconstant pointer constant data nonconstant pointer nonconstant data
-nonconstant pointer nonconstant data nonconstant pointer constant data constant pointer nonconstant data constant pointer constant data
-pointers may passed functions value reference reference arguments reference pointer arguments
-four way pass pointer function 1 non constant pointer non constant data 2 non constant pointer constant data 3 constant pointer non constant data 4 constant pointer constant data
-nonconstant pointer nonconstant data nonconstant pointer constant data constant pointer nonconstant data constant pointer constant data
-pass value pass reference reference arguments pass reference pointer arguments
+nonconstant pointer constant data
+pointer pass reference value arguments
+address pointer pass memory
+const nonconst gt
+pointer nonconstant constant point data
+constant pointer non data
+int pointer pass reference arguments function
+function dereference pass reference
+pointer pass reference performance 1 nonconstant qualifier constant include value 3 delcaration protection data provides 4 date 2 const
+constant pointer nonconstant data
+nonconstant pointer constant data
+pointer functions value reference arguments passed may pointers
+pointer pass non 1 constant way four 3 data 4 function 2
+nonconstant pointer constant data
+pointer pass reference value arguments

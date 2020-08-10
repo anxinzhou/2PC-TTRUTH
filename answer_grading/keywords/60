@@ -1,24 +1,24 @@
-hierarchy nodes sorted particular order node ancestor except root children except leaves
-tree finite set one nodes specially designated node called root remaining nodes partitioned disjoint sets sets tree
-tree finite set one nodes specially designated node called root
-connected undirected graph without cycles
-data structure contains root internal nodes external nodes node references another node means pointers pass reference root base tree parents leaf node end tree points null
-tree series nodes node links nodes
-infinite set nodes root descendants addition leaf
-set one nodes hierarchically organized one special ã â å rootã â â node
-tree finite set one nodes specially designated node called root
-one nodes hierarchy starting root branching like tree subtrees
-tree data structure nodes linked hierarchical manner
-grouping data parent child structure
-list numbers list made comparing values nodes already tree adding appropriate spot list made nodes left right pointers
-tree branched data structure nodes leaves special node called root parent node however like all nodes 2 nodes links namely one right one left
-organizes data nonlinear hierarchical form items one successor partitioned root node subsets general subtrees root
-tree finite set one nodes specially designated node called root remaining nodes partitioned n gt 0 disjoint sets n plus 1 element set tree
-finite set nodes starts root terminates leaves
-set data arranged pointers element many pointers two pointers point element
-tree data structure one data nodes contains data node number attached child nodes creating branched structure trees named
-finite collection nodes starts element called root children children children get leaves last elements children
-nonlinear two dimensional data structure
-finite set one nodes root node all nodes split trees lesser value root
-finite number nodes one root node node certain number children nodes child also tree
-type data structure element attached one elements directly beneath
+nodes root order particular hierarchy node sorted leaves ancestor except children
+nodes root finite specially remaining sets called tree disjoint node designated partitioned set one
+nodes root finite specially called tree node designated set one
+graph cycles connected undirected without
+pass structure contains parents end nodes root tree null references reference external internal another base means leaf node data points pointers
+links nodes tree node series
+nodes root descendants leaf infinite set addition
+nodes ã special hierarchically node organized â set å rootã one
+nodes root finite specially called tree node designated set one
+nodes root tree hierarchy subtrees branching starting one like
+nodes structure hierarchical tree data manner linked
+structure grouping data parent child
+already appropriate nodes adding left tree spot numbers right pointers values comparing list made
+all links left nodes however branched root structure called tree special namely node data leaves right parent 2 one like
+successor root hierarchical organizes nonlinear items node data form general subtrees partitioned one subsets
+nodes root finite specially remaining 0 called sets tree n plus disjoint 1 node designated element gt partitioned set one
+nodes root finite terminates starts leaves set
+two arranged point many element data set pointers
+nodes branched structure trees tree contains node data number attached creating child named one
+nodes root collection finite last called get starts element leaves elements children
+two dimensional structure nonlinear data
+all lesser nodes root finite value trees node split set one
+nodes root finite certain tree node also number child one children
+structure type data attached element elements directly beneath one

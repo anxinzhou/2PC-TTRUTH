@@ -5,7 +5,7 @@
 #include "mpc_ttruth.h"
 
 namespace MPC {
-    const uint ALPHA[4] = {90, 10, 50, 50};
+    const uint ALPHA[4] = {80, 20, 40, 60};
     const uint CLUSTER_NUM = 10;
     const uint SKM_ITER = 10;
     const uint LTM_ITER = 10;
@@ -17,10 +17,11 @@ namespace MPC {
         // truth label
         uint question_num = all_obs.size();
         uint user_num = all_obs[0].size();
-        vector<vector<uint64_t>> tls(question_num, vector<uint64_t>(user_num, 0));
+        uint cluster_num = CLUSTER_NUM;
+        vector<vector<uint64_t>> tls(question_num, vector<uint64_t>(cluster_num, 0));
         // random initialization truth label
         for (int i = 0; i < question_num; i++) {
-            for (int j = 0; j < user_num; j++) {
+            for (int j = 0; j < cluster_num; j++) {
                 uint r = random(pt, role);
                 uint t = share_gt_const(r, RAND_MAX / 2, pt, role);
                 tls[i][j] = t;
@@ -35,7 +36,7 @@ namespace MPC {
                 auto &tl = tls[i];
                 auto &ob = all_obs[i][j];
                 vector<uint64_t> one_minus_tl(tl);
-                for (int k = 0; k < tl.size(); k++) {
+                for (int k = 0; k < cluster_num; k++) {
                     one_minus_tl[k] = -one_minus_tl[k];
                     if (role == SERVER) {
                         one_minus_tl[k] += 1;
@@ -43,7 +44,7 @@ namespace MPC {
                 }
 
                 vector<uint64_t> one_minus_ob(ob);
-                for (int k = 0; k < ob.size(); k++) {
+                for (int k = 0; k < cluster_num; k++) {
                     one_minus_ob[k] = -one_minus_ob[k];
                     if (role == SERVER) {
                         one_minus_ob[k] += 1;
@@ -128,7 +129,7 @@ namespace MPC {
                     uint64_t r = random(pt, role);
                     threshold_p *= RAND_MAX;
                     r = r << FLOAT_SCALE_FACTOR;
-                    uint64_t flip = gt(threshold_p, r, pt, role);
+                    uint64_t flip = gt(r, threshold_p, pt, role);
                     // update statistics
                     for (int j = 0; j < user_num; j++) {
                         auto &ob = all_obs[i][j];

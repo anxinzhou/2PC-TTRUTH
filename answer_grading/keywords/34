@@ -1,24 +1,24 @@
-returns synonym object pointer operand points
-star operator returns synonym object pointer operand points
-returns synonym object operand points
-returns synonym alias nickname name object operand points memory dereferencing pointer
-returns alias nickname object pointer operand points
-operator returns value memory address element points
+pointer returns object operand synonym points
+pointer star returns object operand operator synonym points
+returns object operand synonym points
+pointer returns dereferencing object memory operand alias synonym name points nickname
+pointer returns object operand alias points nickname
+value returns address memory operator element points
 returns value
-operator returns dereferenced pointer variable ie returns value whatever variable pointer pointing
-dereferencing operator returns dereferenced object
-returns synonym object operand points
-returns information address pointer points
-star operator returns value memory address pointer pointing
-star operator returns object memory location
-operator returns value object memory address precedes
-value object operand points
-value stored object pointed
-value variable pointer points
-returns synonym object operand points
-synonym object operand points
-returns synonym object operand points
-dereferences pointer meaning returns value stored memory address pointer refers
-unary operator returns value variable located address
-reference variable
-synonym object pointer operand points
+pointer value returns variable whatever ie pointing operator dereferenced
+returns dereferencing object operator dereferenced
+returns object operand synonym points
+pointer returns address information points
+pointer value star returns address memory pointing operator
+star returns location object memory operator
+precedes value returns address object memory operator
+points object value operand
+stored pointed object value
+variable pointer value points
+returns object operand synonym points
+synonym points object operand
+returns object operand synonym points
+pointer value dereferences returns stored refers address memory meaning
+located unary value returns variable address operator
+variable reference
+pointer object operand synonym points
