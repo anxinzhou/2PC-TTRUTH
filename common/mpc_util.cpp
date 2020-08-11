@@ -128,51 +128,30 @@ namespace MPC {
 //        return max2N(a,v,pt,role);
 //    }
 
-//    uint64_t max2N2(uint64_t a, uint64_t &digits, ABYParty *pt, e_role role) {
-//        auto sharings = pt->GetSharings();
-//        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-//        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-//        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-//
-//        auto sa_tmp = acirc->PutSharedINGate(a, UINT64_LEN);
-//        auto sa = bcirc->PutA2BGate(sa_tmp,ycirc);
-//
-//        uint64_t sum = 0;
-//        digits = 0;
-//        vector<share*>inds;
-//        for(int i=1;i<UINT64_LEN;i++) {
-//            sa->set_wire_id(i, bcirc->PutORGate(sa->get_wire_id(i),sa->get_wire_id(i-1)));
-//        }
-//        for(int i=UINT64_LEN-1;i>=0;i--) {
-//            auto tmp =sa->get_wire_ids_as_share(i);
-//            auto sid_tmp = acirc->PutB2AGate(tmp);
-//            auto sid = acirc->PutSharedOUTGate(sid_tmp);
-//            delete sid_tmp;
-//            delete tmp;
-//            inds.push_back(sid);
-//        }
-//        pt->ExecCircuit();
-//        for(int i=UINT64_LEN-1; i>=0; i--) {
-//            uint64_t v = uint64_t(1)<<uint64_t(i);
-//            uint64_t ind = inds[i]->get_clear_value<uint64_t>();
-//            sum+= ind * v;
-//            digits+=ind;
-//        }
-//        pt->Reset();
-//        if(role == SERVER) {
-//            sum+=1;
-//        }
-//
-//        delete sa;
-//        delete sa_tmp;
-//        for(int i=0;i<inds.size();i++) {
-//            delete inds[i];
-//        }
-//
-//        return sum;
-//    }
-
     uint64_t max2N(uint64_t a, uint64_t &digits, ABYParty *pt, e_role role) {
+        vector<uint64_t> a_vec(UINT64_LEN,a);
+        vector<uint64_t> base_vec(UINT64_LEN,0);
+        for(int i=UINT64_LEN-1;i>=0;i--) {
+            base_vec[i] = uint64_t(1)<<uint64_t(i);
+        }
+        auto cmp_vec = gt(a_vec, base_vec,pt,role);
+
+
+        digits = 0;
+        uint64_t  sum = 0;
+        for(int i=UINT64_LEN-1; i>=0; i--) {
+            uint64_t v = uint64_t(1)<<uint64_t(i);
+            sum+= cmp_vec[UINT64_LEN-1-i] * v;
+            digits+=cmp_vec[i];
+        }
+
+        if(role == SERVER) {
+            sum+=1;
+        }
+        return sum;
+    }
+
+    uint64_t max2N2(uint64_t a, uint64_t &digits, ABYParty *pt, e_role role) {
         auto sharings = pt->GetSharings();
         auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
         auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
@@ -184,6 +163,7 @@ namespace MPC {
         uint64_t sum = 0;
         digits = 0;
         vector<share*>inds(UINT64_LEN);
+
         for(int i=UINT64_LEN-1;i>=0;i--) {
             uint64_t v = uint64_t(1)<<uint64_t(i);
             auto sv = ycirc->PutINGate(v,UINT64_LEN,SERVER);

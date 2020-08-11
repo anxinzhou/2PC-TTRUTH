@@ -513,6 +513,28 @@ namespace MPC {
                 }
             }
 
+            // test convergence
+            double diff = 0;
+            for(int i=0; i<cluster_num; i++) {
+                auto newc = open_share(new_cluster_centers[i],pt,role);
+                auto oldc = open_share(cluster_centers[i],pt,role);
+                for(int j=0; j<dim;j++) {
+                    double x;
+                    double y;
+                    if(newc[j]>INT_MAX) x = 0-double(-newc[j]);
+                    else x = newc[j];
+                    if(oldc[j]>INT_MAX) y = 0-double(-oldc[j]);
+                    else y = oldc[j];
+                    x = x/(1<<FLOAT_SCALE_FACTOR);
+                    y = y/(1<<FLOAT_SCALE_FACTOR);
+//                    cout<<x<<" "<<y<<endl;
+                    diff+= (x-y)*(x-y);
+                }
+            }
+            cout<<t<<"-th round "<<"convergence: "<<diff<<endl;
+
+
+
             cluster_centers = std::move(new_cluster_centers);
 //            end = clock();
 //            cout<<"update cluster center time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;

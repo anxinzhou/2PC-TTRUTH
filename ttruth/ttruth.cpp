@@ -215,6 +215,17 @@ vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
             }
         }
 
+        //test convergence
+        double diff = 0;
+        for(int i=0; i<cluster_num; i++) {
+            for(int j=0; j<dim;j++) {
+                double x = new_cluster_centers[i][j];
+                double y = cluster_centers[i][j];
+                diff+= (x-y)*(x-y);
+            }
+        }
+        cout<<t<<"-th round "<<"convergence: "<<diff<<endl;
+
         cluster_centers = std::move(new_cluster_centers);
 
         for (int i = 0; i < cluster_num; i++) {
