@@ -7,9 +7,10 @@
 namespace MPC {
     const uint ALPHA[4] = {80, 20, 40, 60};
     const uint CLUSTER_NUM = 10;
-    const uint SKM_ITER = 1;
+    const uint SKM_ITER = 5;
     const uint LTM_ITER = 1;
     const uint ANSWER_LEN = 128;
+    const uint64_t NEG_PAD_VAL = uint64_t(1)<<32;
 
     void print_share(vector<uint64_t>&a, ABYParty *pt, e_role role) {
         auto tmp = open_share(a,pt,role);
@@ -46,8 +47,11 @@ namespace MPC {
     void print_distance(vector<uint64_t>&a, ABYParty *pt, e_role role) {
         auto tmp = open_share(a,pt,role);
         for(int i=0; i<a.size();i++) {
-            double val = tmp[i]>>FLOAT_SCALE_FACTOR;
-            cout<<val/(1<<FLOAT_SCALE_FACTOR)<<" ";
+            double val;
+            if(tmp[i]>uint64_t(INT_MAX)<<FLOAT_SCALE_FACTOR) val = 0-double(-tmp[i]);
+            else val = tmp[i];
+
+            cout<<val/(uint64_t(1)<<(FLOAT_SCALE_FACTOR)*2)<<" ";
         }
         cout<<endl;
     }
@@ -513,11 +517,51 @@ namespace MPC {
                 }
             }
 
+//            end = clock();
+//            cout<<"update cluster center time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+            //normalize cluster center
+            start = clock();
+            for (int i = 0; i < cluster_num; i++) {
+//                print_scaled_share(cluster_centers[i],pt,role);
+                uint64_t val = inner_product(new_cluster_centers[i], new_cluster_centers[i], pt, role);
+//                print_distance(val,pt,role);
+                val = right_shift_const(val, FLOAT_SCALE_FACTOR, pt, role);
+
+//                auto start = clock();
+                val = rep_square_root(val, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+//                print_scaled_share(val,pt,role);
+//                auto end = clock();
+//                cout<<"req square root Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+                vector<uint64_t> tmp(dim, val);
+                new_cluster_centers[i] = product(tmp, new_cluster_centers[i], pt, role);
+
+//                print_distance(cluster_centers[i],pt,role);
+//                start = clock();
+
+                for(int j=0;j<dim;j++) {
+                    new_cluster_centers[i][j] += role==SERVER? NEG_PAD_VAL << FLOAT_SCALE_FACTOR:0;
+                    new_cluster_centers[i][j] = right_shift_const(new_cluster_centers[i][j],FLOAT_SCALE_FACTOR,pt,role);
+                    new_cluster_centers[i][j] -= role==SERVER? NEG_PAD_VAL:0;
+                }
+
+//                print_scaled_share(cluster_centers[i],pt,role);
+//                end = clock();
+//                cout<<"batch right shift time "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//                exit(-1);
+            }
+
+//            print_scaled_share(cluster_centers[5],pt,role);
+//            cout<<"---------------"<<endl;
             // test convergence
             double diff = 0;
             for(int i=0; i<cluster_num; i++) {
                 auto newc = open_share(new_cluster_centers[i],pt,role);
                 auto oldc = open_share(cluster_centers[i],pt,role);
+//                if(t==SKM_ITER-1) {
+//                    cout<<"---------------"<<endl;
+//                    print_scaled_share(newc,pt,role);
+//                    print_scaled_share(oldc,pt,role);
+//                }
                 for(int j=0; j<dim;j++) {
                     double x;
                     double y;
@@ -533,36 +577,13 @@ namespace MPC {
             }
             cout<<t<<"-th round "<<"convergence: "<<diff<<endl;
 
-
-
-            cluster_centers = std::move(new_cluster_centers);
-//            end = clock();
-//            cout<<"update cluster center time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
-            //normalize cluster center
-            start = clock();
-            for (int i = 0; i < cluster_num; i++) {
-//                print_scaled_share(cluster_centers[i],pt,role);
-                uint64_t val = inner_product(cluster_centers[i], cluster_centers[i], pt, role);
-//                print_distance(val,pt,role);
-
-
-                val = right_shift_const(val, FLOAT_SCALE_FACTOR, pt, role);
-//                auto start = clock();
-                val = rep_square_root(val, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-//                print_scaled_share(val,pt,role);
-//                auto end = clock();
-//                cout<<"req square root Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
-                vector<uint64_t> tmp(dim, val);
-                cluster_centers[i] = product(tmp, cluster_centers[i], pt, role);
-//                start = clock();
-                cluster_centers[i] = right_shift_const(cluster_centers[i], FLOAT_SCALE_FACTOR, pt, role);
-//                end = clock();
-//                cout<<"batch right shift time "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
-            }
 //            cout<<"one iteration finish"<<endl;
+            swap(cluster_centers, new_cluster_centers);
+//            print_scaled_share(cluster_centers[5],pt,role);
+//            cout<<"---------------"<<endl;
 
             end = clock();
-            cout<<"Normalize time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//            cout<<"Normalize time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
         }
 
 //        for(int i=0; i<cluster_num;i++) {

@@ -215,6 +215,15 @@ vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
             }
         }
 
+        for (int i = 0; i < cluster_num; i++) {
+            double val = inner_product(new_cluster_centers[i], new_cluster_centers[i]);
+            if (val == 0) val = INT_MAX;
+            val = 1 / (sqrt(val));
+            for (int j = 0; j < dim; j++) {
+                new_cluster_centers[i][j] *= val;
+            }
+        }
+
         //test convergence
         double diff = 0;
         for(int i=0; i<cluster_num; i++) {
@@ -226,16 +235,7 @@ vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
         }
         cout<<t<<"-th round "<<"convergence: "<<diff<<endl;
 
-        cluster_centers = std::move(new_cluster_centers);
-
-        for (int i = 0; i < cluster_num; i++) {
-            double val = inner_product(cluster_centers[i], cluster_centers[i]);
-            if (val == 0) val = INT_MAX;
-            val = 1 / (sqrt(val));
-            for (int j = 0; j < dim; j++) {
-                cluster_centers[i][j] *= val;
-            }
-        }
+        swap(cluster_centers, new_cluster_centers);
     }
     vector<int>statistics(cluster_num,0);
     for(int i=0;i<points.size();i++) {

@@ -252,59 +252,64 @@ namespace MPC {
     }
 
     vector<uint64_t> bitwise_shift(vector<uint64_t >&a, uint64_t digits, ABYParty *pt, e_role role, bool left, bool const_digit) {
-        uint dim = a.size();
-        auto sharings = pt->GetSharings();
-        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
-        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-
-        share *sdigit_tmp;
-        if(const_digit) {
-            sdigit_tmp = acirc->PutCONSGate(digits, UINT64_LEN);
-        } else {
-            sdigit_tmp = acirc->PutSharedINGate(digits, UINT64_LEN);
-        }
-
-        auto sdigit = ycirc->PutA2YGate(sdigit_tmp);
-
-        auto sa = acirc->PutSharedSIMDINGate(dim, a.data(), UINT64_LEN);
-        auto sa_tmp = ycirc->PutA2YGate(sa);
-        delete sa;
-        sa = sa_tmp;
-        if(left) {
-            sa_tmp = ycirc->PutBarrelLeftShifterGate(sa, sdigit);
-        } else {
-            sa_tmp = ycirc->PutBarrelRightShifterGate(sa, sdigit);
-        }
-
-        delete sdigit_tmp;
-        delete sdigit;
-        delete sa;
-        sa = sa_tmp;
-
-        sa_tmp = acirc->PutY2AGate(sa, bcirc);
-        delete sa;
-        sa = sa_tmp;
-        sa_tmp = acirc->PutSharedOUTGate(sa);
-        delete sa;
-        sa = sa_tmp;
-        pt->ExecCircuit();
-        uint64_t *v;
-        uint bitlen, nval;
-        sa->get_clear_value_vec(&v,&bitlen,&nval);
-        pt->Reset();
-        vector<uint64_t>output(v,v+dim);
-        delete v;
-        delete sa;
-        return output;
+        exit(-1);
+        return vector<uint64_t>();
+//        uint dim = a.size();
+//        auto sharings = pt->GetSharings();
+//        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+//        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+//        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
+//
+//        share *sdigit_tmp;
+//        if(const_digit) {
+//            sdigit_tmp = acirc->PutCONSGate(digits, UINT64_LEN);
+//        } else {
+//            sdigit_tmp = acirc->PutSharedINGate(digits, UINT64_LEN);
+//        }
+//
+//        auto sdigit = ycirc->PutA2YGate(sdigit_tmp);
+//
+//        auto sa = acirc->PutSharedSIMDINGate(dim, a.data(), UINT64_LEN);
+//        auto sa_tmp = ycirc->PutA2YGate(sa);
+//        delete sa;
+//        sa = sa_tmp;
+//        if(left) {
+//            sa_tmp = ycirc->PutBarrelLeftShifterGate(sa, sdigit);
+//        } else {
+//            sa_tmp = ycirc->PutBarrelRightShifterGate(sa, sdigit);
+//        }
+//
+//        delete sdigit_tmp;
+//        delete sdigit;
+//        delete sa;
+//        sa = sa_tmp;
+//
+//        sa_tmp = acirc->PutY2AGate(sa, bcirc);
+//        delete sa;
+//        sa = sa_tmp;
+//        sa_tmp = acirc->PutSharedOUTGate(sa);
+//        delete sa;
+//        sa = sa_tmp;
+//        pt->ExecCircuit();
+//        uint64_t *v;
+//        uint bitlen, nval;
+//        sa->get_clear_value_vec(&v,&bitlen,&nval);
+//        pt->Reset();
+//        vector<uint64_t>output(v,v+dim);
+//        delete v;
+//        delete sa;
+//        return output;
     }
 
+
+    // not fit for negative number
     vector<uint64_t> right_shift_const(vector<uint64_t >&a, uint64_t digits, ABYParty *pt, e_role role) {
         bool left = false;
         bool const_digit = true;
         return bitwise_shift(a,digits,pt,role,left,const_digit);
     }
 
+    // not fit for negative number
     vector<uint64_t> right_shift(vector<uint64_t >&a, uint64_t digits, ABYParty *pt, e_role role) {
         bool left = false;
         bool const_digit = false;
