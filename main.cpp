@@ -36,7 +36,7 @@
 #include "ttruth/ttruth.h"
 #include "mpc_ttruth/mpc_ttruth.h"
 
-const int QUESTION_NUM = 1;
+const int QUESTION_NUM = 5;
 const int USER_NUM = 10;
 
 int32_t read_test_options(int32_t *argcp, char ***argvp, e_role *role,

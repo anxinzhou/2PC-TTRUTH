@@ -1,24 +1,24 @@
-visit left first tree binary every sub node right parent
-according traversal tree order binary visits node data values inorder
-visit nodes according tree order binary data values lets inorder traverses
-visit nodes tree order binary used search key
-left root side tree right
-move left far least tree order greatest going possible right parent printing done
-left root order right go
-left checks hand side level right parent sibling retrieve root traversal tree itã furthest goes binary inorder start gets leaf repeats â
-left visit subtree root traverse right
-postorder
-left root starts order recursively right child
-left right gt parent child
-highest inside goes tree lowest
-furthest order node right recursive displaying starting
-travels left right
-cout left data void ptnode gt lt right ptr inorder
-left subtree root first finally right traversed middle
-left first traversal recursively visits node right parent branch
-all visiting left entire traversal deepest way leaf visits node right pattern inorder branch following child
-left middle right
-all left nodes visit root traverse right
-left process root continue furthest exist side reached previous would node right go return one
-subtree means traverse node look traversing one
-visited left nodes push root successively traversal 0 level pop methods order method node right levels starting
+binary sub right node tree left visit parent first
+visits binary according traversal node tree order values data
+nodes binary traverses according tree order values lets data
+nodes binary search used tree order key
+right tree left root side
+possible right far tree left least order parent done printing going
+root right order left
+level start binary checks â traversal right goes tree furthest left hand repeats gets parent sibling root leaf side
+right subtree left root traverse
+none
+right starts left order recursively root child
+right gt left parent child
+lowest inside goes tree highest
+starting recursive right node furthest order displaying
+travels left
+ptr right gt lt void left data
+traversed middle right subtree left root finally first
+visits right traversal node left branch parent recursively first
+visits right traversal deepest pattern entire node left branch way visiting following leaf child all
+right middle left
+nodes right left visit root traverse all
+exist right reached one process node left furthest previous root side
+traversing one means node subtree look traverse
+level nodes methods starting 0 traversal levels pop node left method visited order push successively root

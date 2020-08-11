@@ -1,24 +1,24 @@
-array program compilation bytes number
-sizeof returns size operand operator
-returns bytes size operand
-returns bytes array size
-array program returns size compilation bytes
-returns argument passed size
-ina stored variable size byte date
-sizeof returns size operand bytes
-ints parameter required specific memory amount doubles
-sizeof returns size operand bytes
+bytes program number compilation array
+operand returns size operator
+operand bytes returns size
+array bytes returns size
+bytes program size returns compilation array
+passed returns size argument
+ina variable byte stored size date
+operand bytes returns size
+required specific parameter ints doubles amount memory
+operand bytes returns size
 information size bits
-string size
-sizeof returns respective size object bytes
-sizeof returns total operator bytes operand number
-names variable constant size operand bytes type used values
-needed size object memory bytes store
-object size list
-sizeof array parameter returns size operator bytes
-bytes size operand
-returns specified size bytes data
-returns size memory operand time compiler checked
-bytes return size operand
-bytes number object total
-bytes array number total
+size string
+bytes object size respective returns
+bytes total operator returns number operand
+bytes variable type used size names constant values operand
+bytes object size needed memory
+list object size
+bytes parameter size operator returns array
+operand bytes size
+bytes size returns specified data
+size time compiler returns memory checked operand
+operand bytes size return
+bytes total number object
+bytes total number array

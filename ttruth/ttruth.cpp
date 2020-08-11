@@ -194,6 +194,7 @@ vector<vector<double>> cluster_init(vector<vector<double>> &points) {
                 break;
             }
         }
+//        cout<<cluster_index<<endl;
         cluster_centers[i] = points[cluster_index];
     }
     return cluster_centers;
@@ -209,16 +210,22 @@ vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
     // iteration
     for (int t = 0; t < iter; t++) {
         // assign cluster index
+        // clear cluster index first
+
+        cluster_index = vector<vector<int>>(points.size(), vector<int>(cluster_num, 0));
         for (int j = 0; j < points.size(); j++) {
             double min_dis = INT_MAX;
             int min_index = -1;
+//            cout<<"dis: ";
             for (int i = 0; i < cluster_num; i++) {
                 double dis = distance(points[j], cluster_centers[i]);
                 if (dis < min_dis) {
                     min_dis = dis;
                     min_index = i;
                 }
+//                cout<<dis << " ";
             }
+//            cout<<endl;
             cluster_index[j][min_index] = 1;
         }
 
@@ -258,6 +265,8 @@ vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
         cout<<t<<"-th round "<<"convergence: "<<diff<<endl;
 
         swap(cluster_centers, new_cluster_centers);
+
+
         vector<int>statistics(cluster_num,0);
         for(int i=0;i<points.size();i++) {
             for(int j=0;j<cluster_num;j++) {

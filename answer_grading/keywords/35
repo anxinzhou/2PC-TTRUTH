@@ -1,24 +1,24 @@
-array pointer assigned element signed
-array pointer setting adding value variable addressed accessed name notation elements offset equal
-b n accessed bptr element
-array pointer using separate name either points
-b referenced 3 using bptr element instead
-first location get memory element add elements offset
+element pointer assigned signed array
+adding equal variable elements addressed pointer value name notation setting array offset accessed
+element n accessed b
+separate pointer name using points array
+element referenced 3 using instead b
+element elements get add memory offset location first
 array offset yes
-int array pointer functions stores 0 address parameters name declaring c considered 10 passed creates
-array example pointer b n accessed addressed bptr element notation offset
+parameters c int 0 passed pointer stores declaring name creates considered functions 10 array address
+example element addressed pointer notation n b array offset accessed
 array element
 3 f
-array pointer initial value location memory front add offset
-array pointer initially first point incremented element next
-int 1 address xptr 10 x
-array number time elements takes points
-array pointer referenced 3 act arrayptr
-using pointer index element
-array star b n operator using accessed bpointer
-accessed element n aptr
-pointer first 1 etc relative referring referencing 2 pointers
-array pointer nthentity reference must first variable plus entity address ptrtoarray n accessed referring offset e
-array pointer 3 bptr b3 treated
-belonging
-3 bptr b
+initial pointer value memory front array offset location
+element incremented pointer initially array next first
+x int 1 10 address
+elements time takes points number array
+array referenced pointer 3
+element pointer index using
+operator using n array star accessed
+element n accessed
+referencing referring pointer 2 etc pointers 1 relative first
+accessed variable referring pointer e n array offset entity address first
+treated pointer b3 3 array
+cheaper
+3 b

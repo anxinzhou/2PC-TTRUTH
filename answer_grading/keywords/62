@@ -1,24 +1,24 @@
-nodes leaf node parent child children
-node children leaf
-node children
-node tree children
-end tree point node children
-node children
-new child tree item
-node terminating children leaf
-0 node degree
-0 node degree
-node children leaf
-child branch last
-attatched value last tree children
-node children
-node children
-node children leaf
-degree root away last 0 tree node furtherest
-tree endpoint contains null set pointers
-node children leaf
-element tree children
-node children
-node nodes children leaf
-node children leaf
-called tree inverted leaves bottom elements
+nodes node parent children child leaf
+children node leaf
+children node
+children node tree
+point children node tree
+children node
+item new child tree
+children terminating node leaf
+degree node 0
+degree node 0
+children node leaf
+last branch child
+last children value tree
+children node
+children node
+children node leaf
+last 0 node tree away degree root
+endpoint tree pointers set contains
+children node leaf
+element children tree
+children node
+children nodes node leaf
+children node leaf
+inverted elements tree bottom called leaves

@@ -1,24 +1,24 @@
-number log nodes n
-log steps n
-levels height number tree
+log n number nodes
+log n steps
+levels number height tree
 height tree
-criteria search given n would elements take find steps 2
+criteria search elements given 2 n steps
 log n
-depends current left go root step location node larger right looking else one smaller
-n tree binary levels 2
-1 n node number search function steps
-given n would elements take 2
+location smaller right one node left current larger step looking root else depends go
+binary levels 2 tree n
+function node n number 1 steps
+n 2 elements given
 log n
 log n
 log n
-best progressing linear n items right linked search children one constructed root 1 downwards worse traversal tree case log full list poorly way binary would last instance efficiently time number scenario
-number nodes n
-way tree anywhere n depending log could steps ordered
+constructed search case items one time full worse binary scenario best list instance log way n number root last traversal progressing children linear efficiently right tree 1 poorly linked downwards
+nodes n number
+anywhere depending ordered tree log way n steps
 log n
-best worst root step 1 tree case ie position node number farthest levels scenario
-3 steps cases
-nodes n tree total log number equals
-tree generations number levels steps
-tree binary node number search levels find takes steps
-visiting visit subtree left root three node right go steps
+step case scenario worst levels node tree number 1 ie farthest root position
+cases 3 steps
+total nodes equals tree log n number
+levels tree number steps generations
+binary search levels takes node tree number steps
+right node subtree visiting visit left three steps root
 log n

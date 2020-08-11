@@ -1,24 +1,24 @@
-pointer returns object operand synonym points
-pointer star returns object operand operator synonym points
-returns object operand synonym points
-pointer returns dereferencing object memory operand alias synonym name points nickname
-pointer returns object operand alias points nickname
-value returns address memory operator element points
-returns value
-pointer value returns variable whatever ie pointing operator dereferenced
-returns dereferencing object operator dereferenced
-returns object operand synonym points
-pointer returns address information points
-pointer value star returns address memory pointing operator
-star returns location object memory operator
-precedes value returns address object memory operator
-points object value operand
-stored pointed object value
-variable pointer value points
-returns object operand synonym points
-synonym points object operand
-returns object operand synonym points
-pointer value dereferences returns stored refers address memory meaning
-located unary value returns variable address operator
+pointer object synonym points returns operand
+object pointer synonym operator points returns operand star
+object synonym points returns operand
+object pointer name synonym nickname points returns memory alias operand
+pointer object nickname points returns alias operand
+element value operator points returns memory
+value returns
+variable pointing pointer value operator returns ie
+object returns operator
+object synonym points returns operand
+information pointer points returns address
+pointing value pointer operator returns memory star
+object operator returns memory star location
+object value operator precedes returns memory address
+operand value object points
+object value stored pointed
+points pointer value variable
+object synonym points returns operand
+operand object points synonym
+object synonym points returns operand
+meaning pointer stored value returns memory address refers
+variable value operator returns unary address located
 variable reference
-pointer object operand synonym points
+pointer object synonym points operand

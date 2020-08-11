@@ -1,24 +1,24 @@
-3 log n 2
-3 log n 2
-n 3 log logn 2
-3 log n 2
-3 log n 2
-3 log n 2
-n 3 log logn 2
-3 log n 2
-goes n 3 log smallest largest 2
-3 log n 2
-3 log n 2
-3 log n 2
-least n 3 log greatest 2
-3 log n 2
-3 log n 2
-longest n 3 log lowest 2
-3 log n 2
-3 log n 2
-3 log n 2
+log n 2 3
+log n 2 3
+log n 2 3
+log n 2 3
+log n 2 3
+log n 2 3
+log n 2 3
+log n 2 3
+largest goes 2 3 log n
+log n 2 3
+log n 2 3
+log n 2 3
+2 3 log n least
+log n 2 3
+log n 2 3
+lowest 2 3 log n
+log n 2 3
+log n 2 3
+log n 2 3
 exponential linear logarithmic
-n 3 log slowest bottom top quickest 2
-longest n 3 log shortest 2
-long n 3 log 2
-long highest 1 5 n 3 log lowest 4 2
+slowest 2 3 bottom top log n quickest
+longest 2 3 log n
+2 3 log n long
+lowest 2 4 3 log 5 n 1 highest long
