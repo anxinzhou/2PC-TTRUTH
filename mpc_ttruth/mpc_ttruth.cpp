@@ -139,6 +139,7 @@ namespace MPC {
                     uint64_t tl_eq_0 = role == SERVER ? -tl_eq_1 : -tl_eq_1 + 1;
                     vector<vector<uint64_t>> tmp_prior(user_num, vector<uint64_t>(2, 0));
 
+                    auto start = clock();
                     for (int j = 0; j < user_num; j++) {
                         // load paramers
                         auto &ob = all_obs[i][j];
@@ -193,11 +194,13 @@ namespace MPC {
                         }
 //                        print_share(tmp1,pt,role);
 
-                        auto start = clock();
+
                         tmp1 = left_shift_const(tmp1, FLOAT_SCALE_FACTOR, pt, role);
-                        auto end = clock();
-//                        cout<<"Left shift const time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+
+                        auto start = clock();
                         tmp1 = log(tmp1, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                        auto end = clock();
+                        cout<<"Log time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 //                        print_scaled_share(tmp1,pt,role);
 //                        exit(-1);
                         uint64_t tmp2 = n_u_t_1 + n_u_t_0 + alpha_t_0 + alpha_t_1;
@@ -224,10 +227,13 @@ namespace MPC {
                         tmp_prior[j][1] = n_u_negt_o;
                     }
 
-                    auto start = clock();
+                    end = clock();
+                    cout<<"Calculate prob time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+
+                    start = clock();
                     uint64_t threshold_p = sigmoid(p_negt - p_t, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-                    auto end = clock();
-//                    cout<<"Sigmoid time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+                    end = clock();
+                    cout<<"Sigmoid time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 //                    print_scaled_share(p_t,pt,role);
 //                    print_scaled_share(p_negt,pt,role);
 //                    print_scaled_share(threshold_p,pt,role);

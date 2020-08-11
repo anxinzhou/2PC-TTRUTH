@@ -134,18 +134,21 @@ namespace MPC {
 //        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
 //        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
 //
-//        auto sa = acirc->PutSharedINGate(a, UINT64_LEN);
-//        sa = bcirc->PutA2YGate(sa);
+//        auto sa_tmp = acirc->PutSharedINGate(a, UINT64_LEN);
+//        auto sa = bcirc->PutA2BGate(sa_tmp,ycirc);
 //
 //        uint64_t sum = 0;
 //        digits = 0;
 //        vector<share*>inds;
 //        for(int i=1;i<UINT64_LEN;i++) {
-//            sa->set_wire_id(i, ycirc->PutORGate(sa->get_wire_id(i),sa->get_wire_id(i-1)));
+//            sa->set_wire_id(i, bcirc->PutORGate(sa->get_wire_id(i),sa->get_wire_id(i-1)));
 //        }
 //        for(int i=UINT64_LEN-1;i>=0;i--) {
-//            auto sid = acirc->PutY2AGate(sa->get_wire_ids_as_share(i),bcirc);
-//            sid = acirc->PutSharedOUTGate(sid);
+//            auto tmp =sa->get_wire_ids_as_share(i);
+//            auto sid_tmp = acirc->PutB2AGate(tmp);
+//            auto sid = acirc->PutSharedOUTGate(sid_tmp);
+//            delete sid_tmp;
+//            delete tmp;
 //            inds.push_back(sid);
 //        }
 //        pt->ExecCircuit();
@@ -158,6 +161,12 @@ namespace MPC {
 //        pt->Reset();
 //        if(role == SERVER) {
 //            sum+=1;
+//        }
+//
+//        delete sa;
+//        delete sa_tmp;
+//        for(int i=0;i<inds.size();i++) {
+//            delete inds[i];
 //        }
 //
 //        return sum;
@@ -366,9 +375,81 @@ namespace MPC {
     }
 
     // the result will scale scale_factor (1<<scale_factor)
+//    uint64_t log_v2(uint64_t a, uint64_t scale_factor, uint64_t already_scaled_factor, ABYParty *pt, e_role role) {
+//        uint64_t digits;
+//
+//        auto start = clock();
+//        uint64_t m2N = max2N(a, digits,pt, role);
+//
+//        auto end = clock();
+//        cout<<"Max2N time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//
+//        uint64_t threshold = uint64_t(0.85 * (1<<FLOAT_SCALE_FACTOR));
+//        uint64_t alpha1 = 1.86511335 * (1<<FLOAT_SCALE_FACTOR) ;
+//        uint64_t beta1 = - uint64_t (1.8154986 * (1<<scale_factor));
+//        uint64_t alpha2 = 1.5617682 * (1<<FLOAT_SCALE_FACTOR);
+//        uint64_t beta2 = - uint64_t (1.55872625 * (1<<scale_factor));
+//
+//        uint64_t tmp = m2N*threshold;
+//        auto sharings = pt->GetSharings();
+//        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+//        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+//        auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
+//
+//        auto sa = acirc->PutSharedINGate(a, UINT64_LEN);
+//        auto ya = ycirc->PutA2YGate(sa);
+//
+//        auto at = acirc->PutSharedINGate(tmp, UINT64_LEN);
+//        auto yt_tmp = ycirc->PutA2YGate(at);
+//        auto shiftpos = ycirc->PutCONSGate(FLOAT_SCALE_FACTOR,UINT64_LEN);
+//        auto yt = ycirc->PutBarrelRightShifterGate(yt_tmp,shiftpos);
+//        auto cmp_res = ycirc->PutGTGate(yt,ya);
+//        auto one = ycirc->PutCONSGate(1,UINT64_LEN);
+//        auto cmp_inv = ycirc->PutSUBGate(one, cmp_res);
+//
+//        uint64_t res1 = alpha1 * a;
+//        auto sres1 = acirc->PutSharedINGate(res1,UINT64_LEN);
+//        auto yres1_tmp = ycirc->PutA2YGate(sres1);
+//        if(FLOAT_SCALE_FACTOR > scale_factor) {
+//
+//        }
+//
+//
+//        res1 = right_shift_const(res1, FLOAT_SCALE_FACTOR, pt, role);
+//        res1 = left_shift_const(res1,scale_factor,pt,role);
+//        res1 = right_shift(res1, digits,pt,role);
+//
+//        if(role==SERVER) {
+//            res1 = res1 + beta1;
+//        }
+//
+//        uint64_t res2 = alpha2 * a;
+//        res2 = right_shift_const(res2, FLOAT_SCALE_FACTOR, pt, role);
+//        res2 = left_shift_const(res2,scale_factor,pt,role);
+//        res2 = right_shift(res2, digits,pt,role);
+//        if(role==SERVER){
+//            res2=res2 + beta2;
+//        }
+//
+//        uint64_t p1 = product(cmp_res, res1, pt, role);
+//        uint64_t p2 = product(cmp_inv, res2, pt, role);
+//
+//        uint64_t res = p1 + p2 + digits * (1<<scale_factor);
+//        if(role == SERVER) {
+//            res-=already_scaled_factor * (1<<scale_factor);
+//        }
+//        return res;
+//    }
+
+
     uint64_t log(uint64_t a, uint64_t scale_factor, uint64_t already_scaled_factor, ABYParty *pt, e_role role) {
         uint64_t digits;
+
+        auto start = clock();
         uint64_t m2N = max2N(a, digits,pt, role);
+
+        auto end = clock();
+        cout<<"Max2N time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
         uint64_t threshold = uint64_t(0.85 * (1<<FLOAT_SCALE_FACTOR));
         uint64_t alpha1 = 1.86511335 * (1<<FLOAT_SCALE_FACTOR) ;
@@ -385,8 +466,10 @@ namespace MPC {
         }
 
         uint64_t res1 = alpha1 * a;
-        res1 = right_shift_const(res1, FLOAT_SCALE_FACTOR, pt, role);
-        res1 = left_shift_const(res1,scale_factor,pt,role);
+        if(FLOAT_SCALE_FACTOR!=scale_factor) {
+            res1 = right_shift_const(res1, FLOAT_SCALE_FACTOR, pt, role);
+            res1 = left_shift_const(res1,scale_factor,pt,role);
+        }
         res1 = right_shift(res1, digits,pt,role);
 
         if(role==SERVER) {
@@ -394,8 +477,10 @@ namespace MPC {
         }
 
         uint64_t res2 = alpha2 * a;
-        res2 = right_shift_const(res2, FLOAT_SCALE_FACTOR, pt, role);
-        res2 = left_shift_const(res2,scale_factor,pt,role);
+        if(FLOAT_SCALE_FACTOR!=scale_factor) {
+            res2 = right_shift_const(res2, FLOAT_SCALE_FACTOR, pt, role);
+            res2 = left_shift_const(res2,scale_factor,pt,role);
+        }
         res2 = right_shift(res2, digits,pt,role);
         if(role==SERVER){
             res2=res2 + beta2;
@@ -455,8 +540,10 @@ namespace MPC {
             }
 
             uint64_t val = alpha[i] * a;
-            val = right_shift_const(val, FLOAT_SCALE_FACTOR, pt, role);
-            val = left_shift_const(val,scale_factor,pt,role);
+            if(FLOAT_SCALE_FACTOR!=scale_factor) {
+                val = right_shift_const(val, FLOAT_SCALE_FACTOR, pt, role);
+                val = left_shift_const(val,scale_factor,pt,role);
+            }
             val = right_shift_const(val, already_scaled_factor,pt,role);
 
             if(role==SERVER) {
@@ -486,8 +573,10 @@ namespace MPC {
 
         uint64_t res = -alpha*a;
 
-        res = right_shift_const(res, FLOAT_SCALE_FACTOR, pt, role);
-        res = left_shift_const(res,scale_factor,pt,role);
+        if(FLOAT_SCALE_FACTOR!=scale_factor) {
+            res = right_shift_const(res, FLOAT_SCALE_FACTOR, pt, role);
+            res = left_shift_const(res,scale_factor,pt,role);
+        }
         res = right_shift(res, digits,pt,role);
         res = -res;
         if(role == SERVER) {
@@ -964,6 +1053,7 @@ namespace MPC {
 //        }
 //        return v_index;
 //    }
+
 
     share* build_product_circuit(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty*pt, e_role role){
         assert(a.size() == b.size());

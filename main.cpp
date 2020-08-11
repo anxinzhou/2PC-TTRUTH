@@ -355,6 +355,25 @@ int main(int argc, char **argv) {
     // call inner product routine. set size with cmd-parameter -n <size>
     ABYParty *pt = MPC::init_party(role, address, port, seclvl, UINT64_LEN, nthreads, mt_alg);
 
+    uint64_t  a = 10;
+    auto sharings = pt->GetSharings();
+    auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+    auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+    auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
+
+//    pt->ExecCircuit();
+//    pt->Reset();
+//    auto start = clock();
+//    auto s1 = acirc->PutSharedINGate(a, UINT64_LEN);
+//    auto s2 = bcirc->PutA2BGate(s1,ycirc);
+//    auto s3 = acirc->PutB2AGate(s2);
+//    auto s4 = acirc->PutSharedOUTGate(s3);
+//    pt->ExecCircuit();
+//    pt->Reset();
+//    auto end = clock();
+//    cout<<"time "<<double(end-start)/CLOCKS_PER_SEC<<endl;
+//    exit(-1);
+
 //    test_ttruth();
 testMPCTextTruth(pt,role);
     delete pt;

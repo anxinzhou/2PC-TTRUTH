@@ -217,6 +217,8 @@ namespace MPC {
 
     share *build_eq_circuit(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
 
+    share *build_product_circuit_yao(share* a, share* b, ABYParty *pt, e_role role);
+
     share *build_product_circuit(uint64_t a, uint64_t b, ABYParty *pt, e_role role);
 
     share *build_product_circuit(vector<uint64_t> &a, vector<uint64_t> &b, ABYParty *pt, e_role role);
