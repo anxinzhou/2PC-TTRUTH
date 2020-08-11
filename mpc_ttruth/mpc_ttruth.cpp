@@ -200,7 +200,7 @@ namespace MPC {
                         auto start = clock();
                         tmp1 = log(tmp1, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
                         auto end = clock();
-                        cout<<"Log time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//                        cout<<"Log time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 //                        print_scaled_share(tmp1,pt,role);
 //                        exit(-1);
                         uint64_t tmp2 = n_u_t_1 + n_u_t_0 + alpha_t_0 + alpha_t_1;
@@ -228,12 +228,12 @@ namespace MPC {
                     }
 
                     end = clock();
-                    cout<<"Calculate prob time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//                    cout<<"Calculate prob time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
                     start = clock();
                     uint64_t threshold_p = sigmoid(p_negt - p_t, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
                     end = clock();
-                    cout<<"Sigmoid time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//                    cout<<"Sigmoid time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 //                    print_scaled_share(p_t,pt,role);
 //                    print_scaled_share(p_negt,pt,role);
 //                    print_scaled_share(threshold_p,pt,role);

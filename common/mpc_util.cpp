@@ -449,7 +449,7 @@ namespace MPC {
         uint64_t m2N = max2N(a, digits,pt, role);
 
         auto end = clock();
-        cout<<"Max2N time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//        cout<<"Max2N time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
         uint64_t threshold = uint64_t(0.85 * (1<<FLOAT_SCALE_FACTOR));
         uint64_t alpha1 = 1.86511335 * (1<<FLOAT_SCALE_FACTOR) ;

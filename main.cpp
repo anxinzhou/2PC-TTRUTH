@@ -321,7 +321,7 @@ void testMPCTextTruth(ABYParty *pt, e_role role) {
         cout<< total_avg[i]<<" ";
     }
     cout<<endl;
-    cout<<"avg score: " << all_socre/all_count;
+    cout<<"total topk avg score: " << all_socre/all_count;
     cout<<endl;
     vector<double>total_avg2(topK,0);
     for(int i=0;i<question_num;i++) {
@@ -333,10 +333,12 @@ void testMPCTextTruth(ABYParty *pt, e_role role) {
         }
     }
 //    cout<<endl;
+    cout<<"total avg score: ";
     for(int i=0; i<topK;i++) {
         total_avg2[i]/=question_num;
         cout<< total_avg2[i]<<" ";
     }
+    cout<<endl;
 }
 
 int main(int argc, char **argv) {
