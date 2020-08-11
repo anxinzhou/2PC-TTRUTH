@@ -7,8 +7,26 @@
 const uint ALPHA[4] = {80, 20, 40, 60};
 
 const int CLUSTER_NUM = 10;
-const uint SKM_ITER = 10;
-const uint LTM_ITER = 10;
+const uint SKM_ITER = 1;
+const uint LTM_ITER = 1;
+const uint RANDOMNESS_BIT = 16;
+
+class RandomnessPool {
+public:
+    int loc;
+    default_random_engine eng;
+    std::uniform_int_distribution<int> distribution;
+    RandomnessPool():distribution(std::uniform_int_distribution<int>(0,(1<<RANDOMNESS_BIT)-1)),
+                     eng(default_random_engine {1}){}
+    uint rand() {
+        int val = distribution(eng);
+//        cout<<"randomness " <<val<<endl;
+        return val;
+    }
+};
+
+RandomnessPool *randomness_pool;
+
 
 vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs, int iter) {
     uint question_num = all_obs.size();
@@ -18,7 +36,7 @@ vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,
     // random initialization truth label
     for (int i = 0; i < question_num; i++) {
         for (int j = 0; j < cluster_num; j++) {
-            float p = double(rand()) / RAND_MAX;
+            float p = double(randomness_pool->rand()) / (1<<RANDOMNESS_BIT);
             tls[i][j] = p > 0.5 ? 1 : 0;
 
 //            int num_user_has_ob = 0;
@@ -84,7 +102,7 @@ vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,
 
                 // update statistics
                 double threshold = 1.0 / (1 + exp(p_t - p_negt));
-                double p = double(rand()) / RAND_MAX;
+                double p = double(randomness_pool->rand()) / (1<<RANDOMNESS_BIT);
                 if (p < threshold) {
                     for (int j = 0; j < user_num; j++) {
                         auto &ob = all_obs[i][j];
@@ -96,6 +114,13 @@ vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,
                 }
             }
         }
+    }
+    cout<<"final truth label"<<endl;
+    for(int i=0;i<tls.size();i++) {
+        for(int j=0; j<tls[i].size();j++) {
+            cout<<tls[i][j]<<" ";
+        }
+        cout<<endl;
     }
     return tls;
 }
@@ -119,7 +144,7 @@ vector<vector<double>> cluster_init(vector<vector<double>> &points) {
     vector<vector<double>> cluster_centers(cluster_num);
     int dim = points[0].size();
     // pick first cluster center
-    int r = rand() % cluster_num;
+    int r = randomness_pool->rand() % cluster_num;
     cluster_centers[0] = points[r];
 
     vector<double> D(points.size(), INT_MAX);
@@ -133,7 +158,7 @@ vector<vector<double>> cluster_init(vector<vector<double>> &points) {
         }
 
         // sample next cluster
-        double p = double(rand()) / RAND_MAX;
+        double p = double(randomness_pool->rand()) / (1<<RANDOMNESS_BIT);
         p = p * total_dis;
 
         vector<double> bar_D(points.size(), INT_MAX);
@@ -218,6 +243,8 @@ vector<vector<int>> ttruth(vector<vector<vector<vector<double>>>> &all_kvec, int
     int question_num = all_kvec.size();
     int user_num = all_kvec[0].size();
     int cluster_number = CLUSTER_NUM;
+
+    randomness_pool = new RandomnessPool();
 
     vector<vector<vector<int>>> all_obs(question_num,
                                         vector<vector<int>>(user_num,

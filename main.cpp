@@ -299,7 +299,7 @@ void testMPCTextTruth(ABYParty *pt, e_role role) {
     int all_count = question_num * topK;
     for(int i=0;i<question_num;i++) {
         vector<double>avg(topK,0);
-        cout<<"question "<<i+1<<" ";
+        cout<<"question "<<i+1<<"th score ";
         for(int j=0;j<topK;j++) {
             int index = topk_index[i][j];
             cout<<score[i][index] << " ";
@@ -315,12 +315,13 @@ void testMPCTextTruth(ABYParty *pt, e_role role) {
             total_avg[j] += avg[j];
         }
     }
+    cout<<"topK avg score: ";
     for(int i=0; i<topK;i++) {
         total_avg[i]/=question_num;
         cout<< total_avg[i]<<" ";
     }
     cout<<endl;
-    cout<<"avg: " << all_socre/all_count;
+    cout<<"avg score: " << all_socre/all_count;
     cout<<endl;
     vector<double>total_avg2(topK,0);
     for(int i=0;i<question_num;i++) {

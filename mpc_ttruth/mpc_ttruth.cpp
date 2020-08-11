@@ -68,6 +68,8 @@ namespace MPC {
         uint cluster_num = CLUSTER_NUM;
         vector<vector<uint64_t>> tls(question_num, vector<uint64_t>(cluster_num, 0));
         // random initialization truth label
+        cout<<"initial truth label"<<endl;
+        auto start = clock();
         for (int i = 0; i < question_num; i++) {
             for (int j = 0; j < cluster_num; j++) {
                 uint64_t r = random(pt, role);
@@ -78,10 +80,13 @@ namespace MPC {
                 tls[i][j] = t;
             }
             print_share(tls[i],pt,role);
-            exit(-1);
+//            exit(-1);
         }
+        auto end = clock();
+//        cout<<"Init truth label time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
         // initialize posterior counts
+        start = clock();
         vector<vector<uint64_t>> pos_counts(user_num, vector<uint64_t>(4, 0));
         for (int j = 0; j < user_num; j++) {
             // n,0,0
@@ -114,16 +119,26 @@ namespace MPC {
             }
         }
 
+        end = clock();
+//        cout<<"Init posterior time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+
+        cout<<"initial posterior counts"<<endl;
+        for(int j=0; j<user_num; j++) {
+            print_share(pos_counts[j],pt,role);
+        }
+
         // iteratively update truth label and prior count
+        start = clock();
         for (int t = 0; t < iter; t++) {
             for (int i = 0; i < question_num; i++) {
                 auto &tl = tls[i];
                 for (int k = 0; k < tl.size(); k++) {
-                    uint p_t = 0;
-                    uint p_negt = 0;
+                    uint64_t p_t = 0;
+                    uint64_t p_negt = 0;
                     auto tl_eq_1 = eq(tl[k], role == SERVER ? 1 : 0, pt, role);
                     uint64_t tl_eq_0 = role == SERVER ? -tl_eq_1 : -tl_eq_1 + 1;
                     vector<vector<uint64_t>> tmp_prior(user_num, vector<uint64_t>(2, 0));
+
                     for (int j = 0; j < user_num; j++) {
                         // load paramers
                         auto &ob = all_obs[i][j];
@@ -139,10 +154,25 @@ namespace MPC {
                         uint64_t n_u_negt_1 = product(tl_eq_0, pos_counts[j][3], pt, role) +
                                               product(tl_eq_1, pos_counts[j][1], pt, role);
 
+
                         uint64_t n_u_t_o = product(ob_eq_1, n_u_t_1, pt, role) +
                                            product(ob_eq_0, n_u_t_0, pt, role);
-                        uint64_t n_u_negt_o = product(ob_eq_0, n_u_t_1, pt, role) +
-                                              product(ob_eq_1, n_u_t_0, pt, role);
+                        uint64_t n_u_negt_o = product(ob_eq_1, n_u_negt_1, pt, role) +
+                                              product(ob_eq_0, n_u_negt_0, pt, role);
+
+                        //                        cout<<"-----------------------------"<<endl;
+//                        print_share(tl[k],pt,role);
+//                        print_share(tl_eq_1,pt,role);
+//                        print_share(ob[k], pt, role);
+//                        print_share(ob_eq_1,pt,role);
+//                        print_share(pos_counts[j],pt,role);
+//                        print_share(n_u_t_o, pt, role);
+//                        print_share(n_u_negt_o,pt,role);
+//                        print_share(n_u_t_0,pt,role);
+//                        print_share(n_u_t_1,pt,role);
+//                        print_share(n_u_negt_0,pt,role);
+//                        print_share(n_u_negt_1,pt,role);
+//                        exit(-1);
 
                         uint64_t alpha_t_0 = product(tl_eq_1, role == SERVER ? ALPHA[2] : 0, pt, role) +
                                              product(tl_eq_0, role == SERVER ? ALPHA[0] : 0, pt, role);
@@ -154,35 +184,65 @@ namespace MPC {
                                                 product(tl_eq_1, role == SERVER ? ALPHA[1] : 0, pt, role);
                         uint64_t alpha_t_o = product(ob_eq_1, alpha_t_1, pt, role) +
                                              product(ob_eq_0, alpha_t_0, pt, role);
-                        uint64_t alpha_negt_o = product(ob_eq_0, alpha_t_1, pt, role) +
-                                                product(ob_eq_1, alpha_t_0, pt, role);
+                        uint64_t alpha_negt_o = product(ob_eq_1, alpha_negt_1, pt, role) +
+                                                product(ob_eq_0, alpha_negt_0, pt, role);
                         // update p_t
-                        uint tmp1 = n_u_t_o + alpha_t_o;
+                        uint64_t tmp1 = n_u_t_o + alpha_t_o;
                         if (role == SERVER) {
                             tmp1 -= 1;
                         }
-                        tmp1 = log(tmp1 << FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-                        uint tmp2 = n_u_t_1 + n_u_t_0 + alpha_t_0 + alpha_t_1;
+//                        print_share(tmp1,pt,role);
+
+                        auto start = clock();
+                        tmp1 = left_shift_const(tmp1, FLOAT_SCALE_FACTOR, pt, role);
+                        auto end = clock();
+//                        cout<<"Left shift const time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+                        tmp1 = log(tmp1, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+//                        print_scaled_share(tmp1,pt,role);
+//                        exit(-1);
+                        uint64_t tmp2 = n_u_t_1 + n_u_t_0 + alpha_t_0 + alpha_t_1;
                         if (role == SERVER) {
                             tmp2 -= 1;
                         }
-                        tmp2 = log(tmp2 << FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                        tmp2= left_shift_const(tmp2, FLOAT_SCALE_FACTOR, pt, role);
+                        tmp2 = log(tmp2, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
                         p_t += tmp1 - tmp2;
                         // update p_(1-t)
-                        uint tmp3 = n_u_negt_o + alpha_negt_o;
-                        tmp3 = log(tmp3 << FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-                        uint tmp4 = n_u_negt_0 + n_u_negt_1 + alpha_negt_0 + alpha_negt_1;
-                        tmp4 = log(tmp4 << FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-                        p_negt = tmp3 - tmp4;
+                        uint64_t tmp3 = n_u_negt_o + alpha_negt_o;
+                        tmp3 = left_shift_const(tmp3, FLOAT_SCALE_FACTOR, pt, role);
+                        tmp3 = log(tmp3, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                        uint64_t tmp4 = n_u_negt_0 + n_u_negt_1 + alpha_negt_0 + alpha_negt_1;
+                        tmp4 = left_shift_const(tmp4, FLOAT_SCALE_FACTOR, pt, role);
+                        tmp4 = log(tmp4, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                        p_negt += tmp3 - tmp4;
+
+//                        print_scaled_share(p_t,pt,role);
+//                        print_scaled_share(p_negt,pt,role);
+//                        exit(-1);
 
                         tmp_prior[j][0] = n_u_t_o;
                         tmp_prior[j][1] = n_u_negt_o;
                     }
+
+                    auto start = clock();
                     uint64_t threshold_p = sigmoid(p_negt - p_t, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                    auto end = clock();
+//                    cout<<"Sigmoid time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//                    print_scaled_share(p_t,pt,role);
+//                    print_scaled_share(p_negt,pt,role);
+//                    print_scaled_share(threshold_p,pt,role);
+//                    exit(-1);
+
                     uint64_t r = random(pt, role);
-                    threshold_p *= (1<<RANDOMNESS_BIT);
-                    r = r << FLOAT_SCALE_FACTOR;
-                    uint64_t flip = gt(r, threshold_p, pt, role);
+
+                    r = left_shift_const(r, FLOAT_SCALE_FACTOR, pt, role);
+                    threshold_p = left_shift_const(threshold_p, RANDOMNESS_BIT, pt, role);
+                    uint64_t flip = gt(threshold_p, r, pt, role);
+//                    cout<<"------------------"<<endl;
+//                    print_share(r,pt,role);
+//                    print_share(threshold_p,pt,role);
+//                    print_share(flip, pt, role);
+//                    cout<<"---------------------"<<endl;
                     // update statistics
                     for (int j = 0; j < user_num; j++) {
                         auto &ob = all_obs[i][j];
@@ -193,27 +253,60 @@ namespace MPC {
                         tmp_prior[j][1] += flip;
                         uint64_t n_u_t_o = tmp_prior[j][0];
                         uint64_t n_u_negt_o = tmp_prior[j][1];
+
+//                        cout<<"---------------------"<<endl;
+//                        print_share(tl[k],pt,role);
+//                        print_share(ob[k],pt,role);
+//                        print_share(tl_eq_0, pt, role);
+//                        print_share(tl_eq_1, pt, role);
+//                        print_share(ob_eq_0, pt, role);
+//                        print_share(ob_eq_1,pt,role);
+//                        print_share(pos_counts[j],pt,role);
+//                        print_share(n_u_t_o,pt,role);
+//                        print_share(n_u_negt_o,pt,role);
+//                        exit(-1);
+
                         pos_counts[j][0] = product(ob_eq_0,
                                                    product(tl_eq_0, n_u_t_o, pt, role) +
-                                                   product(tl_eq_1, n_u_negt_o, pt, role), pt, role);
+                                                   product(tl_eq_1, n_u_negt_o, pt, role), pt, role)
+                                                           + product(ob_eq_1, pos_counts[j][0],pt,role);
 
                         pos_counts[j][1] = product(ob_eq_1,
                                                    product(tl_eq_0, n_u_t_o, pt, role) +
-                                                   product(tl_eq_1, n_u_negt_o, pt, role), pt, role);
+                                                   product(tl_eq_1, n_u_negt_o, pt, role), pt, role)
+                                           + product(ob_eq_0, pos_counts[j][1],pt,role);
+
                         pos_counts[j][2] = product(ob_eq_0,
                                                    product(tl_eq_1, n_u_t_o, pt, role) +
-                                                   product(tl_eq_0, n_u_negt_o, pt, role), pt, role);
-                        pos_counts[j][0] = product(ob_eq_1,
+                                                   product(tl_eq_0, n_u_negt_o, pt, role), pt, role)
+                                           + product(ob_eq_1, pos_counts[j][2],pt,role);
+
+
+                        pos_counts[j][3] = product(ob_eq_1,
                                                    product(tl_eq_1, n_u_t_o, pt, role) +
-                                                   product(tl_eq_0, n_u_negt_o, pt, role), pt, role);
+                                                   product(tl_eq_0, n_u_negt_o, pt, role), pt, role)
+                                           + product(ob_eq_0, pos_counts[j][3],pt,role);
+//                        print_share(pos_counts[j],pt,role);
+//                        exit(-1);
                     }
                     // update truth label
                     tl[k] = product(flip, role == SERVER ? 1 - tl[k] : -tl[k], pt, role) +
                             product(role == SERVER ? 1 - flip : -flip, tl[k], pt, role);
                 }
-                return tls;
             }
         }
+        end = clock();
+        cout<<"Update truth label time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+
+        cout<<"after latent truth posterior counts"<<endl;
+        for(int j=0; j<user_num; j++) {
+            print_share(pos_counts[j],pt,role);
+        }
+        cout<<"final truth label"<<endl;
+        for(int i=0; i<question_num; i++){
+            print_share(tls[i],pt,role);
+        }
+        return tls;
     }
 
     // only for float number
@@ -343,11 +436,11 @@ namespace MPC {
 //            cout<<"Select a new cluster Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
         }
         //test
-        for(int i=0; i<cluster_num; i++) {
-            print_scaled_share(cluster_centers[i],pt,role);
-            cout<<"------------------"<<endl;
-//            exit(-1);
-        }
+//        for(int i=0; i<cluster_num; i++) {
+//            print_scaled_share(cluster_centers[i],pt,role);
+//            cout<<"------------------"<<endl;
+////            exit(-1);
+//        }
         return cluster_centers;
     }
 
@@ -363,13 +456,13 @@ namespace MPC {
         int dim = points[0].size();
         vector<vector<uint64_t>> cluster_index(points.size(), vector<uint64_t>(cluster_num, 0));
         // initialization
-        cout<<"start cluster init"<<endl;
+//        cout<<"start cluster init"<<endl;
 //        cout<<"point size "<<
         auto start = clock();
         auto cluster_centers = cluster_init(points, pt, role);
         auto end = clock();
-        cout<<"Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
-        cout<<"cluster init finish!"<<endl;
+        cout<<"Cluster init time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//        cout<<"cluster init finish!"<<endl;
         // iteration
         cout<<"start clustering"<<endl;
         for (int t = 0; t < iter; t++) {
@@ -381,7 +474,11 @@ namespace MPC {
                 for (int i = 0; i < cluster_num; i++) {
                     dis[i] = non_right_shift_distance(points[j], cluster_centers[i], pt, role);
                 }
+                auto start = clock();
                 cluster_index[j] = argmin_vector(dis, pt, role);
+                auto end = clock();
+//                cout<<"argmin time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+
 //                print_scaled_share(points[j],pt,role);
 //                cout<<"--------------------------------"<<endl;
 //                print_distance(dis,pt,role);
@@ -414,14 +511,15 @@ namespace MPC {
 //            end = clock();
 //            cout<<"update cluster center time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
             //normalize cluster center
-//            start = clock();
+            start = clock();
             for (int i = 0; i < cluster_num; i++) {
 //                print_scaled_share(cluster_centers[i],pt,role);
                 uint64_t val = inner_product(cluster_centers[i], cluster_centers[i], pt, role);
 //                print_distance(val,pt,role);
 
-//                auto start = clock();
+
                 val = right_shift_const(val, FLOAT_SCALE_FACTOR, pt, role);
+//                auto start = clock();
                 val = rep_square_root(val, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
 //                print_scaled_share(val,pt,role);
 //                auto end = clock();
@@ -435,8 +533,8 @@ namespace MPC {
             }
 //            cout<<"one iteration finish"<<endl;
 
-//            end = clock();
-//            cout<<"Normalize time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+            end = clock();
+            cout<<"Normalize time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
         }
 
 //        for(int i=0; i<cluster_num;i++) {
@@ -471,6 +569,8 @@ namespace MPC {
         // clustering keywords
         vector<vector<vector<vector<uint64_t>>>> all_cls(question_num,
                                                          vector<vector<vector<uint64_t>>>(user_num));
+
+        auto start = clock();
         for (int i = 0; i < question_num; i++) {
             auto &obs = all_obs[i];
             auto &kvec = all_kvec[i];
@@ -482,10 +582,7 @@ namespace MPC {
                 points.insert(points.end(), kvec[j].begin(), kvec[j].end());
             }
 
-            auto start = clock();
             auto cluster_index = sphere_kmeans(points, SKM_ITER, pt, role);
-            auto end = clock();
-            cout<<"Cluster time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
             uint c = 0;
             uint u = 0;
@@ -499,8 +596,14 @@ namespace MPC {
                 }
                 cls[u].push_back(std::move(cluster_index[j]));
             }
+        }
+        auto end = clock();
+        cout<<"Cluster time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
+        start = clock();
+        for(int i=0;i<question_num;i++) {
             // normalize observation
+            auto &obs = all_obs[i];
             for (int j = 0; j < user_num; j++) {
                 auto &ob = obs[j];
                 vector<uint64_t> tmp(cluster_number, 0);
@@ -510,12 +613,14 @@ namespace MPC {
 //                cout<<"----------------------------"<<endl;
             }
         }
+        end = clock();
+        cout<<"Observation update time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
         // latent truth discovery
 
-        auto start = clock();
+        start = clock();
         cout<<"start latent truth"<<endl;
         auto tls = latent_truth_discovery(all_obs, LTM_ITER, pt, role);
-        auto end = clock();
+        end = clock();
         cout<<"Latent truth time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
         // calculate score of each user for each question
@@ -530,14 +635,19 @@ namespace MPC {
                 uint64_t s = 0;
                 for (int k = 0; k < cl.size(); k++) {
                     s += inner_product(tl, cl[k], pt, role);
+//                    print_share(tl,pt,role);
+//                    print_share(cl[k], pt,role);
+//                    print_share(s,pt,role);
                 }
                 score[i][j] = s;
+//                print_share(s,pt,role);
+//                cout<<"------------------------------"<<endl;
             }
             // answer selection
             auto best_user = argmax_vector(score[i], pt, role);
             vector<uint64_t> as(ANSWER_LEN, 0);
             for (int j = 0; j < user_num; j++) {
-                vector<uint64_t> tmp(user_num, best_user[0]);
+                vector<uint64_t> tmp(ANSWER_LEN, best_user[j]);
                 tmp = product(ans[j], tmp, pt, role);
                 for (int k = 0; k < as.size(); k++) {
                     as[k] += tmp[k];

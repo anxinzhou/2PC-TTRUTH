@@ -27,6 +27,20 @@ const uint RANDOMNESS_BIT = 16;
 
 
 namespace MPC {
+    class RandomnessPool {
+    public:
+        int loc;
+        default_random_engine eng;
+        std::uniform_int_distribution<int> distribution;
+        RandomnessPool():distribution(std::uniform_int_distribution<int>(0,(1<<RANDOMNESS_BIT)-1)),
+        eng(default_random_engine {1}){}
+        uint rand() {
+            return distribution(eng);
+        }
+    };
+
+    RandomnessPool *randomness_pool;
+
     ABYParty* init_party(e_role role, const std::string& address, uint16_t port, seclvl seclvl,uint32_t bitlen, uint32_t nthreads, e_mt_gen_alg mt_alg) {
         return new ABYParty(role, address, port, seclvl, bitlen, nthreads,
                             mt_alg);
@@ -65,20 +79,24 @@ namespace MPC {
     }
 
     uint64_t random(ABYParty *pt, e_role role) {
-//        uint seed = role==SERVER? 2:3;
-//        srand(time(nullptr));
-        std::random_device rd;
-        std::mt19937 mt(rd());
-        std::uniform_int_distribution<int> distribution(0,(1<<RANDOMNESS_BIT)-1);
-        uint l = distribution(mt);
-//
-//        if(role==SERVER) rand();
-//        uint l = rand()%(1<<RANDOMNESS_BIT);
-
         auto sharings = pt->GetSharings();
         auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
         auto bcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
-        auto r1 = bcirc->PutSharedINGate(l,UINT_LEN);
+
+        //        std::random_device rd;
+//        std::mt19937 mt(rd());
+//        std::uniform_int_distribution<int> distribution(0,(1<<RANDOMNESS_BIT)-1);
+//        uint l = distribution(mt);
+//        auto r1 = bcirc->PutSharedINGate(l,UINT_LEN);
+
+        //for test use fix randomness
+        if(randomness_pool == nullptr) {
+            randomness_pool = new RandomnessPool();
+        }
+        uint l = randomness_pool->rand();
+//        cout<<"randomness " <<l<<endl;
+        auto r1 = bcirc->PutCONSGate(l,UINT_LEN);
+
         auto r2 = acirc->PutB2AGate(r1);
         auto r = acirc->PutSharedOUTGate(r2);
         pt->ExecCircuit();
@@ -192,6 +210,16 @@ namespace MPC {
         return sum;
     }
 
+//    uint64_t bitwise_shift(uint64_t a, uint64_t digits, ABYParty *pt, e_role role, bool left, bool const_digit) {
+//        auto sharings = pt->GetSharings();
+//        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+//        auto sa = acirc->PutSharedINGate(a,65);
+//        uint64_t t = UINT64_MAX;
+//
+//        t = acirc->PutCONSGate(t,65);
+//        acirc->PutGTGate(sa)
+//    }
+
     uint64_t bitwise_shift(uint64_t a, uint64_t digits, ABYParty *pt, e_role role, bool left, bool const_digit) {
         auto sharings = pt->GetSharings();
         auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
@@ -298,6 +326,24 @@ namespace MPC {
         bool left = false;
         bool const_digit = true;
         return bitwise_shift(a, digits, pt, role, left, const_digit);
+//        auto sharings = pt->GetSharings();
+//        auto acirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+//        auto ycirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+//        auto sa = acirc->PutSharedINGate(a,UINT64_LEN);
+//        share * a_part1,*a_part2;
+//        if(role==SERVER) {
+//            a_part1 = acirc->PutINGate(a,UINT64_LEN,SERVER);
+//            a_part2 = acirc->PutDummyINGate(UINT64_LEN);
+//        } else {
+//            a_part1 = acirc->PutDummyINGate(UINT64_LEN);
+//            a_part2 = acirc->PutINGate(a,UINT64_LEN,SERVER);
+//        }
+//        auto ya = ycirc->PutA2YGate(sa);
+//        auto y_p1 = ycirc->PutA2YGate(a_part1);
+//        auto y_p2 = ycirc->PutA2YGate(a_part1);
+//
+//        auto c1 = ycirc->PutGTGate(ya,y_p1);
+//        auto c2 = ycirc->PutGTGate(ya,y_p2);
     }
 
     uint64_t right_shift(uint64_t a, uint64_t digits, ABYParty *pt, e_role role) {
@@ -313,9 +359,10 @@ namespace MPC {
     }
 
     uint64_t left_shift_const(uint64_t a, uint64_t digits, ABYParty *pt, e_role role) {
-        bool left = true;
-        bool const_digit = true;
-        return bitwise_shift(a, digits, pt, role, left, const_digit);
+//        bool left = true;
+//        bool const_digit = true;
+//        return bitwise_shift(a, digits, pt, role, left, const_digit);
+          return (uint64_t(1)<<digits) * a;
     }
 
     // the result will scale scale_factor (1<<scale_factor)
@@ -552,7 +599,72 @@ namespace MPC {
 //        ArithmeticCircuit*
         auto boolcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
         auto arithcirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
-        auto yaocirc = (ArithmeticCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+        auto yaocirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
+        share ** val, ** id, *maxval, *maxindex;
+        val = (share **)malloc(sizeof(share *)*dim);
+        id = (share **)malloc(sizeof(share *)*dim);
+        for(uint64_t i=0; i<a.size(); i++) {
+            val[i] = arithcirc->PutSharedINGate(a[i],UINT64_LEN);
+            id[i] = arithcirc->PutCONSGate(i, UINT64_LEN);
+        }
+
+        for(uint64_t i=0; i<a.size(); i++) {
+            auto val_tmp = yaocirc->PutA2YGate(val[i]);
+            delete val[i];
+            val[i] = val_tmp;
+            auto id_tmp = yaocirc->PutA2YGate(id[i]);
+            delete id[i];
+            id[i] = id_tmp;
+        }
+
+        if(get_max) {
+            yaocirc->PutMaxIdxGate(val, id, dim, &maxval, &maxindex);
+        } else {
+            yaocirc->PutMinIdxGate(val, id, dim, &maxval, &maxindex);
+        }
+
+        vector<uint64_t> indexs(dim);
+        vector<share*> sindex;
+        for(uint64_t i=0;i<dim;i++) {
+            auto tmp_index = yaocirc->PutINGate(i,UINT64_LEN,SERVER);
+            auto cmp_res_tmp1 = yaocirc->PutEQGate(maxindex,tmp_index);
+            auto cmp_res_tmp2 = arithcirc->PutY2AGate(cmp_res_tmp1,boolcirc);
+
+            auto cmp_res = arithcirc->PutSharedOUTGate(cmp_res_tmp2);
+            delete tmp_index;
+            delete cmp_res_tmp1;
+            delete cmp_res_tmp2;
+
+            sindex.push_back(cmp_res);
+        }
+        pt->ExecCircuit();
+        for(int i=0;i<dim;i++) {
+            auto index = sindex[i]->get_clear_value<uint64_t>();
+            indexs[i] = index;
+        }
+        pt->Reset();
+
+        for(uint64_t i=0; i<a.size(); i++) {
+            delete val[i];
+            delete id[i];
+        }
+        delete val;
+        delete id;
+        delete maxval;
+        delete maxindex;
+        for(int i=0;i<dim;i++) {
+            delete sindex[i];
+        }
+        return indexs;
+    }
+
+    vector<uint64_t> argminmax_vector_boolshare(vector<uint64_t>&a, ABYParty *pt, e_role role, bool get_max) {
+        uint64_t dim = a.size();
+        std::vector<Sharing*>& sharings = pt->GetSharings();
+//        ArithmeticCircuit*
+        auto boolcirc = (BooleanCircuit*) sharings[S_BOOL]->GetCircuitBuildRoutine();
+        auto arithcirc = (ArithmeticCircuit*) sharings[S_ARITH]->GetCircuitBuildRoutine();
+        auto yaocirc = (BooleanCircuit*) sharings[S_YAO]->GetCircuitBuildRoutine();
         share ** val, ** id, *maxval, *maxindex;
         val = (share **)malloc(sizeof(share *)*dim);
         id = (share **)malloc(sizeof(share *)*dim);
