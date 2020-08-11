@@ -37,7 +37,7 @@
 #include "mpc_ttruth/mpc_ttruth.h"
 
 const int QUESTION_NUM = 1;
-const int USER_NUM = 1;
+const int USER_NUM = 10;
 
 int32_t read_test_options(int32_t *argcp, char ***argvp, e_role *role,
                           uint32_t *bitlen, uint32_t *numbers, uint32_t *secparam, std::string *address,
@@ -376,8 +376,8 @@ int main(int argc, char **argv) {
 //    cout<<"time "<<double(end-start)/CLOCKS_PER_SEC<<endl;
 //    exit(-1);
 
-//    test_ttruth();
-testMPCTextTruth(pt,role);
+    test_ttruth();
+//testMPCTextTruth(pt,role);
     delete pt;
     return 0;
 }

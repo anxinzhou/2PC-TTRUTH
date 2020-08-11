@@ -132,7 +132,7 @@ namespace MPC {
         vector<uint64_t> a_vec(UINT64_LEN,a);
         vector<uint64_t> base_vec(UINT64_LEN,0);
         for(int i=UINT64_LEN-1;i>=0;i--) {
-            base_vec[i] = uint64_t(1)<<uint64_t(i);
+            base_vec[i] = role==SERVER? uint64_t(1)<<uint64_t(i):0;
         }
         auto cmp_vec = gt(a_vec, base_vec,pt,role);
 
@@ -141,7 +141,7 @@ namespace MPC {
         uint64_t  sum = 0;
         for(int i=UINT64_LEN-1; i>=0; i--) {
             uint64_t v = uint64_t(1)<<uint64_t(i);
-            sum+= cmp_vec[UINT64_LEN-1-i] * v;
+            sum+= cmp_vec[i] * v;
             digits+=cmp_vec[i];
         }
 
@@ -483,7 +483,7 @@ namespace MPC {
 
     uint64_t sigmoid(uint64_t a, uint64_t scale_factor, uint64_t already_scaled_factor, ABYParty *pt, e_role role) {
 
-        uint64_t  padded_value = (uint64_t(1) << uint(32)) << (already_scaled_factor);
+        uint64_t  padded_value = uint64_t(UINT_MAX)<< (already_scaled_factor);
 
         vector<uint64_t> alpha(6);
         vector<uint64_t> beta(6);
@@ -520,7 +520,7 @@ namespace MPC {
             cmp[i] = cmp_res;
 
             if(i==threshold.size()-1) {
-                res[i] = role ==SERVER? 1:0;
+                res[i+1] = role ==SERVER? 1<<scale_factor:0;
                 break;
             }
 
@@ -529,7 +529,9 @@ namespace MPC {
                 val = right_shift_const(val, FLOAT_SCALE_FACTOR, pt, role);
                 val = left_shift_const(val,scale_factor,pt,role);
             }
-            val = right_shift_const(val, already_scaled_factor,pt,role);
+            if(already_scaled_factor!=0) {
+                val = right_shift_const(val, already_scaled_factor,pt,role);
+            }
 
             if(role==SERVER) {
                 val += beta[i];
@@ -539,7 +541,7 @@ namespace MPC {
         }
 
         uint64_t sum=res[0];
-        for(int i=1;i<8;i++) {
+        for(int i=1;i<res.size();i++) {
             sum+= product(cmp[i-1], res[i]-res[i-1], pt, role);
         }
 
@@ -553,19 +555,35 @@ namespace MPC {
         uint64_t digits;
         uint64_t m2N = max2N(a, digits,pt, role);
 
-        uint64_t alpha = -uint64_t(0.8099868542 * (1<<FLOAT_SCALE_FACTOR));
-        uint64_t beta = 1.787727479 * (1<<scale_factor);
+        uint64_t alpha1 = -uint64_t(0.73027754 * (1<<FLOAT_SCALE_FACTOR));
+        uint64_t beta1 = 1.70311218 * (1<<scale_factor);
 
-        uint64_t res = -alpha*a;
+        uint64_t alpha2 = -uint64_t(0.56344602 * (1<<FLOAT_SCALE_FACTOR));
+        uint64_t beta2 = 1.56181232 * (1<<scale_factor);
+
+        uint64_t threshold = uint64_t(0.85 * (1<<FLOAT_SCALE_FACTOR));
+
+        uint64_t tmp = m2N*threshold;
+        tmp = right_shift_const(tmp, FLOAT_SCALE_FACTOR, pt, role);
+//        cout<<open_share(m2N,pt,role)<<endl;
+//        cout<<open_share(tmp,pt,role)<<endl;
+
+        uint64_t cmp_res = gt(tmp, a, pt, role);
+        uint64_t cmp_inv = -cmp_res;
+        if(role==SERVER) {
+            cmp_inv += 1;
+        }
+
+        uint64_t res2 = -alpha2*a;
 
         if(FLOAT_SCALE_FACTOR!=scale_factor) {
-            res = right_shift_const(res, FLOAT_SCALE_FACTOR, pt, role);
-            res = left_shift_const(res,scale_factor,pt,role);
+            res2 = right_shift_const(res2, FLOAT_SCALE_FACTOR, pt, role);
+            res2 = left_shift_const(res2,scale_factor,pt,role);
         }
-        res = right_shift(res, digits,pt,role);
-        res = -res;
+        res2 = right_shift(res2, digits,pt,role);
+        res2 = -res2;
         if(role == SERVER) {
-            res += beta;
+            res2 += beta2;
         }
 
         uint64_t digits_even_half = right_shift_const(digits,1,pt,role);
@@ -580,17 +598,53 @@ namespace MPC {
             digits_odd_half +=1;
         }
 
-        uint64_t even_res = right_shift(res, digits_even_half, pt, role);
+        if(already_scaled_factor!=0) {
+            if(already_scaled_factor %2==0) {
+                res2 = left_shift_const(res2,already_scaled_factor/2,pt,role);
+            } else {
+                res2 = left_shift_const(res2,(already_scaled_factor-1)/2,pt,role);
+
+                res2 *= uint64_t(std::sqrt(2)* (1<<FLOAT_SCALE_FACTOR));
+                res2 = right_shift_const(res2, FLOAT_SCALE_FACTOR, pt, role );
+            }
+        }
+
+        uint64_t even_res = right_shift(res2, digits_even_half, pt, role);
         even_res = product(even,even_res,pt,role);
 
 
-        uint64_t odd_res = right_shift(res, digits_odd_half, pt, role);
+        uint64_t odd_res = right_shift(res2, digits_odd_half, pt, role);
         odd_res*= uint64_t(std::sqrt(2)* (1<<FLOAT_SCALE_FACTOR));
         odd_res = right_shift_const(odd_res, FLOAT_SCALE_FACTOR, pt, role );
 
         odd_res = product(odd,odd_res,pt,role);
 
-        res = even_res+odd_res;
+        res2 = even_res+odd_res;
+
+        uint64_t res = -alpha1*a;
+
+        if(FLOAT_SCALE_FACTOR!=scale_factor) {
+            res = right_shift_const(res, FLOAT_SCALE_FACTOR, pt, role);
+            res = left_shift_const(res,scale_factor,pt,role);
+        }
+        res = right_shift(res, digits,pt,role);
+        res = -res;
+        if(role == SERVER) {
+            res += beta1;
+        }
+
+        digits_even_half = right_shift_const(digits,1,pt,role);
+        even = eq(digits, digits_even_half*2, pt, role);
+        odd = -even;
+        if(role == SERVER) {
+            odd+=1;
+        }
+
+        digits_odd_half = digits_even_half;
+        if (role == SERVER) {
+            digits_odd_half +=1;
+        }
+
         if(already_scaled_factor!=0) {
             if(already_scaled_factor %2==0) {
                 res = left_shift_const(res,already_scaled_factor/2,pt,role);
@@ -601,7 +655,28 @@ namespace MPC {
                 res = right_shift_const(res, FLOAT_SCALE_FACTOR, pt, role );
             }
         }
-        return res;
+
+        even_res = right_shift(res, digits_even_half, pt, role);
+        even_res = product(even,even_res,pt,role);
+
+
+        odd_res = right_shift(res, digits_odd_half, pt, role);
+        odd_res*= uint64_t(std::sqrt(2)* (1<<FLOAT_SCALE_FACTOR));
+        odd_res = right_shift_const(odd_res, FLOAT_SCALE_FACTOR, pt, role );
+
+        odd_res = product(odd,odd_res,pt,role);
+
+        res = even_res+odd_res;
+
+        uint64_t final_res = product(cmp_res, res, pt,role) +
+                product(cmp_inv, res2, pt, role);
+
+//        cout<<open_share(a,pt,role)<<endl;
+//        cout<<open_share(final_res,pt,role)<<endl;
+//        cout<<open_share(cmp_res,pt,role)<<endl;
+//        cout<<open_share(cmp_inv,pt,role)<<endl;
+//        exit(-1);
+        return final_res;
     }
 
     uint64_t min(uint64_t a, uint64_t b, ABYParty *pt, e_role role) {

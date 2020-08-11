@@ -83,7 +83,7 @@ namespace MPC {
                 uint64_t t = share_gt_const(r, (1<<RANDOMNESS_BIT) / 2, pt, role);
                 tls[i][j] = t;
             }
-            print_share(tls[i],pt,role);
+//            print_share(tls[i],pt,role);
 //            exit(-1);
         }
         auto end = clock();
@@ -126,10 +126,10 @@ namespace MPC {
         end = clock();
 //        cout<<"Init posterior time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
-        cout<<"initial posterior counts"<<endl;
-        for(int j=0; j<user_num; j++) {
-            print_share(pos_counts[j],pt,role);
-        }
+//        cout<<"initial posterior counts"<<endl;
+//        for(int j=0; j<user_num; j++) {
+//            print_share(pos_counts[j],pt,role);
+//        }
 
         // iteratively update truth label and prior count
         start = clock();
@@ -235,9 +235,11 @@ namespace MPC {
 //                    cout<<"Calculate prob time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
                     start = clock();
+
                     uint64_t threshold_p = sigmoid(p_negt - p_t, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
                     end = clock();
 //                    cout<<"Sigmoid time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//                    cout<<"-----------------------------"<<endl;
 //                    print_scaled_share(p_t,pt,role);
 //                    print_scaled_share(p_negt,pt,role);
 //                    print_scaled_share(threshold_p,pt,role);
@@ -246,12 +248,16 @@ namespace MPC {
                     uint64_t r = random(pt, role);
 
                     r = left_shift_const(r, FLOAT_SCALE_FACTOR, pt, role);
+//                    print_scaled_share(threshold_p,pt,role);
                     threshold_p = left_shift_const(threshold_p, RANDOMNESS_BIT, pt, role);
                     uint64_t flip = gt(threshold_p, r, pt, role);
 //                    cout<<"------------------"<<endl;
 //                    print_share(r,pt,role);
 //                    print_share(threshold_p,pt,role);
+//                    cout<<"flip"<<endl;
 //                    print_share(flip, pt, role);
+//                    print_share(r,pt,role);
+//                    print_share(threshold_p,pt,role);
 //                    cout<<"---------------------"<<endl;
                     // update statistics
                     for (int j = 0; j < user_num; j++) {
@@ -308,10 +314,10 @@ namespace MPC {
         end = clock();
         cout<<"Update truth label time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
-        cout<<"after latent truth posterior counts"<<endl;
-        for(int j=0; j<user_num; j++) {
-            print_share(pos_counts[j],pt,role);
-        }
+//        cout<<"after latent truth posterior counts"<<endl;
+//        for(int j=0; j<user_num; j++) {
+//            print_share(pos_counts[j],pt,role);
+//        }
         cout<<"final truth label"<<endl;
         for(int i=0; i<question_num; i++){
             print_share(tls[i],pt,role);
@@ -455,7 +461,7 @@ namespace MPC {
     }
 
     vector<vector<uint64_t>> sphere_kmeans(vector<vector<uint64_t>> &points, uint iter, ABYParty *pt, e_role role) {
-        cout<<"points "<<points.size()<<endl;
+        cout<<"convergence points "<<points.size()<<endl;
         cout<<"-----------------------------"<<endl;
 //        for(int i=0; i<points.size();i++) {
 //            print_scaled_share(points[i],pt,role);
@@ -524,12 +530,13 @@ namespace MPC {
             for (int i = 0; i < cluster_num; i++) {
 //                print_scaled_share(cluster_centers[i],pt,role);
                 uint64_t val = inner_product(new_cluster_centers[i], new_cluster_centers[i], pt, role);
-//                print_distance(val,pt,role);
                 val = right_shift_const(val, FLOAT_SCALE_FACTOR, pt, role);
 
 //                auto start = clock();
+                cout<<"val"<<endl;
+                print_scaled_share(val,pt,role);
                 val = rep_square_root(val, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-//                print_scaled_share(val,pt,role);
+                print_scaled_share(val,pt,role);
 //                auto end = clock();
 //                cout<<"req square root Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
                 vector<uint64_t> tmp(dim, val);
@@ -583,6 +590,25 @@ namespace MPC {
 //            cout<<"---------------"<<endl;
 
             end = clock();
+
+            cout<<"------------------------"<<endl;
+            for(int i=0;i<cluster_num;i++) {
+                auto val = inner_product(cluster_centers[i],cluster_centers[i],pt,role);
+                print_distance(val,pt,role);
+            }
+            cout<<"------------------------"<<endl;
+
+            vector<uint64_t>statistics(cluster_num,0);
+            for(int i=0;i<points.size();i++) {
+                for(int j=0;j<cluster_num;j++) {
+                    statistics[j]+=cluster_index[i][j];
+                }
+            }
+            statistics = open_share(statistics,pt,role);
+            for(int j=0;j<cluster_num;j++) {
+                cout<<statistics[j]<<" ";
+            }
+            cout<<endl;
 //            cout<<"Normalize time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
         }
 
@@ -591,17 +617,7 @@ namespace MPC {
 //            cout<<"---------------------"<<endl;
 //        }
 
-        vector<uint64_t>statistics(cluster_num,0);
-        for(int i=0;i<points.size();i++) {
-            for(int j=0;j<cluster_num;j++) {
-                statistics[j]+=cluster_index[i][j];
-            }
-        }
-        statistics = open_share(statistics,pt,role);
-        for(int j=0;j<cluster_num;j++) {
-            cout<<statistics[j]<<" ";
-        }
-        cout<<endl;
+
         return cluster_index;
     }
 

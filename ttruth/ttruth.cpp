@@ -7,7 +7,7 @@
 const uint ALPHA[4] = {80, 20, 40, 60};
 
 const int CLUSTER_NUM = 10;
-const uint SKM_ITER = 1;
+const uint SKM_ITER = 5;
 const uint LTM_ITER = 1;
 const uint RANDOMNESS_BIT = 16;
 
@@ -34,11 +34,11 @@ vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,
     int cluster_num = CLUSTER_NUM;
     vector<vector<int>> tls(question_num, vector<int>(cluster_num, 0));
     // random initialization truth label
+    cout<<"initial truth label"<<endl;
     for (int i = 0; i < question_num; i++) {
         for (int j = 0; j < cluster_num; j++) {
             float p = double(randomness_pool->rand()) / (1<<RANDOMNESS_BIT);
             tls[i][j] = p > 0.5 ? 1 : 0;
-
 //            int num_user_has_ob = 0;
 //            for (int k= 0; k<user_num; k++) {
 //                auto &ob = all_obs[i][k];
@@ -50,7 +50,12 @@ vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,
 ////                cout<<"test"<<endl;
 //            }
         }
+//        for(int j=0; j<cluster_num; j++) {
+//            cout<<tls[i][j]<<" ";
+//        }
+//        cout<<endl;
     }
+
 
     // initialize posterior counts
     vector<vector<int>> pos_counts(user_num, vector<int>(4, 0));
@@ -67,6 +72,14 @@ vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,
             }
         }
     }
+
+   /* cout<<"initial posterior counts"<<endl;
+    for(int j=0; j<user_num; j++) {
+        for(int k=0;k<pos_counts[j].size();k++) {
+            cout<<pos_counts[j][k]<<" ";
+        }
+        cout<<endl;
+    }*/
 
     // iteratively update truth label and prior count
     for (int its =0; its<iter;its++) {
@@ -103,6 +116,14 @@ vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,
                 // update statistics
                 double threshold = 1.0 / (1 + exp(p_t - p_negt));
                 double p = double(randomness_pool->rand()) / (1<<RANDOMNESS_BIT);
+//                cout<<"---------------------------"<<endl;
+//                cout<<p_t<<endl;
+//                cout<<p_negt<<endl;
+//                cout<<threshold<<endl;
+//                cout<<"flip"<<endl;
+//                cout<<int(p<threshold)<<endl;
+//                cout<<p<<endl;
+//                cout<<threshold<<endl;
                 if (p < threshold) {
                     for (int j = 0; j < user_num; j++) {
                         auto &ob = all_obs[i][j];
@@ -179,6 +200,7 @@ vector<vector<double>> cluster_init(vector<vector<double>> &points) {
 }
 
 vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
+    cout<<"convergence point size "<<points.size()<<endl;
     int cluster_num = CLUSTER_NUM;
     int dim = points[0].size();
     vector<vector<int>> cluster_index(points.size(), vector<int>(cluster_num, 0));
@@ -236,17 +258,17 @@ vector<vector<int>> sphere_kmeans(vector<vector<double>> points, uint iter) {
         cout<<t<<"-th round "<<"convergence: "<<diff<<endl;
 
         swap(cluster_centers, new_cluster_centers);
-    }
-    vector<int>statistics(cluster_num,0);
-    for(int i=0;i<points.size();i++) {
-        for(int j=0;j<cluster_num;j++) {
-            statistics[j]+=cluster_index[i][j];
+        vector<int>statistics(cluster_num,0);
+        for(int i=0;i<points.size();i++) {
+            for(int j=0;j<cluster_num;j++) {
+                statistics[j]+=cluster_index[i][j];
+            }
         }
+        for(int j=0;j<cluster_num;j++) {
+            cout<<statistics[j]<<" ";
+        }
+        cout<<endl;
     }
-    for(int j=0;j<cluster_num;j++) {
-        cout<<statistics[j]<<" ";
-    }
-    cout<<endl;
     return cluster_index;
 }
 
