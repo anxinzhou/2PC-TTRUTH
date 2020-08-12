@@ -8,7 +8,7 @@ const uint ALPHA[4] = {80, 20, 40, 60};
 
 const int CLUSTER_NUM = 10;
 const uint SKM_ITER = 5;
-const uint LTM_ITER = 1;
+const uint LTM_ITER = 7;
 const uint RANDOMNESS_BIT = 16;
 
 class RandomnessPool {
@@ -135,7 +135,17 @@ vector<vector<int>> latent_truth_discovery(vector<vector<vector<int>>> &all_obs,
                 }
             }
         }
+
+        cout<<"--------------------------------"<<endl;
+        for(int i=0; i<pos_counts.size();i++) {
+            for(int j=0; j<4; j++) {
+                cout<<pos_counts[i][j] << " ";
+            }
+            cout<<endl;
+        }
     }
+
+    cout<<"-----------------------"<<endl;
     cout<<"final truth label"<<endl;
     for(int i=0;i<tls.size();i++) {
         for(int j=0; j<tls[i].size();j++) {

@@ -58,7 +58,7 @@ namespace MPC {
         sa->get_clear_value_vec(&v,&bitlen,&nval);
         vector<uint64_t>res(v,v+dim);
         pt->Reset();
-        delete v;
+        free(v);
         delete sa;
         delete sa_tmp;
         return res;
@@ -252,6 +252,7 @@ namespace MPC {
     }
 
     vector<uint64_t> bitwise_shift(vector<uint64_t >&a, uint64_t digits, ABYParty *pt, e_role role, bool left, bool const_digit) {
+        cout<<"exit"<<endl;
         exit(-1);
         return vector<uint64_t>();
 //        uint dim = a.size();
@@ -436,11 +437,11 @@ namespace MPC {
         auto end = clock();
 //        cout<<"Max2N time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
-        uint64_t threshold = uint64_t(0.85 * (1<<FLOAT_SCALE_FACTOR));
-        uint64_t alpha1 = 1.86511335 * (1<<FLOAT_SCALE_FACTOR) ;
-        uint64_t beta1 = - uint64_t (1.8154986 * (1<<scale_factor));
-        uint64_t alpha2 = 1.5617682 * (1<<FLOAT_SCALE_FACTOR);
-        uint64_t beta2 = - uint64_t (1.55872625 * (1<<scale_factor));
+        uint64_t threshold = uint64_t(0.75 * (1<<FLOAT_SCALE_FACTOR));
+        uint64_t alpha1 = 2.32714061 * (1<<FLOAT_SCALE_FACTOR) ;
+        uint64_t beta1 = - uint64_t (2.14229015 * (1<<scale_factor));
+        uint64_t alpha2 = 1.65559735 * (1<<FLOAT_SCALE_FACTOR);
+        uint64_t beta2 = - uint64_t (1.64624017 * (1<<scale_factor));
 
         uint64_t tmp = m2N*threshold;
         tmp = right_shift_const(tmp, FLOAT_SCALE_FACTOR, pt, role);
@@ -555,13 +556,13 @@ namespace MPC {
         uint64_t digits;
         uint64_t m2N = max2N(a, digits,pt, role);
 
-        uint64_t alpha1 = -uint64_t(0.73027754 * (1<<FLOAT_SCALE_FACTOR));
-        uint64_t beta1 = 1.70311218 * (1<<scale_factor);
+        uint64_t alpha1 = -uint64_t(1.08744579 * (1<<FLOAT_SCALE_FACTOR));
+        uint64_t beta1 = 1.94809276 * (1<<scale_factor);
 
-        uint64_t alpha2 = -uint64_t(0.56344602 * (1<<FLOAT_SCALE_FACTOR));
-        uint64_t beta2 = 1.56181232 * (1<<scale_factor);
+        uint64_t alpha2 = -uint64_t(0.64577004 * (1<<FLOAT_SCALE_FACTOR));
+        uint64_t beta2 = 1.63792539 * (1<<scale_factor);
 
-        uint64_t threshold = uint64_t(0.85 * (1<<FLOAT_SCALE_FACTOR));
+        uint64_t threshold = uint64_t(0.7 * (1<<FLOAT_SCALE_FACTOR));
 
         uint64_t tmp = m2N*threshold;
         tmp = right_shift_const(tmp, FLOAT_SCALE_FACTOR, pt, role);
@@ -703,7 +704,7 @@ namespace MPC {
         delete sb_tmp;
         delete sa;
         delete sb;
-        delete val;
+        free(val);
         delete soutput;
         delete soutput1;
         delete soutput2;
@@ -737,8 +738,8 @@ namespace MPC {
         auto index = maxindex->get_clear_value<uint64_t>();
         pt->Reset();
 
-        delete val;
-        delete id;
+        free(val);
+        free(id);
         return index;
     }
 
@@ -797,8 +798,8 @@ namespace MPC {
             delete val[i];
             delete id[i];
         }
-        delete val;
-        delete id;
+        free(val);
+        free(id);
         delete maxval;
         delete maxindex;
         for(int i=0;i<dim;i++) {
@@ -862,8 +863,8 @@ namespace MPC {
             delete val[i];
             delete id[i];
         }
-        delete val;
-        delete id;
+        free(val);
+        free(id);
         delete maxval;
         delete maxindex;
         for(int i=0;i<dim;i++) {
@@ -903,7 +904,7 @@ namespace MPC {
         cmp_result->get_clear_value_vec(&v, &bitlen, &nval);
         vector<uint64_t> output(v,v+dim);
         pt->Reset();
-        delete v;
+        free(v);
         delete sa;
         delete sb;
         delete ba;
@@ -971,7 +972,7 @@ namespace MPC {
         delete cmp;
         delete cmp_result_tmp;
         delete cmp_result;
-        delete val;
+        free(val);
         return res;
     }
 
@@ -1052,7 +1053,7 @@ namespace MPC {
         s_out->get_clear_value_vec(&v, &bitlen, &nval);
         vector<uint64_t> output (v,v+a.size());
         pt->Reset();
-        delete v;
+        free(v);
         delete s_out_tmp;
         delete s_out;
         return output;
@@ -1166,8 +1167,8 @@ namespace MPC {
             ub[i] *= u[i];
         }
 
-        delete u;
-        delete v;
+        free(u);
+        free(v);
 
         auto s_va = circ->PutSharedSIMDINGate(dim, va, UINT64_LEN);
         auto s_ub = circ->PutSharedSIMDINGate(dim, ub, UINT64_LEN);
@@ -1218,7 +1219,7 @@ namespace MPC {
         } else {
             uv_div2/=2;
         }
-
+        pt->Reset();
         delete sa;
         delete sb;
         delete trip_a;
@@ -1228,7 +1229,7 @@ namespace MPC {
         delete su;
         delete sv;
 
-        pt->Reset();
+
 
         auto va = triplet.getA();
         auto ub = triplet.getB();
@@ -1311,8 +1312,8 @@ namespace MPC {
             ub[i] *= u[i];
         }
 
-        delete u;
-        delete v;
+        free(u);
+        free(v);
 
 
         auto s_va = circ->PutSharedSIMDINGate(dim, va, UINT64_LEN);
@@ -1324,10 +1325,22 @@ namespace MPC {
         auto s_va1 = circ->PutADDGate(s_va, s_ub);
         auto s_va2 = circ->PutADDGate(s_va1, s_c);
         auto s_va3 = circ->PutSplitterGate(s_va2);
+//        share * s_va_tmp = s_va3->get_wire_ids_as_share(0);
+//        for(int i=1;i<dim;i++) {
+//            auto tmp1 = s_va3->get_wire_ids_as_share(i);
+//            auto tmp2 = circ->PutADDGate(s_va_tmp,tmp1);
+//            delete tmp1;
+//            delete s_va_tmp;
+//            s_va_tmp = tmp2;
+//        }
+//        auto s_va4 = circ->PutADDGate(s_va_tmp,c_uv_div2);
+//        delete s_va_tmp;
+
         for (uint64_t i = 1; i < dim; i++) {
             s_va3->set_wire_id(0, circ->PutADDGate(s_va3->get_wire_id(0), s_va3->get_wire_id(i)));
         }
         s_va3->set_bitlength(1);
+
         auto s_va4 = circ->PutADDGate(s_va3, c_uv_div2);
 
         delete s_va;
@@ -1370,8 +1383,8 @@ namespace MPC {
             delete id[i];
         }
 
-        delete val;
-        delete id;
+        free(val);
+        free(id);
         delete maxval;
         return maxindex;
     }
@@ -1480,7 +1493,7 @@ namespace MPC {
         for(uint i=0; i<a.size(); i++) {
             delete val[i];
         }
-        delete val;
+        free(val);
         return out;
     }
 

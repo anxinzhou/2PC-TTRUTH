@@ -2,12 +2,13 @@
 // Created by anxin on 8/8/20.
 //
 
+#include <ABY/extern/ENCRYPTO_utils/src/ENCRYPTO_utils/crypto/crypto.h>
 #include "mpc_ttruth.h"
 
 namespace MPC {
     const uint ALPHA[4] = {80, 20, 40, 60};
     const uint CLUSTER_NUM = 10;
-    const uint SKM_ITER = 5;
+    const uint SKM_ITER = 1;
     const uint LTM_ITER = 1;
     const uint ANSWER_LEN = 128;
     const uint64_t NEG_PAD_VAL = uint64_t(1)<<32;
@@ -132,40 +133,55 @@ namespace MPC {
 //        }
 
         // iteratively update truth label and prior count
+        cout<<"iteratively update truth label and prior count"<<endl;
         start = clock();
         for (int t = 0; t < iter; t++) {
             for (int i = 0; i < question_num; i++) {
-                auto &tl = tls[i];
-                for (int k = 0; k < tl.size(); k++) {
-                    uint64_t p_t = 0;
-                    uint64_t p_negt = 0;
-                    auto tl_eq_1 = eq(tl[k], role == SERVER ? 1 : 0, pt, role);
-                    uint64_t tl_eq_0 = role == SERVER ? -tl_eq_1 : -tl_eq_1 + 1;
-                    vector<vector<uint64_t>> tmp_prior(user_num, vector<uint64_t>(2, 0));
 
-                    auto start = clock();
-                    for (int j = 0; j < user_num; j++) {
-                        // load paramers
-                        auto &ob = all_obs[i][j];
-                        auto ob_eq_1 = eq(ob[k], role == SERVER ? 1 : 0, pt, role);
-                        uint64_t ob_eq_0 = role == SERVER ? -ob_eq_1 : -ob_eq_1 + 1;
+                string pos_count_path = string("../pos_count_cache/")
+                        +"iter"+to_string(t)+"_q"+to_string(i)+"_role"+to_string(role);
+                string truth_label_path = string("../truth_label_cache/")
+                                          +"iter"+to_string(t)+"_q"+to_string(i)+"_role"+to_string(role);
 
-                        uint64_t n_u_t_0 = product(tl_eq_1, pos_counts[j][2], pt, role) +
-                                           product(tl_eq_0, pos_counts[j][0], pt, role);
-                        uint64_t n_u_t_1 = product(tl_eq_1, pos_counts[j][3], pt, role) +
-                                           product(tl_eq_0, pos_counts[j][1], pt, role);
-                        uint64_t n_u_negt_0 = product(tl_eq_0, pos_counts[j][2], pt, role) +
-                                              product(tl_eq_1, pos_counts[j][0], pt, role);
-                        uint64_t n_u_negt_1 = product(tl_eq_0, pos_counts[j][3], pt, role) +
-                                              product(tl_eq_1, pos_counts[j][1], pt, role);
+                if(false and filesystem::exists(pos_count_path) && filesystem::exists(truth_label_path)) {
+                    cout<<"iter"<<t<<" question "<<i<<"-th"<<" truth statistics exists"<<endl;
+                    pos_counts = load_vector_vector(pos_count_path);
+                    tls = load_vector_vector(truth_label_path);
+                } else {
+                    cout<<"update truth label for "<<i<<"-th question"<<endl;
+//                cout<<pt->GetTotalGates()<<endl;
+//                cout<<pt->GetTotalDepth()<<endl;
+                    auto &tl = tls[i];
+                    for (int k = 0; k < tl.size(); k++) {
+                        uint64_t p_t = 0;
+                        uint64_t p_negt = 0;
+                        auto tl_eq_1 = eq(tl[k], role == SERVER ? 1 : 0, pt, role);
+                        uint64_t tl_eq_0 = role == SERVER ? -tl_eq_1 : -tl_eq_1 + 1;
+                        vector<vector<uint64_t>> tmp_prior(user_num, vector<uint64_t>(2, 0));
+
+                        auto start = clock();
+                        for (int j = 0; j < user_num; j++) {
+                            // load paramers
+                            auto &ob = all_obs[i][j];
+                            auto ob_eq_1 = eq(ob[k], role == SERVER ? 1 : 0, pt, role);
+                            uint64_t ob_eq_0 = role == SERVER ? -ob_eq_1 : -ob_eq_1 + 1;
+
+                            uint64_t n_u_t_0 = product(tl_eq_1, pos_counts[j][2], pt, role) +
+                                               product(tl_eq_0, pos_counts[j][0], pt, role);
+                            uint64_t n_u_t_1 = product(tl_eq_1, pos_counts[j][3], pt, role) +
+                                               product(tl_eq_0, pos_counts[j][1], pt, role);
+                            uint64_t n_u_negt_0 = product(tl_eq_0, pos_counts[j][2], pt, role) +
+                                                  product(tl_eq_1, pos_counts[j][0], pt, role);
+                            uint64_t n_u_negt_1 = product(tl_eq_0, pos_counts[j][3], pt, role) +
+                                                  product(tl_eq_1, pos_counts[j][1], pt, role);
 
 
-                        uint64_t n_u_t_o = product(ob_eq_1, n_u_t_1, pt, role) +
-                                           product(ob_eq_0, n_u_t_0, pt, role);
-                        uint64_t n_u_negt_o = product(ob_eq_1, n_u_negt_1, pt, role) +
-                                              product(ob_eq_0, n_u_negt_0, pt, role);
+                            uint64_t n_u_t_o = product(ob_eq_1, n_u_t_1, pt, role) +
+                                               product(ob_eq_0, n_u_t_0, pt, role);
+                            uint64_t n_u_negt_o = product(ob_eq_1, n_u_negt_1, pt, role) +
+                                                  product(ob_eq_0, n_u_negt_0, pt, role);
 
-                        //                        cout<<"-----------------------------"<<endl;
+                            //                        cout<<"-----------------------------"<<endl;
 //                        print_share(tl[k],pt,role);
 //                        print_share(tl_eq_1,pt,role);
 //                        print_share(ob[k], pt, role);
@@ -179,65 +195,65 @@ namespace MPC {
 //                        print_share(n_u_negt_1,pt,role);
 //                        exit(-1);
 
-                        uint64_t alpha_t_0 = product(tl_eq_1, role == SERVER ? ALPHA[2] : 0, pt, role) +
-                                             product(tl_eq_0, role == SERVER ? ALPHA[0] : 0, pt, role);
-                        uint64_t alpha_t_1 = product(tl_eq_1, role == SERVER ? ALPHA[3] : 0, pt, role) +
-                                             product(tl_eq_0, role == SERVER ? ALPHA[1] : 0, pt, role);
-                        uint64_t alpha_negt_0 = product(tl_eq_0, role == SERVER ? ALPHA[2] : 0, pt, role) +
-                                                product(tl_eq_1, role == SERVER ? ALPHA[0] : 0, pt, role);
-                        uint64_t alpha_negt_1 = product(tl_eq_0, role == SERVER ? ALPHA[3] : 0, pt, role) +
-                                                product(tl_eq_1, role == SERVER ? ALPHA[1] : 0, pt, role);
-                        uint64_t alpha_t_o = product(ob_eq_1, alpha_t_1, pt, role) +
-                                             product(ob_eq_0, alpha_t_0, pt, role);
-                        uint64_t alpha_negt_o = product(ob_eq_1, alpha_negt_1, pt, role) +
-                                                product(ob_eq_0, alpha_negt_0, pt, role);
-                        // update p_t
-                        uint64_t tmp1 = n_u_t_o + alpha_t_o;
-                        if (role == SERVER) {
-                            tmp1 -= 1;
-                        }
+                            uint64_t alpha_t_0 = product(tl_eq_1, role == SERVER ? ALPHA[2] : 0, pt, role) +
+                                                 product(tl_eq_0, role == SERVER ? ALPHA[0] : 0, pt, role);
+                            uint64_t alpha_t_1 = product(tl_eq_1, role == SERVER ? ALPHA[3] : 0, pt, role) +
+                                                 product(tl_eq_0, role == SERVER ? ALPHA[1] : 0, pt, role);
+                            uint64_t alpha_negt_0 = product(tl_eq_0, role == SERVER ? ALPHA[2] : 0, pt, role) +
+                                                    product(tl_eq_1, role == SERVER ? ALPHA[0] : 0, pt, role);
+                            uint64_t alpha_negt_1 = product(tl_eq_0, role == SERVER ? ALPHA[3] : 0, pt, role) +
+                                                    product(tl_eq_1, role == SERVER ? ALPHA[1] : 0, pt, role);
+                            uint64_t alpha_t_o = product(ob_eq_1, alpha_t_1, pt, role) +
+                                                 product(ob_eq_0, alpha_t_0, pt, role);
+                            uint64_t alpha_negt_o = product(ob_eq_1, alpha_negt_1, pt, role) +
+                                                    product(ob_eq_0, alpha_negt_0, pt, role);
+                            // update p_t
+                            uint64_t tmp1 = n_u_t_o + alpha_t_o;
+                            if (role == SERVER) {
+                                tmp1 -= 1;
+                            }
 //                        print_share(tmp1,pt,role);
 
 
-                        tmp1 = left_shift_const(tmp1, FLOAT_SCALE_FACTOR, pt, role);
+                            tmp1 = left_shift_const(tmp1, FLOAT_SCALE_FACTOR, pt, role);
 
-                        auto start = clock();
-                        tmp1 = log(tmp1, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-                        auto end = clock();
+                            auto start = clock();
+                            tmp1 = log(tmp1, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                            auto end = clock();
 //                        cout<<"Log time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 //                        print_scaled_share(tmp1,pt,role);
 //                        exit(-1);
-                        uint64_t tmp2 = n_u_t_1 + n_u_t_0 + alpha_t_0 + alpha_t_1;
-                        if (role == SERVER) {
-                            tmp2 -= 1;
-                        }
-                        tmp2= left_shift_const(tmp2, FLOAT_SCALE_FACTOR, pt, role);
-                        tmp2 = log(tmp2, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-                        p_t += tmp1 - tmp2;
-                        // update p_(1-t)
-                        uint64_t tmp3 = n_u_negt_o + alpha_negt_o;
-                        tmp3 = left_shift_const(tmp3, FLOAT_SCALE_FACTOR, pt, role);
-                        tmp3 = log(tmp3, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-                        uint64_t tmp4 = n_u_negt_0 + n_u_negt_1 + alpha_negt_0 + alpha_negt_1;
-                        tmp4 = left_shift_const(tmp4, FLOAT_SCALE_FACTOR, pt, role);
-                        tmp4 = log(tmp4, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-                        p_negt += tmp3 - tmp4;
+                            uint64_t tmp2 = n_u_t_1 + n_u_t_0 + alpha_t_0 + alpha_t_1;
+                            if (role == SERVER) {
+                                tmp2 -= 1;
+                            }
+                            tmp2= left_shift_const(tmp2, FLOAT_SCALE_FACTOR, pt, role);
+                            tmp2 = log(tmp2, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                            p_t += tmp1 - tmp2;
+                            // update p_(1-t)
+                            uint64_t tmp3 = n_u_negt_o + alpha_negt_o;
+                            tmp3 = left_shift_const(tmp3, FLOAT_SCALE_FACTOR, pt, role);
+                            tmp3 = log(tmp3, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                            uint64_t tmp4 = n_u_negt_0 + n_u_negt_1 + alpha_negt_0 + alpha_negt_1;
+                            tmp4 = left_shift_const(tmp4, FLOAT_SCALE_FACTOR, pt, role);
+                            tmp4 = log(tmp4, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                            p_negt += tmp3 - tmp4;
 
 //                        print_scaled_share(p_t,pt,role);
 //                        print_scaled_share(p_negt,pt,role);
 //                        exit(-1);
 
-                        tmp_prior[j][0] = n_u_t_o;
-                        tmp_prior[j][1] = n_u_negt_o;
-                    }
+                            tmp_prior[j][0] = n_u_t_o;
+                            tmp_prior[j][1] = n_u_negt_o;
+                        }
 
-                    end = clock();
+                        end = clock();
 //                    cout<<"Calculate prob time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
-                    start = clock();
+                        start = clock();
 
-                    uint64_t threshold_p = sigmoid(p_negt - p_t, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-                    end = clock();
+                        uint64_t threshold_p = sigmoid(p_negt - p_t, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
+                        end = clock();
 //                    cout<<"Sigmoid time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 //                    cout<<"-----------------------------"<<endl;
 //                    print_scaled_share(p_t,pt,role);
@@ -245,12 +261,12 @@ namespace MPC {
 //                    print_scaled_share(threshold_p,pt,role);
 //                    exit(-1);
 
-                    uint64_t r = random(pt, role);
+                        uint64_t r = random(pt, role);
 
-                    r = left_shift_const(r, FLOAT_SCALE_FACTOR, pt, role);
+                        r = left_shift_const(r, FLOAT_SCALE_FACTOR, pt, role);
 //                    print_scaled_share(threshold_p,pt,role);
-                    threshold_p = left_shift_const(threshold_p, RANDOMNESS_BIT, pt, role);
-                    uint64_t flip = gt(threshold_p, r, pt, role);
+                        threshold_p = left_shift_const(threshold_p, RANDOMNESS_BIT, pt, role);
+                        uint64_t flip = gt(threshold_p, r, pt, role);
 //                    cout<<"------------------"<<endl;
 //                    print_share(r,pt,role);
 //                    print_share(threshold_p,pt,role);
@@ -259,16 +275,16 @@ namespace MPC {
 //                    print_share(r,pt,role);
 //                    print_share(threshold_p,pt,role);
 //                    cout<<"---------------------"<<endl;
-                    // update statistics
-                    for (int j = 0; j < user_num; j++) {
-                        auto &ob = all_obs[i][j];
-                        auto ob_eq_1 = eq(ob[k], role == SERVER ? 1 : 0, pt, role);
-                        uint64_t ob_eq_0 = role == SERVER ? -ob_eq_1 : -ob_eq_1 + 1;
+                        // update statistics
+                        for (int j = 0; j < user_num; j++) {
+                            auto &ob = all_obs[i][j];
+                            auto ob_eq_1 = eq(ob[k], role == SERVER ? 1 : 0, pt, role);
+                            uint64_t ob_eq_0 = role == SERVER ? -ob_eq_1 : -ob_eq_1 + 1;
 
-                        tmp_prior[j][0] -= flip;
-                        tmp_prior[j][1] += flip;
-                        uint64_t n_u_t_o = tmp_prior[j][0];
-                        uint64_t n_u_negt_o = tmp_prior[j][1];
+                            tmp_prior[j][0] -= flip;
+                            tmp_prior[j][1] += flip;
+                            uint64_t n_u_t_o = tmp_prior[j][0];
+                            uint64_t n_u_negt_o = tmp_prior[j][1];
 
 //                        cout<<"---------------------"<<endl;
 //                        print_share(tl[k],pt,role);
@@ -282,37 +298,49 @@ namespace MPC {
 //                        print_share(n_u_negt_o,pt,role);
 //                        exit(-1);
 
-                        pos_counts[j][0] = product(ob_eq_0,
-                                                   product(tl_eq_0, n_u_t_o, pt, role) +
-                                                   product(tl_eq_1, n_u_negt_o, pt, role), pt, role)
-                                                           + product(ob_eq_1, pos_counts[j][0],pt,role);
+                            pos_counts[j][0] = product(ob_eq_0,
+                                                       product(tl_eq_0, n_u_t_o, pt, role) +
+                                                       product(tl_eq_1, n_u_negt_o, pt, role), pt, role)
+                                               + product(ob_eq_1, pos_counts[j][0],pt,role);
 
-                        pos_counts[j][1] = product(ob_eq_1,
-                                                   product(tl_eq_0, n_u_t_o, pt, role) +
-                                                   product(tl_eq_1, n_u_negt_o, pt, role), pt, role)
-                                           + product(ob_eq_0, pos_counts[j][1],pt,role);
+                            pos_counts[j][1] = product(ob_eq_1,
+                                                       product(tl_eq_0, n_u_t_o, pt, role) +
+                                                       product(tl_eq_1, n_u_negt_o, pt, role), pt, role)
+                                               + product(ob_eq_0, pos_counts[j][1],pt,role);
 
-                        pos_counts[j][2] = product(ob_eq_0,
-                                                   product(tl_eq_1, n_u_t_o, pt, role) +
-                                                   product(tl_eq_0, n_u_negt_o, pt, role), pt, role)
-                                           + product(ob_eq_1, pos_counts[j][2],pt,role);
+                            pos_counts[j][2] = product(ob_eq_0,
+                                                       product(tl_eq_1, n_u_t_o, pt, role) +
+                                                       product(tl_eq_0, n_u_negt_o, pt, role), pt, role)
+                                               + product(ob_eq_1, pos_counts[j][2],pt,role);
 
 
-                        pos_counts[j][3] = product(ob_eq_1,
-                                                   product(tl_eq_1, n_u_t_o, pt, role) +
-                                                   product(tl_eq_0, n_u_negt_o, pt, role), pt, role)
-                                           + product(ob_eq_0, pos_counts[j][3],pt,role);
-//                        print_share(pos_counts[j],pt,role);
+                            pos_counts[j][3] = product(ob_eq_1,
+                                                       product(tl_eq_1, n_u_t_o, pt, role) +
+                                                       product(tl_eq_0, n_u_negt_o, pt, role), pt, role)
+                                               + product(ob_eq_0, pos_counts[j][3],pt,role);
 //                        exit(-1);
+                        }
+                        // update truth label
+                        tl[k] = product(flip, role == SERVER ? 1 - tl[k] : -tl[k], pt, role) +
+                                product(role == SERVER ? 1 - flip : -flip, tl[k], pt, role);
                     }
-                    // update truth label
-                    tl[k] = product(flip, role == SERVER ? 1 - tl[k] : -tl[k], pt, role) +
-                            product(role == SERVER ? 1 - flip : -flip, tl[k], pt, role);
+//                    cache_vector_vector(pos_counts, pos_count_path);
+//                    cache_vector_vector(tls, truth_label_path);
                 }
+
+//                for(int j=0;j<pos_counts.size();j++) {
+//                    if(i==1)
+//                    print_share(pos_counts[j],pt,role);
+//                }
+
             }
+
+//            cout<<" truth label"<<endl;
+//            print_share(tls[0],pt,role);
+
         }
         end = clock();
-        cout<<"Update truth label time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//        cout<<"Update truth label time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 
 //        cout<<"after latent truth posterior counts"<<endl;
 //        for(int j=0; j<user_num; j++) {
@@ -477,7 +505,7 @@ namespace MPC {
         auto start = clock();
         auto cluster_centers = cluster_init(points, pt, role);
         auto end = clock();
-        cout<<"Cluster init time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//        cout<<"Cluster init time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
 //        cout<<"cluster init finish!"<<endl;
         // iteration
         cout<<"start clustering"<<endl;
@@ -533,10 +561,10 @@ namespace MPC {
                 val = right_shift_const(val, FLOAT_SCALE_FACTOR, pt, role);
 
 //                auto start = clock();
-                cout<<"val"<<endl;
-                print_scaled_share(val,pt,role);
+//                cout<<"val"<<endl;
+//                print_scaled_share(val,pt,role);
                 val = rep_square_root(val, FLOAT_SCALE_FACTOR, FLOAT_SCALE_FACTOR, pt, role);
-                print_scaled_share(val,pt,role);
+//                print_scaled_share(val,pt,role);
 //                auto end = clock();
 //                cout<<"req square root Run time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
                 vector<uint64_t> tmp(dim, val);
@@ -591,12 +619,12 @@ namespace MPC {
 
             end = clock();
 
-            cout<<"------------------------"<<endl;
-            for(int i=0;i<cluster_num;i++) {
-                auto val = inner_product(cluster_centers[i],cluster_centers[i],pt,role);
-                print_distance(val,pt,role);
-            }
-            cout<<"------------------------"<<endl;
+//            cout<<"------------------------"<<endl;
+//            for(int i=0;i<cluster_num;i++) {
+//                auto val = inner_product(cluster_centers[i],cluster_centers[i],pt,role);
+//                print_distance(val,pt,role);
+//            }
+//            cout<<"------------------------"<<endl;
 
             vector<uint64_t>statistics(cluster_num,0);
             for(int i=0;i<points.size();i++) {
@@ -621,6 +649,32 @@ namespace MPC {
         return cluster_index;
     }
 
+    vector<vector<uint64_t>> load_vector_vector(const string &path) {
+        vector<vector<uint64_t>> cluster_index;
+        ifstream index_file(path);
+        if (!index_file.is_open()) {
+            cout << "can not open index file " << path<< endl;
+            cout << strerror(errno) << endl;
+            exit(0);
+        }
+        boost::archive::binary_iarchive ia(index_file);
+        ia>>cluster_index;
+        index_file.close();
+        return cluster_index;
+    }
+
+    void cache_vector_vector(vector<vector<uint64_t>> &cluster_index,const string &path) {
+        ofstream index_file(path);
+        if (!index_file.is_open()) {
+            cout << "can not open index file " << path<< endl;
+            cout << strerror(errno) << endl;
+            exit(0);
+        }
+        boost::archive::binary_oarchive oa(index_file);
+        oa << cluster_index;
+        index_file.close();
+    }
+
     vector<vector<int>>
     ttruth(vector<vector<vector<vector<uint64_t>>>> &all_kvec, vector<vector<vector<uint64_t>>> &answers, uint topK, ABYParty *pt,
            e_role role) {
@@ -635,6 +689,7 @@ namespace MPC {
         vector<vector<vector<vector<uint64_t>>>> all_cls(question_num,
                                                          vector<vector<vector<uint64_t>>>(user_num));
 
+        auto start_all = clock();
         auto start = clock();
         for (int i = 0; i < question_num; i++) {
             auto &obs = all_obs[i];
@@ -647,8 +702,33 @@ namespace MPC {
                 points.insert(points.end(), kvec[j].begin(), kvec[j].end());
             }
 
-            auto cluster_index = sphere_kmeans(points, SKM_ITER, pt, role);
+            vector<vector<uint64_t>> cluster_index;
+            string index_path = string("../index_cache/q"+to_string(i)+"_role"+to_string(role));
+//            cout<< filesystem::exists(index_path) <<endl;
+            if(false and filesystem::exists(index_path)) {
+                cout<<"question "<<i<<"-th"<<" cluster index exists"<<endl;
+                cluster_index = load_vector_vector(index_path);
 
+                vector<uint64_t>statistics(CLUSTER_NUM,0);
+                for(int i=0;i<points.size();i++) {
+                    for(int j=0;j<CLUSTER_NUM;j++) {
+                        statistics[j]+=cluster_index[i][j];
+                    }
+                }
+                statistics = open_share(statistics,pt,role);
+                for(int j=0;j<CLUSTER_NUM;j++) {
+                    cout<<statistics[j]<<" ";
+                }
+                cout<<endl;
+
+            } else {
+                cout<<"compute question "<<i<<"-th"<<" cluster index"<<endl;
+                auto start=clock();
+                cluster_index = sphere_kmeans(points, SKM_ITER, pt, role);
+//                cache_vector_vector(cluster_index, index_path);
+                auto end=clock();
+//                cout<<"worker num "<<user_num<<" kmeans time "<<double(end-start)/CLOCKS_PER_SEC<<endl;
+            }
             uint c = 0;
             uint u = 0;
             for (int j = 0; j < points.size(); j++) {
@@ -679,7 +759,7 @@ namespace MPC {
             }
         }
         end = clock();
-        cout<<"Observation update time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+//        cout<<"Observation update time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
         // latent truth discovery
 
         start = clock();
@@ -720,8 +800,8 @@ namespace MPC {
             }
         }
 
-        end = clock();
-        cout<<"Answer selection time: "<<(double)(end - start) / CLOCKS_PER_SEC<<"S"<<endl;
+        auto end_all = clock();
+        cout<<"TextTruth time: "<<(double)(end_all - start_all) / CLOCKS_PER_SEC<<"S"<<endl;
 
         // for test only return topk index for benchmark
         vector<vector<int>>topk_index(question_num,vector<int>(topK,0));

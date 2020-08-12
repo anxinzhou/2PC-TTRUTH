@@ -36,8 +36,8 @@
 #include "ttruth/ttruth.h"
 #include "mpc_ttruth/mpc_ttruth.h"
 
-const int QUESTION_NUM = 5;
-const int USER_NUM = 10;
+const int QUESTION_NUM = 1;
+const int USER_NUM = 1;
 
 int32_t read_test_options(int32_t *argcp, char ***argvp, e_role *role,
                           uint32_t *bitlen, uint32_t *numbers, uint32_t *secparam, std::string *address,
@@ -344,7 +344,7 @@ void testMPCTextTruth(ABYParty *pt, e_role role) {
 int main(int argc, char **argv) {
 
     e_role role;
-    uint32_t bitlen = UINT64_LEN, numbers = 128, secparam = 128, nthreads = 1;
+    uint32_t bitlen = UINT64_LEN, numbers = 128, secparam = 80, nthreads = 1;
     uint16_t port = 7766;
     std::string address = "127.0.0.1";
     int32_t test_op = -1;
@@ -376,8 +376,8 @@ int main(int argc, char **argv) {
 //    cout<<"time "<<double(end-start)/CLOCKS_PER_SEC<<endl;
 //    exit(-1);
 
-    test_ttruth();
-//testMPCTextTruth(pt,role);
+//    test_ttruth();
+testMPCTextTruth(pt,role);
     delete pt;
     return 0;
 }
